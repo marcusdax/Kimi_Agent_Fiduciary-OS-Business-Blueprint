@@ -3,7 +3,7 @@
 **A two-sided financial-planning platform: free planning tools for households, a white-label command center for the advisors who serve them.**
 
 > [!IMPORTANT]
-> **Status: pre-launch blueprint.** This repository holds the business plan, financial model, target architecture, and a working **backend API prototype**. There is no frontend yet and no compliance certification. Insurance revenue share is excluded from the model pending regulatory review. See [Before go-to-market](#before-go-to-market).
+> **Status: pre-launch blueprint (October 2026).** This repository holds the business plan, a reproducible financial model, the target architecture, and a working **backend API prototype** with AI and data-provenance safeguards. There is no frontend yet and no compliance certification. See [Open items before launch](#open-items-before-launch).
 
 ---
 
@@ -14,7 +14,8 @@
 - [Quick start](#quick-start)
 - [Repository map](#repository-map)
 - [Business model at a glance](#business-model-at-a-glance)
-- [Before go-to-market](#before-go-to-market)
+- [Trust and safety controls](#trust-and-safety-controls)
+- [Open items before launch](#open-items-before-launch)
 - [Upgrade roadmap (open-source accelerators)](#upgrade-roadmap)
 - [Document index](#document-index)
 
@@ -26,7 +27,7 @@ Every feature in this repo should earn its place on one path: **a household gets
 
 ```mermaid
 flowchart LR
-    A["Attract<br/>Free calculators<br/>annuity · life · retirement · tax"] --> B["Activate<br/>Financial profile<br/>+ first AI insight"]
+    A["Attract<br/>Free calculators<br/>annuity · life · retirement · tax"] --> B["Activate<br/>Financial profile<br/>+ AI explanation"]
     B --> C{"Convert"}
     C -->|self-directed| D["B2C Premium<br/>$15/mo"]
     C -->|wants help| E["Shares plan with an advisor<br/>(no paid matching)"]
@@ -52,7 +53,7 @@ The [roadmap](VALUE_FLOW_AND_REPO_ROADMAP.md) maps open-source projects onto eac
 
 | Area | Reality |
 |---|---|
-| **Backend API** (`fiduciary-os/backend`) | Express + TypeScript + Prisma. Type-checks, builds, and passes its test suite. |
+| **Backend API** (`fiduciary-os/backend`) | Express + TypeScript + Prisma. Type-checks, builds, and passes 41 tests in CI. |
 | **Database** | SQLite via Prisma (the docs describe PostgreSQL + TimescaleDB as the target). |
 | **Auth** | Email/password with bcrypt and JWT access/refresh tokens. No SSO, MFA, or advisor/firm roles yet. |
 | **Calculators** | Annuity, life insurance, retirement, tax (2024 federal brackets). Rule-of-thumb formulas, labelled illustrative with a disclaimer on every response. |
@@ -183,21 +184,32 @@ All are assumptions until measured. Details: [FINANCIAL_MODEL_PACKAGE.md](FINANC
 
 ---
 
-## Before go-to-market
+## Trust and safety controls
 
-Status of the gaps found in the October 2026 review.
+What protects users and the company today. Each item is enforced in code or in the model, not just described.
 
-| # | Gap | Status |
+| Area | Control | Where |
 |---|---|---|
-| 1 | Unearned compliance claims ("SOC 2 Type II compliant", "WCAG 2.1 AA compliant", "bank-grade security", "compliance-first") | **Done.** Removed from READMEs and business docs; architecture docs now say *target, not attested* |
-| 2 | Insurance quotes that looked real (named carriers, ratings, logos, features) | **Done in code and docs.** Anonymised, labelled illustrative, disclaimer on every response. Real quotes still need a licensed quoting partner |
-| 3 | Revenue share on insurance premiums | **Done in the model.** Removed from all projections and docs. Still open: counsel's opinion and a named licensed channel partner before it can return (not legal advice) |
-| 4 | AI output guardrails | **Done.** Disclosures, education-only boundary, output guardrails, PII minimisation, supervision log, deterministic tests in CI and a live eval suite (`npm run eval:ai`) |
-| 5 | Silent mock data | **Done.** `source` on every market, crypto, calculator and AI response; placeholders refused in production; simulated price stream disabled in production |
-| 6 | Financial model (LTV, ARR mismatch, dates, financing) | **Done.** Model v2 is reproducible; every doc uses the same figures and is dated October 2026 |
-| 7 | Public repository holding confidential material | **Open.** Repository to be made private once these changes are merged. Note that `fiduciary-os/LICENSE` is MIT, which permits reuse of the code by anyone who obtained it; decide whether that license still fits |
+| **Claims** | No compliance certification is claimed. SOC 2, WCAG and FINRA appear only as *targets, not attested* | All docs; [Security_Architecture.md](Security_Architecture.md) |
+| **AI explanations** | Education-only system prompt; output guardrails withhold promised returns, buy/sell directives, carrier picks and advisor impersonation; names and emails stripped before model calls; disclosure and `notARecommendation` on every response | `src/services/aiGuardrails.ts`, `aiPolicy.json` |
+| **AI supervision** | Every prompt and response logged to `ai_interactions` (kept if the user is deleted); guardrail eval corpus in CI; live eval suite via `npm run eval:ai` | `src/services/aiGateway.ts`, `tests/`, `evals/` |
+| **Data provenance** | `source` (`live`, `mock`, `fallback`, `illustrative`) on every market, crypto, calculator and AI response; placeholders refused (HTTP 503) when `NODE_ENV=production` | `src/utils/dataSource.ts` |
+| **Insurance figures** | Anonymised carriers, no ratings or logos, labelled illustrative with a disclaimer; no carrier integration until a licensed quoting partner is in place | `src/services/unifiedAiService.ts` |
+| **Revenue model** | Subscriptions only. No revenue tied to insurance or investment placement, and no paid advisor matching | `model/build_model.py` |
+| **Financial model** | One reproducible source for every figure; LTV = ARPU × margin ÷ churn | `python3 model/build_model.py` |
 
-Still to do before launch: confirm the placeholders marked **[Confirm]** in `VC_Executive_Summary.md`, rebuild valuation comparables from a sourced data provider, and run `npm run eval:ai` against the production model.
+---
+
+## Open items before launch
+
+- [ ] **Make this repository private.** It is currently public and contains material marked confidential.
+- [ ] **Decide on the code license.** `fiduciary-os/LICENSE` is MIT, which lets anyone who obtained a copy reuse the code. Making the repository private does not revoke that for existing copies.
+- [ ] **Confirm or remove the `[Confirm]` placeholders** in [VC_Executive_Summary.md](VC_Executive_Summary.md) (headquarters, team, founder background, traction) before it is shared.
+- [ ] **Rebuild valuation comparables** from a sourced data provider; see [Valuation_Analysis.md](Valuation_Analysis.md).
+- [ ] **Get securities and insurance counsel's opinion** on the advisor workspace and any future insurance features, and name a licensed quoting partner before showing real quotes. *(Not legal advice.)*
+- [ ] **Run `npm run eval:ai`** against the production model before AI features go live, and set up human review of the `ai_interactions` log.
+- [ ] **Build the frontend** (see the [roadmap](VALUE_FLOW_AND_REPO_ROADMAP.md#1-experience--aesthetics)) and fix or remove the `docker-compose.yml` and `Makefile` targets that reference missing `frontend/` and `infra/` folders.
+- [ ] **Replace model assumptions with measured data** (churn, CAC, conversion) as soon as there are customers.
 
 ---
 
@@ -231,4 +243,4 @@ Still to do before launch: confirm the placeholders marked **[Confirm]** in `VC_
 
 ---
 
-Code in `fiduciary-os/` is MIT-licensed ([LICENSE](fiduciary-os/LICENSE)).
+Code in `fiduciary-os/` is currently MIT-licensed ([LICENSE](fiduciary-os/LICENSE)); see [Open items before launch](#open-items-before-launch). Business documents and the financial model are confidential.

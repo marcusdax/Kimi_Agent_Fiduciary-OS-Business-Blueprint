@@ -152,7 +152,7 @@ Sequenced so each phase produces something sellable or demonstrable, and nothing
 
 | Phase | Outcome | Adopt | Exit criteria |
 |---|---|---|---|
-| **0 · Credibility gates** | Nothing in the repo overstates reality | — (fixes listed in [README](README.md#before-go-to-market)) | Claims removed, quotes anonymised, model corrected, counsel engaged on revenue share |
+| **0 · Credibility gates** | Nothing in the repo overstates reality | — (see [README](README.md#trust-and-safety-controls) and [open items](README.md#open-items-before-launch)) | Claims removed, quotes anonymised, model corrected, counsel engaged on revenue share |
 | **1 · Consumer MVP** | Public calculators with a real UI | shadcn-admin, shadcn/ui, Tremor, Recharts, formulajs, PostHog | Four calculators live; funnel instrumented from first visit to registration |
 | **2 · Trustworthy AI** | AI insights a supervisor can review | Langfuse, promptfoo, MCP SDK | Every AI response traced; eval suite blocks unsafe output in CI; calculators published as MCP tools |
 | **3 · Advisor product** | First paying firm | Better Auth, OpenFGA, react-pdf, react-email, Plaid | Firm → advisor → household permissions; branded PDF plan; aggregated accounts |
