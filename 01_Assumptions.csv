@@ -1,0 +1,96 @@
+Category,Conservative,Base Case,Optimistic
+=== MARKET ASSUMPTIONS ===,,,
+Total Addressable Market (B2B - RIAs),"50,000","50,000","50,000"
+Total Addressable Market (B2C - Households),130M,130M,130M
+Serviceable Addressable Market (B2B),"15,000","15,000","15,000"
+Serviceable Addressable Market (B2C),10M,10M,10M
+,,,
+=== B2B PRICING ===,,,
+Solo Tier - Monthly Price,$99,$99,$99
+Solo Tier - Annual Price,"$1,069","$1,069","$1,069"
+Growth Tier - Monthly Price,$299,$299,$299
+Growth Tier - Annual Price,"$3,229","$3,229","$3,229"
+Enterprise - Avg Monthly Price,"$1,500","$1,500","$1,500"
+Enterprise - Avg Annual Price,"$18,000","$18,000","$18,000"
+,,,
+=== B2C PRICING ===,,,
+Premium Monthly Price,$15,$15,$15
+Premium Annual Price,$150,$150,$150
+Free-to-Premium Conversion Rate,3%,5%,8%
+,,,
+=== PERFORMANCE PARTNERSHIP ===,,,
+Revenue Share % (Tier 1),25%,25%,25%
+Revenue Share % (Tier 2),35%,35%,35%
+Revenue Share % (Tier 3),45%,45%,45%
+Avg Premium per Policy (B2B referred),"$2,400","$2,400","$2,400"
+Avg Premium per Policy (B2C),"$1,800","$1,800","$1,800"
+,,,
+=== CUSTOMER ACQUISITION (B2B) ===,,,
+New Solo Customers (Conservative),120,180,250
+New Solo Customers (Base),180,250,350
+New Solo Customers (Optimistic),250,350,500
+New Growth Customers (Conservative),40,60,90
+New Growth Customers (Base),60,90,130
+New Growth Customers (Optimistic),90,130,180
+New Enterprise Customers (Conservative),5,8,15
+New Enterprise Customers (Base),8,12,20
+New Enterprise Customers (Optimistic),15,20,30
+,,,
+=== CUSTOMER ACQUISITION (B2C) ===,,,
+New Free Users (Conservative),"50,000","80,000","120,000"
+New Free Users (Base),"80,000","120,000","180,000"
+New Free Users (Optimistic),"120,000","180,000","280,000"
+New Premium Users (Conservative),"1,500","2,500","4,000"
+New Premium Users (Base),"2,500","4,000","6,500"
+New Premium Users (Optimistic),"4,000","6,500","10,000"
+,,,
+=== CHURN RATES ===,,,
+B2B Monthly Churn (Conservative),3.0%,2.5%,2.0%
+B2B Monthly Churn (Base),2.0%,1.5%,1.0%
+B2B Monthly Churn (Optimistic),1.5%,1.0%,0.8%
+B2C Monthly Churn (Conservative),8.0%,6.5%,5.0%
+B2C Monthly Churn (Base),6.0%,5.0%,4.0%
+B2C Monthly Churn (Optimistic),4.0%,3.5%,3.0%
+,,,
+=== CAC ASSUMPTIONS ===,,,
+B2B CAC - Solo (Conservative),$800,$700,$600
+B2B CAC - Solo (Base),$600,$500,$400
+B2B CAC - Solo (Optimistic),$450,$375,$300
+B2B CAC - Growth (Conservative),"$2,500","$2,200","$2,000"
+B2B CAC - Growth (Base),"$1,800","$1,500","$1,200"
+B2B CAC - Growth (Optimistic),"$1,200","$1,000",$800
+B2B CAC - Enterprise (Conservative),"$15,000","$12,000","$10,000"
+B2B CAC - Enterprise (Base),"$10,000","$8,000","$6,000"
+B2B CAC - Enterprise (Optimistic),"$6,000","$5,000","$4,000"
+B2C CAC - Premium (Conservative),$45,$40,$35
+B2C CAC - Premium (Base),$35,$30,$25
+B2C CAC - Premium (Optimistic),$25,$22,$18
+,,,
+=== GROWTH RATES ===,,,
+YoY Customer Growth (Conservative),40%,55%,70%
+YoY Customer Growth (Base),60%,75%,90%
+YoY Customer Growth (Optimistic),85%,100%,120%
+,,,
+=== EXPENSE ASSUMPTIONS (% of Revenue) ===,,,
+COGS % (Conservative),35%,30%,25%
+COGS % (Base),28%,25%,22%
+COGS % (Optimistic),22%,20%,18%
+R&D % (Conservative),35%,30%,25%
+R&D % (Base),28%,25%,22%
+R&D % (Optimistic),22%,20%,18%
+Sales & Marketing % (Conservative),45%,40%,35%
+Sales & Marketing % (Base),38%,35%,30%
+Sales & Marketing % (Optimistic),30%,28%,25%
+G&A % (Conservative),20%,18%,15%
+G&A % (Base),15%,14%,12%
+G&A % (Optimistic),12%,10%,8%
+,,,
+=== HEADCOUNT ASSUMPTIONS ===,,,
+Starting Headcount,8,12,18
+Headcount Growth Rate,25%,30%,40%
+Avg Fully Loaded Cost per Employee,"$125,000","$135,000","$150,000"
+,,,
+=== VALUATION ASSUMPTIONS ===,,,
+Discount Rate (WACC),15%,12%,10%
+Terminal Growth Rate,3%,3%,3%
+Tax Rate,25%,25%,25%

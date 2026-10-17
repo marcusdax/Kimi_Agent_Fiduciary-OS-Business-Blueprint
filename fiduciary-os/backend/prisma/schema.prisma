@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password      String?
+  name          String
+  role          String    @default("client")
+  advisorCode   String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  profile       Profile?
+  portfolio     Portfolio?
+  documents     Document[]
+  sessions      Session[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model Profile {
+  id                String   @id @default(uuid())
+  userId            String   @unique
+  age               Int      @default(45)
+  retirementAge     Int      @default(65)
+  filingStatus      String   @default("married")
+  stateTaxRate      Int      @default(0)
+  employmentStatus  String   @default("employed")
+  annualIncome      Int      @default(150000)
+  investableAssets  Int      @default(500000)
+  monthlyExpenses   Int      @default(6000)
+  retirementSavings Int      @default(300000)
+  primaryGoal       String   @default("retire")
+  riskTolerance     Int      @default(3)
+  investmentStyle   String   @default("active")
+  cryptoAllocation  Int      @default(5)
+  notes             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profiles")
+}
+
+model Portfolio {
+  id         String    @id @default(uuid())
+  userId     String    @unique
+  totalValue Float     @default(0)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  holdings   Holding[]
+
+  @@map("portfolios")
+}
+
+model Holding {
+  id          String   @id @default(uuid())
+  portfolioId String
+  symbol      String
+  quantity    Float
+  avgCost     Float    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+
+  @@unique([portfolioId, symbol])
+  @@map("holdings")
+}
+
+model Document {
+  id          String   @id @default(uuid())
+  userId      String
+  name        String
+  type        String
+  size        Int
+  path        String
+  encrypted   Boolean  @default(true)
+  uploadedAt  DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("documents")
+}
