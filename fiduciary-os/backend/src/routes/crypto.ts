@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { authenticateToken } from '../middleware/auth';
 import { AppError } from '../middleware/errorHandler';
 import {
@@ -16,7 +17,7 @@ const router = Router();
 // =============================================================================
 
 // Get all crypto prices
-router.get('/prices', authenticateToken, async (req, res, next) => {
+router.get('/prices', authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const prices = await getCryptoPrices();
 
@@ -35,7 +36,7 @@ router.get('/prices', authenticateToken, async (req, res, next) => {
 });
 
 // Get trending cryptocurrencies
-router.get('/trending', authenticateToken, async (req, res, next) => {
+router.get('/trending', authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const trending = await getTrendingCrypto();
 
@@ -53,7 +54,7 @@ router.get('/trending', authenticateToken, async (req, res, next) => {
 });
 
 // Get specific coin details
-router.get('/coin/:id', authenticateToken, async (req, res, next) => {
+router.get('/coin/:id', authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const coin = await getCoinDetails(id);
@@ -72,7 +73,7 @@ router.get('/coin/:id', authenticateToken, async (req, res, next) => {
 });
 
 // Calculate portfolio value
-router.post('/portfolio', authenticateToken, async (req, res, next) => {
+router.post('/portfolio', authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { holdings } = req.body;
 
@@ -107,7 +108,7 @@ router.post('/portfolio', authenticateToken, async (req, res, next) => {
 });
 
 // Get crypto market summary
-router.get('/market-summary', authenticateToken, async (req, res, next) => {
+router.get('/market-summary', authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const prices = await getCryptoPrices();
 

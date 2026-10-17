@@ -5,8 +5,8 @@ Node.js/Express + TypeScript API for the Fiduciary OS™ platform.
 ## Features
 
 - **RESTful API**: Clean, well-documented endpoints
-- **Authentication**: JWT-based auth with optional Auth0 integration
-- **Database**: PostgreSQL with Prisma ORM
+- **Authentication**: JWT access/refresh tokens (Auth0 is planned, not wired)
+- **Database**: SQLite via Prisma today; PostgreSQL is the production target
 - **Caching**: Redis for sessions and performance
 - **Real-time**: WebSocket support for live updates
 - **Security**: Helmet, CORS, rate limiting
@@ -28,8 +28,7 @@ Node.js/Express + TypeScript API for the Fiduciary OS™ platform.
 ### Prerequisites
 
 - Node.js 20+
-- PostgreSQL 15+
-- Redis 7+
+- Redis 7+ (optional; the API runs without it)
 
 ### Installation
 
@@ -41,7 +40,7 @@ npm install
 
 ```bash
 # Set up database URL in .env
-# DATABASE_URL=postgresql://user:password@localhost:5432/fiduciary_os
+# DATABASE_URL=file:./dev.db
 
 # Run migrations
 npx prisma migrate dev
@@ -133,7 +132,7 @@ NODE_ENV=development
 PORT=3001
 
 # Database
-DATABASE_URL=postgresql://user:password@localhost:5432/fiduciary_os
+DATABASE_URL=file:./dev.db
 
 # Redis
 REDIS_URL=redis://localhost:6379
@@ -142,7 +141,7 @@ REDIS_URL=redis://localhost:6379
 JWT_SECRET=your-super-secret-key
 JWT_EXPIRES_IN=7d
 
-# Auth0 (optional)
+# Auth0 (planned; not read by the current code)
 AUTH0_DOMAIN=your-auth0-domain.auth0.com
 AUTH0_AUDIENCE=your-api-identifier
 

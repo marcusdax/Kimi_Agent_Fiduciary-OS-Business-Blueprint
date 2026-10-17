@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { body } from 'express-validator';
 import { authenticateToken } from '../middleware/auth';
 import { validateRequest } from '../middleware/validateRequest';
@@ -18,7 +19,7 @@ router.post(
     body('colaRider').isIn(['0', '2', '3', 'cpi']),
     validateRequest,
   ],
-  async (req, res) => {
+  async (req: Request, res: Response) => {
     const { principal, deferralPeriod, productType, jointLife, colaRider } = req.body;
 
     const rates: Record<string, number> = {
@@ -65,7 +66,7 @@ router.post(
     body('tobacco').isIn(['n', 'y']),
     validateRequest,
   ],
-  async (req, res) => {
+  async (req: Request, res: Response) => {
     const { currentAge, annualIncome, existingCoverage, term, healthClass, gender, tobacco } =
       req.body;
 
@@ -105,7 +106,7 @@ router.post(
     body('strategy').isIn(['4pct', 'dynamic', 'guardrails', 'annuity']),
     validateRequest,
   ],
-  async (req, res) => {
+  async (req: Request, res: Response) => {
     const { portfolioValue, monthlySpending, socialSecurity, pension, strategy } = req.body;
 
     const netSpend = monthlySpending - socialSecurity - pension;
@@ -157,7 +158,7 @@ router.post(
     body('qcdAmount').isFloat({ min: 0 }),
     validateRequest,
   ],
-  async (req, res) => {
+  async (req: Request, res: Response) => {
     const { filingStatus, annualIncome, contribution401k, rothConversion, capitalLossHarvest, hsaContribution, qcdAmount } = req.body;
 
     const standardDeductions: Record<string, number> = {

@@ -1,10 +1,11 @@
 import { Router } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { prisma } from '../config/database';
 import { getRedis } from '../config/redis';
 
 const router = Router();
 
-router.get('/', async (req, res) => {
+router.get('/', async (req: Request, res: Response) => {
   const health = {
     status: 'healthy',
     timestamp: new Date().toISOString(),
@@ -43,7 +44,7 @@ router.get('/', async (req, res) => {
   res.status(statusCode).json(health);
 });
 
-router.get('/ready', async (req, res) => {
+router.get('/ready', async (req: Request, res: Response) => {
   try {
     await prisma.$queryRaw`SELECT 1`;
     res.status(200).json({ ready: true });

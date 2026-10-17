@@ -1,14 +1,14 @@
 import { Router } from 'express';
-import { body } from 'express-validator';
+import type { Request, Response, NextFunction } from 'express';
+import { body, matchedData } from 'express-validator';
 import { prisma } from '../config/database';
 import { authenticateToken } from '../middleware/auth';
-import { AppError } from '../middleware/errorHandler';
 import { validateRequest } from '../middleware/validateRequest';
 
 const router = Router();
 
 // Get profile
-router.get('/', authenticateToken, async (req, res, next) => {
+router.get('/', authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const profile = await prisma.profile.findUnique({
       where: { userId: req.user!.userId },
@@ -16,7 +16,7 @@ router.get('/', authenticateToken, async (req, res, next) => {
 
     if (!profile) {
       // Return default profile
-      return res.json({
+      res.json({
         userId: req.user!.userId,
         age: 45,
         retirementAge: 65,
@@ -33,6 +33,7 @@ router.get('/', authenticateToken, async (req, res, next) => {
         cryptoAllocation: 5,
         notes: '',
       });
+      return;
     }
 
     res.json(profile);
@@ -62,14 +63,17 @@ router.put(
     body('notes').optional().isString(),
     validateRequest,
   ],
-  async (req, res, next) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
+      // Only persist fields declared in the validator chain above, so a client
+      // cannot overwrite userId/id or other columns via mass assignment.
+      const data = matchedData(req, { locations: ['body'] });
       const profile = await prisma.profile.upsert({
         where: { userId: req.user!.userId },
-        update: req.body,
+        update: data,
         create: {
+          ...data,
           userId: req.user!.userId,
-          ...req.body,
         },
       });
 
@@ -81,7 +85,7 @@ router.put(
 );
 
 // Delete profile
-router.delete('/', authenticateToken, async (req, res, next) => {
+router.delete('/', authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
     await prisma.profile.delete({
       where: { userId: req.user!.userId },

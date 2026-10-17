@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { body } from 'express-validator';
 import { prisma } from '../config/database';
 import { authenticateToken } from '../middleware/auth';
@@ -8,7 +9,7 @@ import { validateRequest } from '../middleware/validateRequest';
 const router = Router();
 
 // Get portfolio
-router.get('/', authenticateToken, async (req, res, next) => {
+router.get('/', authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const portfolio = await prisma.portfolio.findUnique({
       where: { userId: req.user!.userId },
@@ -18,11 +19,12 @@ router.get('/', authenticateToken, async (req, res, next) => {
     });
 
     if (!portfolio) {
-      return res.json({
+      res.json({
         userId: req.user!.userId,
         totalValue: 0,
         holdings: [],
       });
+      return;
     }
 
     res.json(portfolio);
@@ -40,7 +42,7 @@ router.put(
     body('holdings').optional().isArray(),
     validateRequest,
   ],
-  async (req, res, next) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { totalValue, holdings } = req.body;
 
@@ -93,7 +95,7 @@ router.post(
     body('avgCost').optional().isFloat({ min: 0 }),
     validateRequest,
   ],
-  async (req, res, next) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const portfolio = await prisma.portfolio.findUnique({
         where: { userId: req.user!.userId },
@@ -122,7 +124,7 @@ router.post(
 );
 
 // Delete holding
-router.delete('/holdings/:id', authenticateToken, async (req, res, next) => {
+router.delete('/holdings/:id', authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
     await prisma.holding.delete({
       where: { id: req.params.id },
