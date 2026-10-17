@@ -1,11 +1,13 @@
 import type { Server } from 'socket.io';
 import { logger } from '../utils/logger';
+import { placeholdersAllowed, type DataSource } from '../utils/dataSource';
 
 interface PriceUpdate {
   symbol: string;
   price: number;
   change: number;
   timestamp: Date;
+  source: DataSource;
 }
 
 export function setupWebSocketHandlers(io: Server): void {
@@ -34,9 +36,14 @@ export function setupWebSocketHandlers(io: Server): void {
     });
   });
 
-  // Start price update simulation (in production, this would come from market data feed)
+  // Simulated price stream for UI development only. There is no live feed yet, and random
+  // prices must never reach production users, so the simulation refuses to start there.
   if (process.env.ENABLE_REALTIME_UPDATES === 'true') {
-    startPriceSimulation(io);
+    if (placeholdersAllowed()) {
+      startPriceSimulation(io);
+    } else {
+      logger.warn('ENABLE_REALTIME_UPDATES is set but no live price feed exists; simulation disabled in production');
+    }
   }
 }
 
@@ -61,6 +68,7 @@ function startPriceSimulation(io: Server): void {
         price: newPrice,
         change: change * 100,
         timestamp: new Date(),
+        source: 'mock',
       };
 
       io.to(`symbol:${symbol}`).emit('price_update', update);

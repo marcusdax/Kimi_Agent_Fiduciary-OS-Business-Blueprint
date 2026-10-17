@@ -5,7 +5,7 @@
 
 **Document Classification:** Strategic Intelligence  
 **Prepared For:** Executive Leadership & Investment Committee  
-**Date:** June 2025  
+**Date:** October 2026 (v1.1)  
 **Scope:** Direct Competitors, Indirect Competitors, Market Positioning
 
 ---
@@ -632,6 +632,6 @@ Fiduciary OS™'s differentiated positioning—AI-powered, dual-sided, insurance
 
 ---
 
-**Document Version:** 1.0  
-**Last Updated:** June 2025  
+**Document Version:** 1.1  
+**Last Updated:** October 2026  
 **Next Review:** Quarterly

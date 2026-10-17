@@ -21,6 +21,7 @@ model User {
   portfolio     Portfolio?
   documents     Document[]
   sessions      Session[]
+  aiInteractions AiInteraction[]
 
   @@map("users")
 }
@@ -103,4 +104,26 @@ model Document {
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("documents")
+}
+
+// Supervisory record of every AI prompt and response (see services/aiGateway.ts).
+// Kept when a user is deleted (userId set to null) so the review trail survives.
+model AiInteraction {
+  id            String   @id @default(uuid())
+  userId        String?
+  endpoint      String
+  provider      String
+  model         String?
+  source        String
+  policyVersion String
+  prompt        String
+  response      String
+  blocked       Boolean  @default(false)
+  flags         String   @default("")
+  createdAt     DateTime @default(now())
+
+  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@map("ai_interactions")
 }

@@ -267,6 +267,8 @@ class PlaidErrorHandler {
 
 ## Carrier API Integration Patterns
 
+> **Design pattern only.** No carrier integration exists today. Carrier or product data may be connected only through a licensed quoting partner or a direct carrier agreement that permits the use, after securities/insurance counsel has reviewed the flow. Until then, the API returns anonymised, illustrative figures labelled `"source": "illustrative"`.
+
 ### Dynamic Source Router Pattern
 
 ```mermaid
@@ -1068,6 +1070,6 @@ describe('Plaid Integration Contract', () => {
 
 ---
 
-*Document Version: 1.0*
-*Last Updated: January 2025*
+*Document Version: 1.1*
+*Last Updated: October 2026 (illustrative-only insurance data; compliance stated as targets)*
 *Owner: Integration Engineering Team*

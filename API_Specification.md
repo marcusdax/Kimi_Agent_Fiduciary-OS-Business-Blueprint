@@ -499,43 +499,34 @@ Generate annuity quotes.
 {
   "success": true,
   "data": {
-    "quote_id": "quote_xyz789",
+    "illustration_id": "illus_xyz789",
     "monthly_income": 1850.00,
     "annual_income": 22200.00,
-    "yield_rate": 0.065,
+    "assumed_payout_rate": 0.065,
     "ten_year_total": 222000.00,
     "twenty_year_total": 444000.00,
     "lifetime_estimate": 532800.00,
-    "carrier_quotes": [
+    "illustrations": [
       {
-        "carrier": "Athene",
-        "product": "Ascent Pro 10",
-        "rating": "A+",
+        "carrier": "Illustrative Carrier A",
         "monthly_income": 1920.00,
-        "yield_rate": 0.0675,
-        "features": ["high_cap_rate", "guaranteed_growth"],
-        "fees": {
-          "annual": 0.0,
-          "surrender": [
-            {"year": 1, "rate": 0.10},
-            {"year": 2, "rate": 0.09}
-          ]
-        }
+        "assumed_payout_rate": 0.0675,
+        "illustrative": true
       },
       {
-        "carrier": "Nationwide",
-        "product": "Peak 10",
-        "rating": "A+",
+        "carrier": "Illustrative Carrier B",
         "monthly_income": 1880.00,
-        "yield_rate": 0.066,
-        "features": ["liquidity_bonus", "free_withdrawal"]
+        "assumed_payout_rate": 0.066,
+        "illustrative": true
       }
     ],
     "projections": {
       "labels": ["Age 65", "Age 70", "Age 75", "Age 80", "Age 85"],
       "values": [22200, 23310, 24476, 25700, 26985]
     }
-  }
+  },
+  "source": "illustrative",
+  "disclaimer": "Illustrative estimate from a simplified formula with assumed rates. It is not a quote, offer, or recommendation."
 }
 ```
 
@@ -554,19 +545,21 @@ Get current annuity rates.
   "data": {
     "rates": [
       {
-        "carrier": "Athene",
-        "product": "Fixed 10-Year",
+        "carrier": "Partner-supplied carrier name",
+        "product": "Partner-supplied product name",
         "rate": 0.055,
         "min_premium": 10000,
         "max_premium": 1000000,
-        "rating": "A+",
-        "updated_at": "2025-01-15T09:00:00Z"
+        "updated_at": "2027-01-15T09:00:00Z"
       }
     ],
-    "as_of": "2025-01-15T09:00:00Z"
-  }
+    "as_of": "2027-01-15T09:00:00Z"
+  },
+  "source": "live"
 }
 ```
+
+> Planned endpoint. Rates would come only from a licensed quoting partner and are not available until one is under contract. Annuity figures returned today are illustrative and labelled `"source": "illustrative"`.
 
 ### Life Insurance Navigator
 
@@ -592,32 +585,33 @@ Generate life insurance quotes.
 {
   "success": true,
   "data": {
-    "quote_id": "quote_life_123",
+    "illustration_id": "illus_life_123",
     "protection_gap": 1300000,
-    "recommended_coverage": 1500000,
+    "estimated_need": 1500000,
     "monthly_premium": 85.50,
     "annual_premium": 1026.00,
     "lifetime_cost": 20520.00,
-    "carrier_quotes": [
+    "illustrations": [
       {
-        "carrier": "Haven Life",
-        "rating": "A++",
+        "carrier": "Illustrative Carrier A",
         "monthly_premium": 81.25,
         "annual_premium": 975.00,
-        "conversion_option": true,
-        "accelerated_death_benefit": true
+        "illustrative": true
       },
       {
-        "carrier": "Protective",
-        "rating": "A+",
+        "carrier": "Illustrative Carrier B",
         "monthly_premium": 78.65,
         "annual_premium": 943.80,
-        "conversion_option": true
+        "illustrative": true
       }
     ]
-  }
+  },
+  "source": "illustrative",
+  "disclaimer": "Illustrative estimates only. These are not quotes or offers from any insurer. Carrier names are anonymised placeholders and premiums come from a simplified formula, not from carrier rate filings. Actual coverage and pricing depend on underwriting and are available only through a licensed insurance producer."
 }
 ```
+
+> Real carrier quotes require a licensed quoting partner. Until one is under contract, every insurance figure the API returns is illustrative, uses anonymised carrier names, and carries the disclaimer above.
 
 ### Investment X-Ray
 
@@ -667,8 +661,9 @@ Get portfolio analysis.
       }
     ],
     "rebalancing": {
+      "_note": "Advisor workspace only: drift against the advisor's own target model. Not shown to consumers as an instruction.",
       "drift_threshold": 0.05,
-      "recommendations": [
+      "drift_items": [
         {
           "asset_class": "us_equity",
           "current": 52,
@@ -832,18 +827,20 @@ Calculate tax liability with strategies.
       "total": 29296.00
     },
     "total_savings": 11204.00,
-    "recommendations": [
+    "scenarios_modelled": [
       {
         "strategy": "max_401k",
-        "potential_savings": 5060.00,
-        "description": "Contribute maximum to 401(k)"
+        "estimated_difference": 5060.00,
+        "description": "Effect of a maximum 401(k) contribution, for discussion with a tax professional"
       },
       {
         "strategy": "hsa_max",
-        "potential_savings": 1826.00,
-        "description": "Max out HSA contribution"
+        "estimated_difference": 1826.00,
+        "description": "Effect of a maximum HSA contribution, for discussion with a tax professional"
       }
-    ]
+    ],
+    "source": "illustrative",
+    "disclaimer": "Illustrative estimate. Not tax advice."
   }
 }
 ```
@@ -1247,6 +1244,6 @@ client.webhooks.on('account.linked', (event) => {
 
 ---
 
-*Document Version: 1.0*
-*Last Updated: January 2025*
+*Document Version: 1.1*
+*Last Updated: October 2026 (illustrative-only insurance data; compliance stated as targets)*
 *Owner: API Engineering Team*

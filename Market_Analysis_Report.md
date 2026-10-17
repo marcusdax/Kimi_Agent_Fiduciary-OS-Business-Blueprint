@@ -5,7 +5,7 @@
 
 **Document Classification:** Strategic Market Intelligence  
 **Prepared For:** Executive Leadership & Investment Committee  
-**Date:** June 2025  
+**Date:** October 2026 (v1.1; SOM aligned to model v2)  
 **Research Sources:** Industry Reports, Regulatory Filings, Primary Research
 
 ---
@@ -139,8 +139,9 @@ SAM represents the realistic portion of TAM that Fiduciary OS™ can serve given
 | B2B SaaS (48,000 advisors × $2,400/year) | 20% penetration | $23M |
 | B2B Enterprise (500 firms × $24,000/year) | 30% penetration | $3.6M |
 | B2C Premium (35M × $180/year) | 2% penetration | $126M |
-| Partnership Revenue ($5B facilitated) | 25bps average | $12.5M |
-| **Total SAM** | | **$165M** |
+| **Total SAM** | | **$152.6M** |
+
+Insurance and investment partnership revenue is excluded: it generally requires a licensed structure and will not be sized until counsel has reviewed it.
 
 ### 2.3 Serviceable Obtainable Market (SOM)
 
@@ -148,20 +149,21 @@ SOM represents the realistic market capture over a 5-year horizon.
 
 #### 5-Year SOM Projection
 
-| Year | B2B Advisors | B2C Premium Subs | Partnership Flows | Annual Revenue |
-|------|--------------|------------------|-------------------|----------------|
-| Year 1 | 150 | 0 | $100M | $780K |
-| Year 2 | 600 | 25,000 | $500M | $3.2M |
-| Year 3 | 1,500 | 100,000 | $1.5B | $12M |
-| Year 4 | 3,000 | 300,000 | $3B | $28M |
-| Year 5 | 5,000 | 500,000 | $5B | $51.7M |
+| Year | B2B Customers | B2C Premium Subs | Revenue | ARR |
+|------|---------------|------------------|---------|-----|
+| Year 1 | 352 | 4,000 | $1.44M | $1.37M |
+| Year 2 | 864 | 12,861 | $4.05M | $3.85M |
+| Year 3 | 1,582 | 26,890 | $8.00M | $7.59M |
+| Year 4 | 2,548 | 47,188 | $13.59M | $12.89M |
+| Year 5 | 3,743 | 75,009 | $21.05M | $19.95M |
+
+Base case from [`model/build_model.py`](model/build_model.py).
 
 #### SOM Assumptions
 
-- **B2B Penetration**: 10% of addressable advisors by Year 5
-- **B2C Conversion**: 1.4% of registered users to premium
-- **Partnership Flows**: $1M average per advisor relationship
-- **Churn**: <5% annually for B2B, <10% for B2C
+- **B2B Penetration**: ~3,740 customers by Year 5 (about 8% of the 48,000-advisor SAM)
+- **B2C Conversion**: 5% of new free users to premium; ~75,000 premium of ~1.35M total users by Year 5
+- **Churn**: 1.0–1.5% monthly for B2B, 5% monthly for B2C (assumptions)
 
 ---
 
@@ -340,10 +342,10 @@ SOM represents the realistic market capture over a 5-year horizon.
 
 | Element | Approach |
 |---------|----------|
-| Design Philosophy | Compliance-first architecture |
+| Design Philosophy | Supervision built in (AI logging, labelled illustrations) |
 | Documentation | Automated audit trails |
 | Disclosure | Transparent fee/product presentation |
-| Data Security | SOC 2 Type II, encryption |
+| Data Security | Encryption in transit; SOC 2 audit planned (not yet attested) |
 | Updates | Continuous regulatory monitoring |
 
 ---
@@ -412,7 +414,7 @@ SOM represents the realistic market capture over a 5-year horizon.
 | Risk | Probability | Impact | Mitigation |
 |------|-------------|--------|------------|
 | Economic Downturn | Medium | Medium | Diverse revenue, efficiency focus |
-| Regulatory Changes | Medium | High | Compliance-first design |
+| Regulatory Changes | Medium | High | Counsel review before launch; supervised AI; illustrative-only insurance figures |
 | Competitive Response | High | Medium | Speed, network effects |
 | Technology Disruption | Low | High | Continuous innovation |
 | Market Saturation | Low | Medium | Expansion strategy |
@@ -451,8 +453,8 @@ Fiduciary OS™ should position as:
 
 | Metric | Target | Frequency |
 |--------|--------|-----------|
-| Advisor Adoption | 10% SAM by Year 5 | Monthly |
-| Consumer Registration | 10M by Year 5 | Monthly |
+| Advisor Adoption | ~8% of SAM by Year 5 | Monthly |
+| Consumer Registration | ~1.35M by Year 5 | Monthly |
 | Net Revenue Retention | >110% | Quarterly |
 | Gross Margin | >80% | Quarterly |
 | LTV:CAC Ratio | >5:1 | Quarterly |
@@ -503,6 +505,6 @@ Success will depend on execution speed, product-market fit achievement, and buil
 
 ---
 
-**Document Version:** 1.0  
-**Last Updated:** June 2025  
+**Document Version:** 1.1  
+**Last Updated:** October 2026  
 **Next Review:** Quarterly

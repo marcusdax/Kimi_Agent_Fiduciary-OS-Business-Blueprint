@@ -1,5 +1,8 @@
 # Fiduciary OS™ - Security Architecture
 
+> [!IMPORTANT]
+> **Target-state design.** This document describes the controls Fiduciary OS intends to implement. None has been independently audited or attested: there is no SOC 2 report, no FINRA registration, and no completed penetration test. Do not describe the platform as compliant with any framework until the relevant audit or assessment is complete. The controls implemented in code today are listed in [fiduciary-os/README.md](fiduciary-os/README.md#security-posture).
+
 ## Table of Contents
 1. [Security Framework Overview](#security-framework-overview)
 2. [Authentication Flows](#authentication-flows)
@@ -357,7 +360,9 @@ flowchart TB
 
 ## Compliance Mapping
 
-### SOC 2 Type II Controls
+*Planned control mapping, not an attestation.*
+
+### SOC 2 Type II Controls (target)
 
 ```mermaid
 flowchart TB
@@ -427,7 +432,7 @@ flowchart LR
     G --> H
 ```
 
-### FINRA/Broker-Dealer Requirements
+### FINRA/Broker-Dealer Requirements (applies only if a broker-dealer customer or partner requires it)
 
 | Requirement | Fiduciary OS Implementation |
 |-------------|----------------------------|
@@ -679,7 +684,7 @@ flowchart LR
 
 ---
 
-*Document Version: 1.0*
-*Last Updated: January 2025*
+*Document Version: 1.1*
+*Last Updated: October 2026 (illustrative-only insurance data; compliance stated as targets)*
 *Owner: Security Engineering Team*
 *Classification: Confidential*

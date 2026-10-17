@@ -4,6 +4,7 @@ import { prisma } from '../src/config/database';
 beforeEach(async () => {
   // Delete test data
   await prisma.$transaction([
+    prisma.aiInteraction.deleteMany(),
     prisma.holding.deleteMany(),
     prisma.portfolio.deleteMany(),
     prisma.document.deleteMany(),

@@ -1,18 +1,16 @@
 import { Router } from 'express';
 import type { Request, Response, NextFunction } from 'express';
-import { param, query } from 'express-validator';
+import { param } from 'express-validator';
 import { authenticateToken } from '../middleware/auth';
 import { validateRequest } from '../middleware/validateRequest';
 import { AppError } from '../middleware/errorHandler';
-import { 
-  getRealTimeQuote, 
+import {
+  getRealTimeQuote,
   getBatchQuotes,
   getPortfolioAnalytics,
-  getInsuranceQuotes,
-  MarketData,
-  InsuranceQuote,
-  PortfolioAnalytics
+  getInsuranceIllustrations,
 } from '../services/unifiedAiService';
+import { combineSources } from '../utils/dataSource';
 import { prisma } from '../config/database';
 
 const router = Router();
@@ -41,6 +39,7 @@ router.get(
       res.json({
         success: true,
         data: quote,
+        meta: { source: quote.source },
       });
     } catch (error) {
       next(error);
@@ -71,6 +70,7 @@ router.post(
         data: quotes,
         meta: {
           count: quotes.length,
+          source: combineSources(quotes.map(q => q.source)),
           timestamp: new Date().toISOString(),
         },
       });
@@ -113,6 +113,7 @@ router.get(
       res.json({
         success: true,
         data: analytics,
+        meta: { source: analytics.source },
       });
     } catch (error) {
       next(error);
@@ -137,6 +138,7 @@ router.post(
       res.json({
         success: true,
         data: analytics,
+        meta: { source: analytics.source },
       });
     } catch (error) {
       next(error);
@@ -148,7 +150,8 @@ router.post(
 // INSURANCE QUOTES ENDPOINTS
 // =============================================================================
 
-// Get life insurance quotes
+// Illustrative term-life premium estimates. NOT quotes: no carrier integration exists,
+// carriers are anonymised, and every response carries a disclaimer the client must show.
 router.post(
   '/insurance/quotes',
   authenticateToken,
@@ -184,7 +187,7 @@ router.post(
         throw new AppError(400, 'Term length must be 10, 15, 20, or 30 years');
       }
 
-      const quotes = await getInsuranceQuotes(
+      const { illustrations, source, disclaimer } = getInsuranceIllustrations(
         age,
         gender as 'male' | 'female',
         healthClass || 'preferred',
@@ -195,8 +198,10 @@ router.post(
 
       res.json({
         success: true,
-        data: quotes,
+        data: illustrations,
+        disclaimer,
         meta: {
+          source,
           params: {
             age,
             gender,
@@ -205,7 +210,7 @@ router.post(
             termLength,
             tobacco: tobacco || false,
           },
-          quoteCount: quotes.length,
+          illustrationCount: illustrations.length,
           timestamp: new Date().toISOString(),
         },
       });
@@ -234,13 +239,16 @@ router.post(
       const educationNeeds = (dependents || 0) * 100000;
       
       const totalNeeds = debtNeeds + incomeNeeds + mortgageNeeds + educationNeeds;
-      const recommendedCoverage = Math.max(500000, Math.ceil(totalNeeds / 100000) * 100000);
-      const coverageGap = Math.max(0, recommendedCoverage - (existingCoverage || 0));
+      const estimatedNeed = Math.ceil(totalNeeds / 100000) * 100000;
+      const coverageGap = Math.max(0, estimatedNeed - (existingCoverage || 0));
 
       res.json({
         success: true,
+        disclaimer:
+          'Rule-of-thumb estimate (10x income plus debts and $100,000 per dependent for education). ' +
+          'It is not a recommendation to buy insurance; needs depend on your full situation.',
         data: {
-          recommendedCoverage,
+          estimatedNeed,
           coverageGap,
           breakdown: {
             incomeReplacement: incomeNeeds,
@@ -248,7 +256,7 @@ router.post(
             educationFund: educationNeeds,
           },
           existingCoverage: existingCoverage || 0,
-          reasoning: `Based on the DIME method (Debt, Income, Mortgage, Education), you need $${recommendedCoverage.toLocaleString()} in coverage to protect your family's financial security.`,
+          method: 'DIME rule of thumb (debt, income, mortgage, education); mortgage not yet included',
         },
       });
     } catch (error) {
@@ -287,6 +295,7 @@ router.get(
       res.json({
         success: true,
         data: summary,
+        meta: { source: combineSources(quotes.filter(Boolean).map(q => q!.source)) },
       });
     } catch (error) {
       next(error);

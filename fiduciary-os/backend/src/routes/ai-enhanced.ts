@@ -3,26 +3,63 @@ import { body } from 'express-validator';
 import { authenticateToken } from '../middleware/auth';
 import { validateRequest } from '../middleware/validateRequest';
 import { AppError } from '../middleware/errorHandler';
-import { generateKimiInsight } from '../services/unifiedAiService';
+import { generateKimiInsight, getRealTimeQuote, type KimiInsightType } from '../services/unifiedAiService';
+import { deliverAiOutput, WITHHELD_TEXT } from '../services/aiGateway';
+import { combineSources, type DataSource } from '../utils/dataSource';
 import { prisma } from '../config/database';
 import { logger } from '../utils/logger';
-
-// Extend Express Request to include user (matches auth middleware)
-interface AuthenticatedRequest extends Request {
-  user?: {
-    userId: string;
-    email: string;
-    role: string;
-  };
-}
 
 const router = Router();
 
 // =============================================================================
-// ENHANCED AI ENDPOINTS WITH KIMI API (Moonshot AI)
+// ENHANCED AI ENDPOINTS (Moonshot Kimi)
+// Every response: { success, data, disclosure, notARecommendation, source,
+//                   policyVersion, guardrail, interactionId, meta }
+// Clients must display `disclosure` alongside the insight.
 // =============================================================================
 
-// Generate comprehensive AI insight using Kimi
+function requireAiEnabled(): void {
+  if (process.env.ENABLE_AI_INSIGHTS !== 'true') {
+    throw new AppError(503, 'AI insights are currently disabled');
+  }
+}
+
+async function sendKimiInsight(
+  req: Request,
+  res: Response,
+  endpoint: string,
+  type: KimiInsightType,
+  input: unknown,
+  extra: Record<string, unknown> = {},
+  options: { useThinking?: boolean; inputSource?: DataSource } = {}
+): Promise<void> {
+  const result = await generateKimiInsight(type, input, { useThinking: options.useThinking });
+  const source = combineSources([result.source, options.inputSource ?? 'live']);
+
+  const { output, envelope } = await deliverAiOutput({
+    userId: req.user?.userId,
+    endpoint,
+    provider: 'moonshot',
+    model: result.model,
+    source,
+    prompt: result.prompt,
+    output: result.insight,
+    texts: i => [i.insight, i.reasoning, ...i.actionItems],
+    withheld: () => ({ insight: WITHHELD_TEXT, confidence: null, actionItems: [], riskLevel: null }),
+  });
+
+  res.json({
+    success: true,
+    data: { ...output, ...extra },
+    ...envelope,
+    meta: {
+      model: result.model,
+      provider: 'Moonshot AI',
+      timestamp: new Date().toISOString(),
+    },
+  });
+}
+
 router.post(
   '/insight',
   authenticateToken,
@@ -32,73 +69,35 @@ router.post(
     body('useThinking').optional().isBoolean(),
     validateRequest,
   ],
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-      if (process.env.ENABLE_AI_INSIGHTS !== 'true') {
-        throw new AppError(503, 'AI insights are currently disabled');
-      }
-
+      requireAiEnabled();
       const { type, data, useThinking } = req.body;
-      const userId = req.user?.userId;
-
-      logger.info(`Generating Kimi AI insight for user ${userId}, type: ${type}`);
-
-      const insight = await generateKimiInsight(type, data, { useThinking });
-
-      res.json({
-        success: true,
-        data: insight,
-        meta: {
-          model: useThinking ? 'kimi-k2-thinking' : 'kimi-k2-5',
-          provider: 'Moonshot AI',
-          timestamp: new Date().toISOString(),
-        },
-      });
+      logger.info(`Generating Kimi AI insight for user ${req.user?.userId}, type: ${type}`);
+      await sendKimiInsight(req, res, '/ai-v2/insight', type, data, {}, { useThinking });
     } catch (error) {
       next(error);
     }
   }
 );
 
-// Generate personalized profile insight with real user data
 router.post(
   '/profile-insight',
   authenticateToken,
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-      if (process.env.ENABLE_AI_INSIGHTS !== 'true') {
-        throw new AppError(503, 'AI insights are currently disabled');
-      }
-
+      requireAiEnabled();
       const userId = req.user?.userId;
+      if (!userId) throw new AppError(401, 'Authentication required');
 
-      if (!userId) {
-        throw new AppError(401, 'Authentication required');
-      }
-
-      // Fetch user's complete profile
       const user = await prisma.user.findUnique({
         where: { id: userId },
-        include: {
-          profile: true,
-          portfolio: {
-            include: {
-              holdings: true,
-            },
-          },
-        },
+        include: { profile: true, portfolio: { include: { holdings: true } } },
       });
+      if (!user) throw new AppError(404, 'User not found');
 
-      if (!user) {
-        throw new AppError(404, 'User not found');
-      }
-
-      // Calculate Financial DNA score
-      const dnaScore = calculateFinancialDNAScore(user.profile, user.portfolio);
-
+      // No name or email: identifiers never leave for a third-party model.
       const profileData = {
-        name: user.name,
-        email: user.email,
         age: user.profile?.age,
         retirementAge: user.profile?.retirementAge,
         annualIncome: user.profile?.annualIncome,
@@ -112,79 +111,38 @@ router.post(
         employmentStatus: user.profile?.employmentStatus,
         portfolioValue: user.portfolio?.totalValue,
         holdingsCount: user.portfolio?.holdings.length || 0,
-        dnaScore,
+        dnaScore: calculateFinancialDNAScore(user.profile, user.portfolio),
       };
 
-      const insight = await generateKimiInsight('profile', profileData);
-
-      res.json({
-        success: true,
-        data: {
-          ...insight,
-          profile: profileData,
-        },
-        meta: {
-          model: 'kimi-k2-5',
-          provider: 'Moonshot AI',
-          timestamp: new Date().toISOString(),
-        },
-      });
+      await sendKimiInsight(req, res, '/ai-v2/profile-insight', 'profile', profileData, { profile: profileData });
     } catch (error) {
       next(error);
     }
   }
 );
 
-// Generate portfolio analysis with real market data
 router.post(
   '/portfolio-insight',
   authenticateToken,
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-      if (process.env.ENABLE_AI_INSIGHTS !== 'true') {
-        throw new AppError(503, 'AI insights are currently disabled');
-      }
-
+      requireAiEnabled();
       const userId = req.user?.userId;
+      if (!userId) throw new AppError(401, 'Authentication required');
 
-      if (!userId) {
-        throw new AppError(401, 'Authentication required');
-      }
-
-      // Fetch user's portfolio
       const portfolio = await prisma.portfolio.findUnique({
         where: { userId },
-        include: {
-          holdings: true,
-        },
+        include: { holdings: true },
       });
-
-      if (!portfolio) {
-        throw new AppError(404, 'Portfolio not found');
-      }
+      if (!portfolio) throw new AppError(404, 'Portfolio not found');
 
       const portfolioData = {
         totalValue: portfolio.totalValue,
-        holdings: portfolio.holdings.map(h => ({
-          symbol: h.symbol,
-          quantity: h.quantity,
-          avgCost: h.avgCost,
-        })),
+        holdings: portfolio.holdings.map(h => ({ symbol: h.symbol, quantity: h.quantity, avgCost: h.avgCost })),
       };
 
-      const insight = await generateKimiInsight('portfolio', portfolioData);
-
-      res.json({
-        success: true,
-        data: {
-          ...insight,
-          portfolio: portfolioData,
-        },
-        meta: {
-          model: 'kimi-k2-5',
-          provider: 'Moonshot AI',
-          timestamp: new Date().toISOString(),
-        },
+      await sendKimiInsight(req, res, '/ai-v2/portfolio-insight', 'portfolio', portfolioData, {
+        portfolio: portfolioData,
       });
     } catch (error) {
       next(error);
@@ -192,40 +150,20 @@ router.post(
   }
 );
 
-// Generate comprehensive Symphony Playbook
 router.post(
   '/symphony-playbook',
   authenticateToken,
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-      if (process.env.ENABLE_AI_INSIGHTS !== 'true') {
-        throw new AppError(503, 'AI insights are currently disabled');
-      }
-
+      requireAiEnabled();
       const userId = req.user?.userId;
+      if (!userId) throw new AppError(401, 'Authentication required');
 
-      if (!userId) {
-        throw new AppError(401, 'Authentication required');
-      }
-
-      // Fetch complete user data
       const user = await prisma.user.findUnique({
         where: { id: userId },
-        include: {
-          profile: true,
-          portfolio: {
-            include: {
-              holdings: true,
-            },
-          },
-        },
+        include: { profile: true, portfolio: { include: { holdings: true } } },
       });
-
-      if (!user) {
-        throw new AppError(404, 'User not found');
-      }
-
-      const dnaScore = calculateFinancialDNAScore(user.profile, user.portfolio);
+      if (!user) throw new AppError(404, 'User not found');
 
       const symphonyData = {
         profile: {
@@ -242,72 +180,62 @@ router.post(
         },
         portfolio: {
           totalValue: user.portfolio?.totalValue,
-          holdings: user.portfolio?.holdings,
+          holdings: user.portfolio?.holdings.map(h => ({ symbol: h.symbol, quantity: h.quantity, avgCost: h.avgCost })),
         },
-        dnaScore,
+        dnaScore: calculateFinancialDNAScore(user.profile, user.portfolio),
       };
 
-      // Use thinking model for comprehensive playbook
-      const insight = await generateKimiInsight('symphony', symphonyData, { useThinking: true });
-
-      res.json({
-        success: true,
-        data: {
-          ...insight,
-          symphony: symphonyData,
-        },
-        meta: {
-          model: 'kimi-k2-thinking',
-          provider: 'Moonshot AI',
-          timestamp: new Date().toISOString(),
-        },
-      });
+      await sendKimiInsight(
+        req,
+        res,
+        '/ai-v2/symphony-playbook',
+        'symphony',
+        symphonyData,
+        { symphony: symphonyData },
+        { useThinking: true }
+      );
     } catch (error) {
       next(error);
     }
   }
 );
 
-// Generate market analysis
 router.post(
   '/market-insight',
   authenticateToken,
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-      if (process.env.ENABLE_AI_INSIGHTS !== 'true') {
-        throw new AppError(503, 'AI insights are currently disabled');
+      requireAiEnabled();
+
+      // Real index quotes (or labelled mock values outside production), never invented figures.
+      const indices = [
+        { symbol: 'SPY', name: 'S&P 500 (SPY)' },
+        { symbol: 'QQQ', name: 'NASDAQ-100 (QQQ)' },
+        { symbol: 'DIA', name: 'Dow Jones Industrial Average (DIA)' },
+      ];
+      const quotes = await Promise.all(indices.map(i => getRealTimeQuote(i.symbol)));
+      const available = indices
+        .map((i, n) => ({ ...i, quote: quotes[n] }))
+        .filter(i => i.quote !== null);
+
+      if (available.length === 0) {
+        throw new AppError(503, 'Market data is temporarily unavailable');
       }
 
       const marketData = {
-        indices: [
-          { symbol: 'SPY', name: 'S&P 500', change: 0.85 },
-          { symbol: 'QQQ', name: 'NASDAQ-100', change: 1.12 },
-          { symbol: 'DIA', name: 'Dow Jones', change: 0.45 },
-        ],
-        sectors: [
-          { name: 'Technology', performance: 1.25 },
-          { name: 'Healthcare', performance: 0.65 },
-          { name: 'Financials', performance: 0.35 },
-          { name: 'Energy', performance: -0.45 },
-        ],
-        volatility: 14.2,
-        vix: 16.85,
+        asOf: new Date().toISOString(),
+        indices: available.map(i => ({ symbol: i.symbol, name: i.name, changePercent: i.quote!.changePercent })),
       };
 
-      const insight = await generateKimiInsight('market', marketData);
-
-      res.json({
-        success: true,
-        data: {
-          ...insight,
-          market: marketData,
-        },
-        meta: {
-          model: 'kimi-k2-5',
-          provider: 'Moonshot AI',
-          timestamp: new Date().toISOString(),
-        },
-      });
+      await sendKimiInsight(
+        req,
+        res,
+        '/ai-v2/market-insight',
+        'market',
+        marketData,
+        { market: marketData },
+        { inputSource: combineSources(available.map(i => i.quote!.source)) }
+      );
     } catch (error) {
       next(error);
     }
@@ -318,18 +246,14 @@ router.post(
 // HELPER FUNCTIONS
 // =============================================================================
 
-function calculateFinancialDNAScore(
-  profile: any,
-  portfolio: any
-): number {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function calculateFinancialDNAScore(profile: any, portfolio: any): number {
   let score = 50; // Base score
 
   if (!profile) return score;
 
   // Retirement savings rate
   const age = profile.age || 45;
-  const retirementAge = profile.retirementAge || 65;
-  const _yearsToRetirement = retirementAge - age; // Available for future use
   const savings = profile.retirementSavings || 0;
   const income = profile.annualIncome || 150000;
   

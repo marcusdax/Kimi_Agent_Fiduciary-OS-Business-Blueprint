@@ -5,7 +5,7 @@
 
 **Document Classification:** Confidential Strategic Planning  
 **Prepared For:** Executive Leadership & Board of Directors  
-**Date:** June 2025  
+**Date:** October 2026 (v1.1; financial figures aligned to model v2)  
 **Planning Horizon:** 2025-2030
 
 ---
@@ -26,16 +26,16 @@ Our phased approach prioritizes B2B advisor adoption in Years 1-2, scales B2C co
 
 ### 1.1 Vision Statement (5-Year)
 
-To become the operating system for fiduciary financial advice, serving 5,000+ professional advisors and 2.5 million consumer households by 2030, while generating $50M+ in annual recurring revenue.
+To become the operating system for financial planning, serving ~3,700 advisor customers and ~75,000 premium households (≈1.35M registered users) by model Year 5, at about $20M in annual recurring revenue (base case).
 
 ### 1.2 Strategic Objectives
 
 | Objective | Target | Timeline |
 |-----------|--------|----------|
 | Market Position | Top 5 financial planning platform | Year 5 |
-| Advisor Adoption | 5,000 active B2B users | Year 5 |
-| Consumer Reach | 2.5M registered B2C users | Year 5 |
-| Revenue | $50M+ ARR | Year 5 |
+| Advisor Adoption | ~3,740 B2B customers | Year 5 |
+| Consumer Reach | ~1.35M registered B2C users | Year 5 |
+| Revenue | ~$20M ARR (base case) | Year 5 |
 | Gross Margin | >80% | Year 3 |
 | Net Revenue Retention | >110% | Year 3 |
 | Geographic Presence | 3 countries | Year 5 |
@@ -44,12 +44,12 @@ To become the operating system for fiduciary financial advice, serving 5,000+ pr
 
 | Category | KPI | Year 1 | Year 3 | Year 5 |
 |----------|-----|--------|--------|--------|
-| **Growth** | B2B Advisors | 150 | 1,500 | 5,000 |
-| | B2C Users | 25,000 | 500,000 | 2,500,000 |
-| | ARR | $780K | $12M | $51.7M |
+| **Growth** | B2B Customers | 352 | 1,582 | 3,743 |
+| | B2C Premium Users | 4,000 | 26,890 | 75,009 |
+| | ARR | $1.37M | $7.59M | $19.95M |
 | **Efficiency** | CAC (B2B) | $1,500 | $1,200 | $1,000 |
 | | CAC (B2C) | $35 | $25 | $20 |
-| | LTV:CAC Ratio | 5:1 | 7:1 | 10:1 |
+| | LTV:CAC Ratio (assumed) | ≥3:1 | ≥5:1 | 8.5–15:1 (plan) |
 | **Retention** | B2B Churn | <5% | <3% | <2% |
 | | NRR | 100% | 108% | 115% |
 | **Product** | NPS | 70 | 75 | 80 |
@@ -69,13 +69,13 @@ To become the operating system for fiduciary financial advice, serving 5,000+ pr
 |------------|-------------|----------------|
 | Beta Program | 50 advisor beta cohort | 80% retention |
 | Product Iteration | Weekly releases based on feedback | NPS >70 |
-| Initial Integrations | 10 carrier integrations | Live data feeds |
+| Licensed Quoting Partner | 1 partner under contract (after counsel review) | Permitted product data |
 | Case Studies | 5 success stories | Published |
 | Advisory Board | 10 industry experts | Monthly meetings |
 
 **Target Outcomes**:
-- 150 paying B2B advisors
-- $180K ARR
+- ~350 paying B2B customers
+- ~$1.37M ARR (base case)
 - Product-market fit validation
 
 #### Phase 2: Scale (Months 13-24)
@@ -87,13 +87,13 @@ To become the operating system for fiduciary financial advice, serving 5,000+ pr
 | Sales Team Build | 5 sales representatives | $3M pipeline |
 | Marketing Launch | Content, events, digital | 10K MQLs |
 | B2C Beta | Consumer portal launch | 50K registrations |
-| Partnership Expansion | 20 carrier integrations | $1B facilitated |
+| Partnership Expansion | Data partners (aggregation, quoting) | Integrations live; no placement-linked fees |
 | Enterprise Pilots | 3 enterprise deals | $100K ACV |
 
 **Target Outcomes**:
-- 600 B2B advisors
-- 150K B2C users
-- $3.2M ARR
+- ~860 B2B customers
+- ~297K B2C users (~12,900 premium)
+- ~$3.85M ARR
 
 #### Phase 3: Expansion (Months 25-36)
 
@@ -102,15 +102,15 @@ To become the operating system for fiduciary financial advice, serving 5,000+ pr
 | Initiative | Description | Success Metric |
 |------------|-------------|----------------|
 | Category Leadership | Industry recognition | Top 3 in surveys |
-| B2C Monetization | Premium subscription launch | 50K premium |
+| B2C Monetization | Premium growth | ~27K premium |
 | International | Canada market entry | 100 advisors |
 | Platform Ecosystem | API marketplace | 10 integrations |
 | Strategic Partnerships | 2 major partnerships | $5M value |
 
 **Target Outcomes**:
-- 1,500 B2B advisors
-- 500K B2C users
-- $12M ARR
+- ~1,580 B2B customers
+- ~546K B2C users (~26,900 premium)
+- ~$7.59M ARR
 
 #### Phase 4: Leadership (Months 37-60)
 
@@ -118,16 +118,16 @@ To become the operating system for fiduciary financial advice, serving 5,000+ pr
 
 | Initiative | Description | Success Metric |
 |------------|-------------|----------------|
-| Market Share | Top 5 platform | 15% advisor penetration |
+| Market Share | Top 5 platform | ~8% advisor penetration (~3,740 customers) |
 | Product Expansion | New Navigator modules | 4 additional |
 | International Scale | UK, Australia | 500 advisors |
 | M&A Opportunities | Strategic acquisitions | 1-2 targets |
-| IPO Preparation | Public market readiness | Metrics achieved |
+| Profitability | EBITDA break-even | Year 5 (base case) |
 
 **Target Outcomes**:
-- 5,000 B2B advisors
-- 2.5M B2C users
-- $51.7M ARR
+- ~3,740 B2B customers
+- ~75,000 B2C premium subscribers (~1.3M free users)
+- $19.95M ARR (base case; see [FINANCIAL_MODEL_PACKAGE.md](FINANCIAL_MODEL_PACKAGE.md))
 
 ### 2.2 Market Entry Strategy by Segment
 
@@ -240,8 +240,8 @@ Partners     Open Banking               Commit
 
 | Partnership Type | Target Partners | Value Exchange |
 |-----------------|-----------------|----------------|
-| Data Integration | 50+ insurance carriers | Real-time product data |
-| Revenue Share | Top 20 carriers | Commission splits |
+| Data Integration | Licensed quoting partner first; carriers later | Permitted product data |
+| Revenue Share | **Gated** — not pursued until counsel review and a licensed channel partner | None until cleared |
 | Co-Marketing | 5 strategic carriers | Joint marketing funds |
 | Exclusive Products | 2-3 carriers | Differentiated offerings |
 
@@ -249,7 +249,7 @@ Partners     Open Banking               Commit
 
 | Phase | Timeline | Partners | Status |
 |-------|----------|----------|--------|
-| Foundation | Months 1-6 | 10 carriers | In progress |
+| Foundation | Months 1-6 | Licensed quoting partner | Not started |
 | Expansion | Months 7-12 | 25 carriers | Planned |
 | Scale | Year 2 | 50 carriers | Target |
 | Optimization | Year 3+ | 75+ carriers | Target |
@@ -321,7 +321,7 @@ Partners     Open Banking               Commit
 | Cloud Infrastructure | AWS | Multi-region | Global |
 | Database | PostgreSQL | Distributed | Global scale |
 | AI/ML | Basic models | Advanced | Generative |
-| Security | SOC 2 Type I | SOC 2 Type II | FedRAMP |
+| Security | None yet (planned) | SOC 2 Type I audit | SOC 2 Type II audit |
 | APIs | Internal | Partner | Public |
 
 ---
@@ -469,32 +469,35 @@ Partners     Open Banking               Commit
 
 | Stream | Year 1 | Year 3 | Year 5 |
 |--------|--------|--------|--------|
-| B2B SaaS | $180K | $6M | $11.7M |
-| B2C Premium | $0 | $3M | $36M |
-| Partnerships | $500K | $2M | $3M |
-| Services | $100K | $1M | $1M |
-| **Total ARR** | **$780K** | **$12M** | **$51.7M** |
+| B2B SaaS revenue | $0.79M | $3.64M | $8.90M |
+| B2C Premium revenue | $0.65M | $4.36M | $12.15M |
+| Insurance revenue share | Excluded (gated) | Excluded | Excluded |
+| **Total revenue** | **$1.44M** | **$8.00M** | **$21.05M** |
+| **ARR (end of year)** | **$1.37M** | **$7.59M** | **$19.95M** |
+
+Source: [`model/build_model.py`](model/build_model.py) (base case).
 
 ### 9.2 Unit Economics Evolution
 
 | Metric | Year 1 | Year 3 | Year 5 |
 |--------|--------|--------|--------|
-| B2B CAC | $1,500 | $1,200 | $1,000 |
-| B2B LTV | $7,500 | $10,000 | $12,000 |
-| B2B LTV:CAC | 5:1 | 8:1 | 12:1 |
-| B2C CAC | $35 | $25 | $20 |
-| B2C LTV | $350 | $450 | $540 |
-| B2C LTV:CAC | 10:1 | 18:1 | 27:1 |
+| Blended B2B CAC | $1,011 | $1,034 | $1,067 |
+| B2B LTV (Solo / Growth / Enterprise) | $4,950 / $14,950 / $120,000 | same | same |
+| B2B LTV:CAC | 9.9–15:1 | 9.9–15:1 | 9.9–15:1 |
+| B2C CAC | $30 | $30 | $30 |
+| B2C LTV | $255 | $255 | $255 |
+| B2C LTV:CAC | 8.5:1 | 8.5:1 | 8.5:1 |
+
+All are assumptions until measured; see [Unit_Economics.md](Unit_Economics.md).
 
 ### 9.3 Path to Profitability
 
 | Milestone | Target Date | Metric |
 |-----------|-------------|--------|
-| Gross Margin Positive | Month 6 | >60% |
-| Contribution Margin Positive | Month 12 | >40% |
-| Operating Break-Even | Month 24 | EBITDA = $0 |
-| Net Profit Positive | Month 30 | Net Income > $0 |
-| Rule of 40 | Year 4 | Growth% + Margin% > 40 |
+| Gross margin ≥70% | Year 1 | Plan: 70% |
+| EBITDA break-even | Year 5 | Plan: $1.99M EBITDA |
+| Net income positive | Year 5 | Plan: $1.15M |
+| Rule of 40 | Year 2 onward | Plan: 140 → 64 (growth-led) |
 
 ---
 
@@ -522,12 +525,12 @@ Product-Market Fit → Scale → Series B → International → Leadership
 
 ## 11. Conclusion
 
-Fiduciary OS™'s strategic plan provides a clear roadmap from Series A funding through market leadership:
+Fiduciary OS™'s strategic plan provides a roadmap from seed funding through market leadership:
 
-1. **Foundation**: Achieve product-market fit with 150 advisors
-2. **Scale**: Grow to 1,500 advisors and 500K consumers
-3. **Expansion**: Enter international markets, reach $12M ARR
-4. **Leadership**: Achieve top 5 market position, $50M+ ARR
+1. **Foundation**: Achieve product-market fit with ~350 advisor customers
+2. **Scale**: Grow to ~1,580 advisor customers and ~546K consumers
+3. **Expansion**: Reach ~$12.9M ARR by Year 4
+4. **Leadership**: Top 5 market position, ~$20M ARR and EBITDA break-even in Year 5
 
 Success requires disciplined execution across product development, customer acquisition, partnership building, and team development. The market opportunity is substantial, the timing is favorable, and Fiduciary OS™ is positioned to capture significant value.
 
@@ -553,6 +556,6 @@ Success requires disciplined execution across product development, customer acqu
 
 ---
 
-**Document Version:** 1.0  
-**Last Updated:** June 2025  
+**Document Version:** 1.1  
+**Last Updated:** October 2026  
 **Next Review:** Quarterly

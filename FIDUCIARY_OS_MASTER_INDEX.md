@@ -25,15 +25,15 @@ Fiduciary OS™ is a dual-sided B2B/B2C financial advisory technology platform t
 
 | Document | Description | File Path |
 |----------|-------------|-----------|
-| **VC Executive Summary** | 2-3 page investor overview with TAM/SAM/SOM, funding ask ($12-18M), and key metrics | `VC_Executive_Summary.md` |
+| **VC Executive Summary** | Investor overview: market, model v2 financials, $5M seed ask | `VC_Executive_Summary.md` |
 | **Market Analysis Report** | Comprehensive market sizing ($150B+ TAM), growth drivers (15-31% CAGR), customer segmentation | `Market_Analysis_Report.md` |
 | **Business Strategy Plan** | 4-phase GTM strategy, customer acquisition, partnership strategy, product roadmap | `Business_Strategy_Plan.md` |
 | **Competitive Analysis** | Direct/indirect competitors, positioning matrix, moat analysis, response scenarios | `Competitive_Analysis.md` |
 
 **Key Market Metrics:**
 - **TAM**: $150B+ (combined financial planning, RIA software, insurtech)
-- **SAM**: $165M (realistic 5-year capture)
-- **SOM**: $51.7M ARR by Year 5
+- **SAM**: ~$153M annual subscription revenue potential (partnership revenue excluded)
+- **5-year plan**: $19.95M ARR / $21.05M revenue in Year 5 (base case)
 - **CAGR**: 15-31% across target markets
 
 ---
@@ -49,7 +49,7 @@ Fiduciary OS™ is a dual-sided B2B/B2C financial advisory technology platform t
 | **05_Cash_Flow.csv** | Operating, investing, financing cash flows | `05_Cash_Flow.csv` |
 | **06_SaaS_Metrics.csv** | ARR, MRR, LTV, CAC, LTV/CAC ratios, Magic Number | `06_SaaS_Metrics.csv` |
 | **07_Scenario_Analysis.csv** | Conservative/Base/Optimistic scenarios | `07_Scenario_Analysis.csv` |
-| **Valuation Analysis** | DCF, comparable company analysis, precedent transactions | `Valuation_Analysis.md` |
+| **Valuation Analysis** | DCF, ARR multiples, VC method (comparables to be rebuilt from sourced data) | `Valuation_Analysis.md` |
 | **Unit Economics** | LTV, CAC, payback periods, margin analysis | `Unit_Economics.md` |
 | **Funding Strategy** | Seed/Series A/B roadmap, investor targets, exit analysis | `Funding_Strategy.md` |
 
@@ -57,16 +57,16 @@ Fiduciary OS™ is a dual-sided B2B/B2C financial advisory technology platform t
 
 | Metric | Year 1 | Year 3 | Year 5 |
 |--------|--------|--------|--------|
-| Revenue | $1.98M | $10.75M | $28.02M |
+| Revenue | $1.44M | $8.00M | $21.05M |
 | ARR | $1.37M | $7.59M | $19.95M |
 | Gross Margin | 70% | 77% | 80% |
-| LTV/CAC (B2B) | 118x | 118x | 118x |
-| Payback Period | 6.7 months | 6.7 months | 6.7 months |
+| EBITDA | −$1.11M | −$1.36M | $1.99M |
+| LTV/CAC (B2B, assumed) | 9.9–15.0× | 9.9–15.0× | 9.9–15.0× |
+| Payback Period (B2B) | 6.7 months | 6.7 months | 6.7 months |
 
-**Valuation Range:**
-- Conservative: $30-40M
-- Base Case: $45-55M
-- Optimistic: $65-85M
+Model v2 (October 2026) excludes insurance revenue share and corrects LTV. See [FINANCIAL_MODEL_PACKAGE.md](FINANCIAL_MODEL_PACKAGE.md).
+
+**Valuation (base case):** methods cluster around $6M–$21M; see [Valuation_Analysis.md](Valuation_Analysis.md).
 
 ---
 
@@ -77,8 +77,8 @@ Fiduciary OS™ is a dual-sided B2B/B2C financial advisory technology platform t
 | **System Architecture** | High-level architecture with Mermaid diagrams, microservices design | `System_Architecture.md` |
 | **API Specification** | RESTful API design, OAuth 2.0/JWT, OpenAPI specs, rate limiting | `API_Specification.md` |
 | **Database Design** | ERD diagrams, PostgreSQL schemas, TimescaleDB, data retention | `Database_Design.md` |
-| **Security Architecture** | Defense in depth, SOC2/GDPR/FINRA compliance, incident response | `Security_Architecture.md` |
-| **Integration Guide** | Plaid integration, Dynamic Source Router, carrier APIs, webhooks | `Integration_Guide.md` |
+| **Security Architecture** | Defense in depth; target SOC 2 / GDPR / FINRA-aligned controls (not attested); incident response | `Security_Architecture.md` |
+| **Integration Guide** | Plaid integration, Dynamic Source Router design, carrier data via licensed partners (planned), webhooks | `Integration_Guide.md` |
 | **Deployment Architecture** | AWS/GCP infrastructure, Kubernetes, CI/CD, monitoring | `Deployment_Architecture.md` |
 
 **Architecture Highlights:**
@@ -86,7 +86,7 @@ Fiduciary OS™ is a dual-sided B2B/B2C financial advisory technology platform t
 - Event-driven architecture for attribution tracking
 - Dynamic Source Router with circuit breakers
 - AI/ML service layer for lead scoring
-- SOC 2 Type II, GDPR, FINRA compliance
+- Target SOC 2 Type II / GDPR controls; FINRA-aligned recordkeeping design (none attested yet)
 - Multi-region DR (RTO 1hr, RPO 5min)
 
 ---
@@ -171,10 +171,10 @@ make dev
 ### Business Metrics
 | KPI | Target |
 |-----|--------|
-| Customer Acquisition Cost (CAC) | $850 B2B, $45 B2C |
-| Lifetime Value (LTV) | $100,200 B2B, $540 B2C |
-| LTV/CAC Ratio | 118x B2B, 12x B2C |
-| Monthly Churn | <2% B2B, <8% B2C |
+| Customer Acquisition Cost (CAC) | ~$1,011–1,067 blended B2B, $30 B2C |
+| Lifetime Value (LTV) | $4,950–$120,000 B2B by tier, $255 B2C |
+| LTV/CAC Ratio | 9.9–15.0× B2B, 8.5× B2C (assumptions) |
+| Monthly Churn | ≤1.5% B2B, ≤5% B2C |
 | Net Revenue Retention | >110% |
 
 ### Technical Metrics
@@ -190,9 +190,9 @@ make dev
 ## 🎯 Product Roadmap
 
 ### Phase 1: Foundation (Months 1-6)
-- [x] Core platform architecture
-- [x] Annuity Navigator MVP
-- [x] B2B Advisor Command Center
+- [x] Core platform architecture (documented) and backend API prototype
+- [ ] Annuity Navigator MVP (backend calculator only)
+- [ ] B2B Advisor Command Center (not started)
 - [ ] Plaid integration
 - [ ] Dynamic Source Router v1
 
@@ -224,14 +224,14 @@ make dev
 
 | Round | Amount | Pre-Money | Timing | Use of Funds |
 |-------|--------|-----------|--------|--------------|
-| Seed | $5M | $45M | Q1 2025 | Product development, initial team |
-| Series A | $15M | $80M | Q4 2026 | Scale sales, expand product |
-| Series B | $40M | $180M | Q2 2028 | International, acquisitions |
+| Seed | $5M | Market-set (model base case ~$6M–$21M) | Q1 2027 | Product development, initial team |
+| Series A | $15M | Set against achieved ARR | Q4 2028 | Scale sales, expand product |
+| Series B | ~$40M | — | 2030+ | International, acquisitions (outside the 5-year model) |
 
 ### Investment Highlights
 - **Massive Market**: $150B+ TAM with 15-31% CAGR
-- **Proven Model**: Hybrid performance partnership reduces client risk
-- **Strong Unit Economics**: 118x LTV/CAC, 6.7-month payback
+- **Subscription Model**: Advisor SaaS plus consumer premium; no placement-linked revenue
+- **Planned Unit Economics**: 8.5–15× LTV/CAC and 2.4–6.7-month payback on stated assumptions
 - **Defensible Moat**: AI-native, dual-sided marketplace, data network effects
 - **Experienced Team**: (To be added based on actual team)
 
@@ -255,6 +255,7 @@ Clone the repository and follow the setup instructions in `fiduciary-os/README.m
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | April 2026 | Initial comprehensive documentation suite |
+| 1.1 | October 2026 | Financials aligned to model v2; unattested compliance claims reworded as targets; revenue share removed |
 
 ---
 
