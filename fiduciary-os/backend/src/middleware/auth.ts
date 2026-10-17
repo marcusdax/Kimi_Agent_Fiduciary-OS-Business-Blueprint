@@ -7,6 +7,7 @@ interface JwtPayload {
   userId: string;
   email: string;
   role: string;
+  tokenType?: 'access' | 'refresh';
 }
 
 declare global {
@@ -36,6 +37,11 @@ export async function authenticateToken(
     }
 
     const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
+
+    // Refresh tokens are long-lived; they must never authorize API calls.
+    if (decoded.tokenType !== 'access') {
+      throw new AppError(401, 'Invalid token');
+    }
     
     // Verify user exists in database
     const user = await prisma.user.findUnique({

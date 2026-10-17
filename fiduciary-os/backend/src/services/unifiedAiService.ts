@@ -136,7 +136,8 @@ export async function generateKimiInsight(
       throw new Error(`Kimi API error: ${response.status} - ${error}`);
     }
 
-    const result = await response.json();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result: any = await response.json();
     const content = result.choices?.[0]?.message?.content;
     
     if (content) {
@@ -225,7 +226,8 @@ export async function getRealTimeQuote(symbol: string): Promise<MarketData | nul
       throw new Error(`Alpha Vantage error: ${response.status}`);
     }
 
-    const data = await response.json();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data: any = await response.json();
     const quote = data['Global Quote'];
 
     if (!quote || Object.keys(quote).length === 0) {
@@ -425,7 +427,7 @@ function generateCarrierQuotes(params: {
     return {
       carrier: carrier.name,
       carrierLogo: carrier.logo,
-      productType: 'term',
+      productType: 'term' as const,
       coverageAmount: params.coverageAmount,
       monthlyPremium,
       annualPremium,
@@ -524,7 +526,7 @@ export async function getPortfolioAnalytics(
 // FALLBACK HELPERS
 // =============================================================================
 
-function getFallbackAIInsight(type: string, data: unknown): AIInsight {
+function getFallbackAIInsight(type: string, _data: unknown): AIInsight {
   const insights: Record<string, AIInsight> = {
     profile: {
       insight: `Based on your Financial DNA analysis, you demonstrate strong foundational habits with opportunities to optimize tax efficiency and investment allocation. Your risk profile suggests a moderate approach that balances growth with stability. Priority actions include maximizing retirement contributions, reviewing insurance coverage gaps, and establishing tax-loss harvesting strategies.`,

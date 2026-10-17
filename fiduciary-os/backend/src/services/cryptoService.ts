@@ -95,7 +95,8 @@ export async function getCryptoPrices(): Promise<CryptoAsset[]> {
       throw new Error(`CoinGecko API error: ${response.status}`);
     }
 
-    const data = await response.json();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data: any = await response.json();
 
     return data.map((coin: any) => ({
       id: coin.id,
@@ -138,7 +139,8 @@ export async function getTrendingCrypto(): Promise<CryptoTrending[]> {
       throw new Error(`CoinGecko API error: ${response.status}`);
     }
 
-    const data = await response.json();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data: any = await response.json();
 
     return data.coins.map((item: any) => ({
       id: item.item.id,
@@ -174,7 +176,8 @@ export async function getCoinDetails(coinId: string): Promise<CryptoAsset | null
       throw new Error(`CoinGecko API error: ${response.status}`);
     }
 
-    const data = await response.json();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data: any = await response.json();
     
     if (data.length === 0) return null;
 

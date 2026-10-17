@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { body } from 'express-validator';
@@ -18,7 +19,7 @@ router.post(
     body('name').trim().notEmpty(),
     validateRequest,
   ],
-  async (req, res, next) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, password, name } = req.body;
 
@@ -75,7 +76,7 @@ router.post(
     body('password').notEmpty(),
     validateRequest,
   ],
-  async (req, res, next) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, password } = req.body;
 
@@ -116,7 +117,7 @@ router.post(
 );
 
 // Refresh token
-router.post('/refresh', async (req, res, next) => {
+router.post('/refresh', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { refreshToken } = req.body;
 
@@ -133,7 +134,13 @@ router.post('/refresh', async (req, res, next) => {
       userId: string;
       email: string;
       role: string;
+      tokenType?: string;
     };
+
+    // Only refresh tokens may mint new tokens; an access token cannot be replayed here.
+    if (decoded.tokenType !== 'refresh') {
+      throw new AppError(401, 'Invalid refresh token');
+    }
 
     const tokens = generateTokens(decoded.userId, decoded.email, decoded.role);
 
@@ -144,7 +151,7 @@ router.post('/refresh', async (req, res, next) => {
 });
 
 // Logout
-router.post('/logout', async (req, res) => {
+router.post('/logout', async (req: Request, res: Response) => {
   // In a more complex implementation, you might invalidate the token in Redis
   res.json({ message: 'Logged out successfully' });
 });
@@ -156,15 +163,15 @@ function generateTokens(userId: string, email: string, role: string) {
   }
 
   const accessToken = jwt.sign(
-    { userId, email, role },
+    { userId, email, role, tokenType: 'access' },
     jwtSecret,
-    { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+    { expiresIn: (process.env.JWT_EXPIRES_IN || '7d') as jwt.SignOptions['expiresIn'] }
   );
 
   const refreshToken = jwt.sign(
-    { userId, email, role },
+    { userId, email, role, tokenType: 'refresh' },
     jwtSecret,
-    { expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || '30d' }
+    { expiresIn: (process.env.REFRESH_TOKEN_EXPIRES_IN || '30d') as jwt.SignOptions['expiresIn'] }
   );
 
   return { accessToken, refreshToken };

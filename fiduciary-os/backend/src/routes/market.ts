@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { param, query } from 'express-validator';
 import { authenticateToken } from '../middleware/auth';
 import { validateRequest } from '../middleware/validateRequest';
@@ -28,7 +29,7 @@ router.get(
     param('symbol').isString().trim().toUpperCase().isLength({ min: 1, max: 10 }),
     validateRequest,
   ],
-  async (req, res, next) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { symbol } = req.params;
       const quote = await getRealTimeQuote(symbol);
@@ -51,7 +52,7 @@ router.get(
 router.post(
   '/batch-quotes',
   authenticateToken,
-  async (req, res, next) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { symbols } = req.body;
 
@@ -87,9 +88,9 @@ router.post(
 router.get(
   '/portfolio-analytics',
   authenticateToken,
-  async (req, res, next) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = req.user?.id;
+      const userId = req.user?.userId;
 
       if (!userId) {
         throw new AppError(401, 'Authentication required');
@@ -123,7 +124,7 @@ router.get(
 router.post(
   '/portfolio-analytics',
   authenticateToken,
-  async (req, res, next) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { holdings } = req.body;
 
@@ -151,7 +152,7 @@ router.post(
 router.post(
   '/insurance/quotes',
   authenticateToken,
-  async (req, res, next) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const {
         age,
@@ -218,7 +219,7 @@ router.post(
 router.post(
   '/insurance/recommendations',
   authenticateToken,
-  async (req, res, next) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { income, dependents, debts, existingCoverage } = req.body;
 
@@ -264,7 +265,7 @@ router.post(
 router.get(
   '/market-summary',
   authenticateToken,
-  async (req, res, next) => {
+  async (_req, res, next) => {
     try {
       const indices = ['SPY', 'QQQ', 'DIA', 'IWM'];
       const quotes = await Promise.all(

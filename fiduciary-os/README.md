@@ -1,248 +1,76 @@
-# Fiduciary OS™
+# Fiduciary OS — Application
 
-<p align="center">
-  <img src="frontend/src/assets/logo.svg" alt="Fiduciary OS Logo" width="200"/>
-</p>
+The code for Fiduciary OS: a planning platform with free tools for households and a white-label workspace for financial advisors. For the business plan, value flow, and go-to-market gates, start at the [repository README](../README.md).
 
-<p align="center">
-  <strong>The Intelligent Financial Operating System for Advisors and Clients</strong>
-</p>
-
-<p align="center">
-  <a href="#features">Features</a> •
-  <a href="#tech-stack">Tech Stack</a> •
-  <a href="#quick-start">Quick Start</a> •
-  <a href="#documentation">Documentation</a> •
-  <a href="#contributing">Contributing</a>
-</p>
+> [!NOTE]
+> Only the **backend API** is implemented. The frontend, Docker images, Kubernetes manifests, and Terraform described in the architecture docs are not in this repository yet.
 
 ---
 
-## Overview
+## Modules
 
-Fiduciary OS™ is a comprehensive, dual-sided financial platform that bridges the gap between financial advisors (B2B) and their clients (B2C). Built with modern web technologies and designed for white-label enterprise deployment, it provides real-time financial intelligence, AI-powered insights, and seamless portfolio management.
-
-### Key Capabilities
-
-- **Fleet of Navigators**: Specialized modules for Annuities, Life Insurance, Investments, and Retirement
-- **AI-Powered Insights**: Claude-powered financial analysis and recommendations
-- **Real-time Analytics**: Live portfolio tracking, risk assessment, and market data
-- **White-Label Ready**: Enterprise customization for RIAs, broker-dealers, and financial institutions
-- **Bank-Grade Security**: SOC 2 compliant with end-to-end encryption
-
----
-
-## Features
-
-### 🎯 Core Modules
-
-| Module | Description | Status |
-|--------|-------------|--------|
-| **Annuity Navigator™** | Longevity risk mitigation & guaranteed income modeling | ✅ Live |
-| **Life Insurance Navigator™** | Protection gap analysis & carrier comparison | ✅ Live |
-| **Investment X-Ray™** | Portfolio analysis, fee drag, tax efficiency | ✅ Live |
-| **Retirement Income Navigator™** | Withdrawal strategy & longevity stress testing | ✅ Live |
-| **Symphony Composer™** | Holistic financial score & unified playbook | ✅ Live |
-| **Tax Planning** | US tax code integration & strategy simulator | ✅ Live |
-| **Digital Assets Intelligence™** | Crypto portfolio modeling & AI insights | ✅ Live |
-| **Risk Analytics** | Stress testing & scenario analysis | ✅ Live |
-| **Estate Engine™** | Legacy planning & wealth transfer | ✅ Live |
-| **The Vault** | Secure document storage & key management | ✅ Live |
-
-### 🎨 Design System
-
-- **Dark Theme**: Professional aesthetic with cyan/gold/purple/sage accents
-- **Responsive**: Mobile-first design with breakpoint optimization
-- **Accessible**: WCAG 2.1 AA compliant
-- **Animations**: Smooth transitions and micro-interactions
+| Module | Backend support today | Frontend |
+|---|---|---|
+| Annuity Navigator | `POST /calculations/annuity` — simplified payout estimate | Planned |
+| Life Insurance Navigator | `POST /calculations/life-insurance` — protection gap; `POST /market/insurance/quotes` — **illustrative quotes only** | Planned |
+| Retirement Income Navigator | `POST /calculations/retirement` — withdrawal-rate heuristic | Planned |
+| Tax Planning | `POST /calculations/tax` — hard-coded federal brackets | Planned |
+| Investment X-Ray | `GET/POST /market/portfolio-analytics` | Planned |
+| Digital Assets | `/crypto/*` via CoinGecko | Planned |
+| Symphony Composer | `POST /ai/symphony-playbook`, `POST /ai-v2/symphony-playbook` | Planned |
+| The Vault | `/documents` — metadata only, no file storage yet | Planned |
+| Risk Analytics, Estate Engine | Not started | Planned |
 
 ---
 
-## Tech Stack
+## Tech stack
 
-### Frontend
-- **Framework**: React 18+ with TypeScript
-- **Styling**: Tailwind CSS + CSS Modules
-- **State Management**: Zustand + React Query
-- **Charts**: Chart.js + Recharts
-- **Build Tool**: Vite
-- **Testing**: Vitest + React Testing Library
-
-### Backend
-- **Runtime**: Node.js 20+
-- **Framework**: Express.js with TypeScript
-- **Database**: PostgreSQL 15+ (primary), Redis (cache/sessions)
-- **ORM**: Prisma
-- **Authentication**: Auth0 / Firebase Auth
-- **API**: REST + WebSocket for real-time updates
-
-### Infrastructure
-- **Containerization**: Docker + Docker Compose
-- **Orchestration**: Kubernetes (production)
-- **IaC**: Terraform
-- **CI/CD**: GitHub Actions
-- **Monitoring**: Prometheus + Grafana
+| Layer | In the repo | Target (see architecture docs) |
+|---|---|---|
+| API | Node.js 20, Express, TypeScript | same |
+| Data | Prisma + SQLite | PostgreSQL 15, TimescaleDB, Redis |
+| Auth | bcrypt + JWT access/refresh tokens | Firm/advisor/household tenancy, MFA, SSO |
+| Realtime | Socket.io | same |
+| AI | Anthropic and Moonshot Kimi HTTP clients with canned fallbacks | Supervised, logged, evaluated AI |
+| Frontend | — | React, TypeScript, Tailwind ([recommended stack](../VALUE_FLOW_AND_REPO_ROADMAP.md#1-experience--aesthetics)) |
+| CI | GitHub Actions: type-check, test, build ([workflow](../.github/workflows/backend-ci.yml)) | + frontend, images, deploy |
 
 ---
 
-## Quick Start
-
-### Prerequisites
-
-- Node.js 20+ and npm 10+
-- Docker and Docker Compose
-- PostgreSQL 15+ (or use Docker)
-
-### Clone and Setup
+## Quick start
 
 ```bash
-# Clone the repository
-git clone https://github.com/your-org/fiduciary-os.git
-cd fiduciary-os
-
-# Install dependencies
-make install
-
-# Setup environment
-cp frontend/.env.example frontend/.env
-cp backend/.env.example backend/.env
-
-# Start development environment
-make dev
+cd backend
+cp .env.example .env        # set JWT_SECRET
+npm ci
+npx prisma migrate deploy
+npm run dev                 # http://localhost:3001  ·  health: /health
 ```
 
-### Environment Configuration
-
-Edit the environment files:
-
-**frontend/.env**
-```env
-VITE_API_URL=http://localhost:3001
-VITE_AUTH0_DOMAIN=your-auth0-domain
-VITE_AUTH0_CLIENT_ID=your-client-id
-VITE_WEBSOCKET_URL=ws://localhost:3001
-```
-
-**backend/.env**
-```env
-DATABASE_URL=postgresql://user:pass@localhost:5432/fiduciary_os
-REDIS_URL=redis://localhost:6379
-AUTH0_DOMAIN=your-auth0-domain
-AUTH0_AUDIENCE=your-api-identifier
-JWT_SECRET=your-jwt-secret
-```
-
-### Development Commands
+Tests:
 
 ```bash
-# Start all services
-make dev
-
-# Start frontend only
-make dev-frontend
-
-# Start backend only
-make dev-backend
-
-# Run tests
-make test
-
-# Run linting
-make lint
-
-# Build for production
-make build
-
-# Deploy to staging
-make deploy-staging
+DATABASE_URL=file:./test.db JWT_SECRET=test npx jest --runInBand
 ```
+
+The `Makefile` and `docker-compose.yml` still reference `frontend/` and `infra/`; only the `*-backend` and `db-*` targets work today.
 
 ---
 
-## Project Structure
+## Security posture
 
-```
-fiduciary-os/
-├── frontend/           # React + TypeScript frontend
-│   ├── src/
-│   │   ├── components/ # Reusable UI components
-│   │   ├── pages/      # Page components
-│   │   ├── navigators/ # Fleet of Navigators modules
-│   │   ├── hooks/      # Custom React hooks
-│   │   ├── store/      # Zustand state management
-│   │   ├── services/   # API services
-│   │   ├── utils/      # Utility functions
-│   │   ├── types/      # TypeScript types
-│   │   └── styles/     # Global styles, themes
-│   └── public/         # Static assets
-├── backend/            # Node.js/Express API
-│   ├── src/
-│   │   ├── controllers/# Route controllers
-│   │   ├── services/   # Business logic
-│   │   ├── models/     # Database models
-│   │   ├── routes/     # API routes
-│   │   ├── middleware/ # Auth, validation
-│   │   └── utils/      # Utilities
-│   └── tests/          # Test suites
-├── infra/              # Infrastructure as Code
-│   ├── docker/         # Docker configurations
-│   ├── kubernetes/     # K8s manifests
-│   └── terraform/      # Terraform modules
-└── docs/               # Documentation
-    ├── api/            # API documentation
-    ├── architecture/   # Architecture docs
-    └── deployment/     # Deployment guides
-```
+Implemented: bcrypt password hashing, separate access and refresh tokens, Helmet headers, CORS allow-list, rate limiting, per-user scoping on every data route, validated-field-only writes on profile updates.
 
----
+**Not** implemented or attested: SOC 2, WCAG conformance testing, encryption of stored documents, MFA, audit logging, penetration testing. The [Security Architecture](../Security_Architecture.md) document describes the target controls.
 
-## Documentation
-
-- [Development Setup](docs/development/setup.md)
-- [Architecture Overview](docs/architecture/overview.md)
-- [API Reference](docs/api/README.md)
-- [Deployment Guide](docs/deployment/README.md)
-- [Contributing Guidelines](CONTRIBUTING.md)
+Report security issues privately to the repository owner rather than in a public issue.
 
 ---
 
 ## Contributing
 
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
----
-
-## Security
-
-- 🔒 SOC 2 Type II compliant infrastructure
-- 🔐 End-to-end encryption for sensitive data
-- 🛡️ Regular security audits and penetration testing
-- 📋 Responsible disclosure program
-
-For security concerns, please email security@fiduciaryos.com
-
----
+See [CONTRIBUTING.md](CONTRIBUTING.md). Linting currently reports pre-existing findings and is non-blocking in CI; type-check, tests, and build must pass.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## Support
-
-- 📧 Email: support@fiduciaryos.com
-- 💬 Discord: [Join our community](https://discord.gg/fiduciaryos)
-- 📖 Documentation: [docs.fiduciaryos.com](https://docs.fiduciaryos.com)
-
----
-
-<p align="center">
-  <sub>Built with 💙 by the Fiduciary OS™ Team</sub>
-</p>
+MIT — see [LICENSE](LICENSE).

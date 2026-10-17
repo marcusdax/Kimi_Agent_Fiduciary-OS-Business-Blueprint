@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { body } from 'express-validator';
 import { prisma } from '../config/database';
 import { authenticateToken, requireRole } from '../middleware/auth';
@@ -8,7 +9,7 @@ import { validateRequest } from '../middleware/validateRequest';
 const router = Router();
 
 // Get current user
-router.get('/me', authenticateToken, async (req, res, next) => {
+router.get('/me', authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user!.userId },
@@ -38,7 +39,7 @@ router.patch(
   '/me',
   authenticateToken,
   [body('name').optional().trim().notEmpty(), validateRequest],
-  async (req, res, next) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { name } = req.body;
 
@@ -62,7 +63,7 @@ router.patch(
 );
 
 // List users (admin only)
-router.get('/', authenticateToken, requireRole('admin'), async (req, res, next) => {
+router.get('/', authenticateToken, requireRole('admin'), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 20;
@@ -97,7 +98,7 @@ router.get('/', authenticateToken, requireRole('admin'), async (req, res, next) 
 });
 
 // Get user by ID (admin only)
-router.get('/:id', authenticateToken, requireRole('admin'), async (req, res, next) => {
+router.get('/:id', authenticateToken, requireRole('admin'), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.params.id },

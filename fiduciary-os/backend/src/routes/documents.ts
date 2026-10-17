@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { authenticateToken } from '../middleware/auth';
 import { AppError } from '../middleware/errorHandler';
 import { prisma } from '../config/database';
@@ -6,7 +7,7 @@ import { prisma } from '../config/database';
 const router = Router();
 
 // Get all documents
-router.get('/', authenticateToken, async (req, res, next) => {
+router.get('/', authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const documents = await prisma.document.findMany({
       where: { userId: req.user!.userId },
@@ -28,7 +29,7 @@ router.get('/', authenticateToken, async (req, res, next) => {
 });
 
 // Get document by ID
-router.get('/:id', authenticateToken, async (req, res, next) => {
+router.get('/:id', authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const document = await prisma.document.findFirst({
       where: {
@@ -48,7 +49,7 @@ router.get('/:id', authenticateToken, async (req, res, next) => {
 });
 
 // Upload document (placeholder - would integrate with S3/MinIO)
-router.post('/', authenticateToken, async (req, res, next) => {
+router.post('/', authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
     // TODO: Implement actual file upload to S3/MinIO
     // For now, just create a placeholder record
@@ -70,7 +71,7 @@ router.post('/', authenticateToken, async (req, res, next) => {
 });
 
 // Delete document
-router.delete('/:id', authenticateToken, async (req, res, next) => {
+router.delete('/:id', authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const document = await prisma.document.findFirst({
       where: {

@@ -1,10 +1,5 @@
 import { logger } from '../utils/logger';
 
-interface AIContext {
-  type: string;
-  data: unknown;
-}
-
 export async function generateAIInsight(type: string, data: unknown): Promise<string> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
 
@@ -39,7 +34,8 @@ export async function generateAIInsight(type: string, data: unknown): Promise<st
       throw new Error(`Anthropic API error: ${response.status}`);
     }
 
-    const result = await response.json();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result: any = await response.json();
     return result.content?.[0]?.text || getFallbackInsight(type, data);
   } catch (error) {
     logger.error('AI insight generation failed:', error);

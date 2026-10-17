@@ -3,6 +3,9 @@
 > **World-Class Fintech Platform Documentation Suite**  
 > Generated: April 2026 | Version 1.0
 
+> [!NOTE]
+> This index describes the **target** platform. Several items below (the `frontend/` app, `infra/`, Kubernetes, SOC 2 / FINRA posture) are designs, not shipped code. See [README.md](README.md#what-exists-today) for what is actually in the repository.
+
 ---
 
 ## Executive Overview
@@ -90,7 +93,7 @@ Fiduciary OS™ is a dual-sided B2B/B2C financial advisory technology platform t
 
 ### 4. Production Repository
 
-**Location:** `/mnt/okcomputer/output/fiduciary-os/`
+**Location:** `fiduciary-os/` (backend only today; see README.md for what exists)
 
 ```
 fiduciary-os/
@@ -140,7 +143,7 @@ fiduciary-os/
 
 ### 1. Clone and Setup
 ```bash
-cd /mnt/okcomputer/output/fiduciary-os
+cd fiduciary-os
 make install
 ```
 

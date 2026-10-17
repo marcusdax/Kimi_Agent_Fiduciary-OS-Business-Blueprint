@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { body } from 'express-validator';
 import { authenticateToken } from '../middleware/auth';
 import { validateRequest } from '../middleware/validateRequest';
@@ -15,7 +16,7 @@ router.post(
     body('profile').isObject(),
     validateRequest,
   ],
-  async (req, res, next) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (process.env.ENABLE_AI_INSIGHTS !== 'true') {
         throw new AppError(503, 'AI insights are currently disabled');
@@ -39,7 +40,7 @@ router.post(
     body('portfolio').isObject(),
     validateRequest,
   ],
-  async (req, res, next) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (process.env.ENABLE_AI_INSIGHTS !== 'true') {
         throw new AppError(503, 'AI insights are currently disabled');
@@ -63,7 +64,7 @@ router.post(
     body('config').isObject(),
     validateRequest,
   ],
-  async (req, res, next) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (process.env.ENABLE_AI_INSIGHTS !== 'true') {
         throw new AppError(503, 'AI insights are currently disabled');
@@ -88,7 +89,7 @@ router.post(
     body('dnaScore').isObject(),
     validateRequest,
   ],
-  async (req, res, next) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (process.env.ENABLE_AI_INSIGHTS !== 'true') {
         throw new AppError(503, 'AI insights are currently disabled');

@@ -1,0 +1,39 @@
+name: CI
+
+# Backend-only pipeline. The frontend, Dockerfiles and infra/ referenced in older
+# docs are not in this repository yet; add their jobs back when they land.
+# Lives at the repo root because GitHub only runs workflows from /.github/;
+# the old fiduciary-os/.github/workflows/ci.yml never executed.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: fiduciary-os/backend
+    env:
+      DATABASE_URL: file:./ci.db
+      JWT_SECRET: ci-test-secret
+      BCRYPT_ROUNDS: '4'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: fiduciary-os/backend/package-lock.json
+      - run: npm ci
+      - run: npx prisma generate
+      - run: npm run type-check
+      - run: npx prisma migrate deploy
+      - run: npx jest --runInBand --coverage
+      - run: npm run build
+      # Lint has ~240 pre-existing findings (mostly explicit `any` and a broken
+      # import resolver config). Reported, not blocking, until that debt is paid.
+      - run: npm run lint
+        continue-on-error: true
