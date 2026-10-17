@@ -1,4 +1,5 @@
 import { logger } from '../utils/logger';
+import { assertPlaceholdersAllowed, type DataSource } from '../utils/dataSource';
 
 // =============================================================================
 // CRYPTOCURRENCY SERVICE - Live Prices via CoinGecko API
@@ -76,7 +77,12 @@ const TOP_CRYPTO_IDS = [
 /**
  * Fetch live prices for top cryptocurrencies
  */
-export async function getCryptoPrices(): Promise<CryptoAsset[]> {
+export interface CryptoPrices {
+  assets: CryptoAsset[];
+  source: DataSource;
+}
+
+export async function getCryptoPrices(): Promise<CryptoPrices> {
   try {
     const idsParam = TOP_CRYPTO_IDS.join(',');
     const url = `${COINGECKO_BASE_URL}/coins/markets?vs_currency=usd&ids=${idsParam}&order=market_cap_desc&sparkline=false&price_change_percentage=24h`;
@@ -89,8 +95,8 @@ export async function getCryptoPrices(): Promise<CryptoAsset[]> {
 
     if (!response.ok) {
       if (response.status === 429) {
-        logger.warn('CoinGecko rate limit hit, using cached data');
-        return getMockCryptoData();
+        logger.warn('CoinGecko rate limit hit, using mock data');
+        return { assets: getMockCryptoData(), source: 'mock' };
       }
       throw new Error(`CoinGecko API error: ${response.status}`);
     }
@@ -98,7 +104,7 @@ export async function getCryptoPrices(): Promise<CryptoAsset[]> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data: any = await response.json();
 
-    return data.map((coin: any) => ({
+    const assets: CryptoAsset[] = data.map((coin: any) => ({
       id: coin.id,
       symbol: coin.symbol.toUpperCase(),
       name: coin.name,
@@ -116,9 +122,10 @@ export async function getCryptoPrices(): Promise<CryptoAsset[]> {
       lastUpdated: coin.last_updated,
       imageUrl: coin.image,
     }));
+    return { assets, source: 'live' };
   } catch (error) {
     logger.error('Failed to fetch crypto prices:', error);
-    return getMockCryptoData();
+    return { assets: getMockCryptoData(), source: 'mock' };
   }
 }
 
@@ -273,6 +280,7 @@ export function calculateCryptoPortfolio(
  * Mock crypto data for fallback/demo
  */
 function getMockCryptoData(): CryptoAsset[] {
+  assertPlaceholdersAllowed('Crypto prices');
   const mockData: CryptoAsset[] = [
     {
       id: 'bitcoin',
@@ -289,7 +297,7 @@ function getMockCryptoData(): CryptoAsset[] {
       ath: 73750.07,
       athChangePercentage: -8.82,
       athDate: '2024-03-14',
-      lastUpdated: new Date().toISOString(),
+      lastUpdated: 'mock',
       imageUrl: 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png',
     },
     {
@@ -307,7 +315,7 @@ function getMockCryptoData(): CryptoAsset[] {
       ath: 4878.26,
       athChangePercentage: -27.84,
       athDate: '2021-11-10',
-      lastUpdated: new Date().toISOString(),
+      lastUpdated: 'mock',
       imageUrl: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png',
     },
     {
@@ -325,7 +333,7 @@ function getMockCryptoData(): CryptoAsset[] {
       ath: 259.96,
       athChangePercentage: -43.96,
       athDate: '2021-11-06',
-      lastUpdated: new Date().toISOString(),
+      lastUpdated: 'mock',
       imageUrl: 'https://assets.coingecko.com/coins/images/4128/large/solana.png',
     },
     {
@@ -343,7 +351,7 @@ function getMockCryptoData(): CryptoAsset[] {
       ath: 3.09,
       athChangePercentage: -84.38,
       athDate: '2021-09-02',
-      lastUpdated: new Date().toISOString(),
+      lastUpdated: 'mock',
       imageUrl: 'https://assets.coingecko.com/coins/images/975/large/cardano.png',
     },
     {
@@ -361,7 +369,7 @@ function getMockCryptoData(): CryptoAsset[] {
       ath: 54.98,
       athChangePercentage: -86.83,
       athDate: '2021-11-04',
-      lastUpdated: new Date().toISOString(),
+      lastUpdated: 'mock',
       imageUrl: 'https://assets.coingecko.com/coins/images/12171/large/polkadot.png',
     },
     {
@@ -379,7 +387,7 @@ function getMockCryptoData(): CryptoAsset[] {
       ath: 52.70,
       athChangePercentage: -71.82,
       athDate: '2021-05-10',
-      lastUpdated: new Date().toISOString(),
+      lastUpdated: 'mock',
       imageUrl: 'https://assets.coingecko.com/coins/images/877/large/chainlink-new-logo.png',
     },
     {
@@ -397,7 +405,7 @@ function getMockCryptoData(): CryptoAsset[] {
       ath: 144.96,
       athChangePercentage: -75.57,
       athDate: '2021-11-21',
-      lastUpdated: new Date().toISOString(),
+      lastUpdated: 'mock',
       imageUrl: 'https://assets.coingecko.com/coins/images/12559/large/Avalanche_Circle_RedWhite_Trans.png',
     },
     {
@@ -415,7 +423,7 @@ function getMockCryptoData(): CryptoAsset[] {
       ath: 2.92,
       athChangePercentage: -85.44,
       athDate: '2021-12-27',
-      lastUpdated: new Date().toISOString(),
+      lastUpdated: 'mock',
       imageUrl: 'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png',
     },
   ];

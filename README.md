@@ -3,7 +3,7 @@
 **A two-sided financial-planning platform: free planning tools for households, a white-label command center for the advisors who serve them.**
 
 > [!IMPORTANT]
-> **Status: pre-launch blueprint.** This repository holds the business plan, financial model, target architecture, and a working **backend API prototype**. There is no frontend yet, no compliance certification, and several revenue mechanics need regulatory review before anything goes to market. See [Before go-to-market](#before-go-to-market).
+> **Status: pre-launch blueprint.** This repository holds the business plan, financial model, target architecture, and a working **backend API prototype**. There is no frontend yet and no compliance certification. Insurance revenue share is excluded from the model pending regulatory review. See [Before go-to-market](#before-go-to-market).
 
 ---
 
@@ -22,14 +22,14 @@
 
 ## The value flow
 
-Every feature in this repo should earn its place on one path: **a household gets a real answer for free → trusts the platform with its data → either pays for more, or asks for an advisor → the advisor pays for the tools that serve that client.**
+Every feature in this repo should earn its place on one path: **a household gets a clear answer for free → trusts the platform with its data → either pays for more, or works on the plan with an advisor → the advisor pays for the tools that serve that client.** Revenue comes only from subscriptions, never from product placement.
 
 ```mermaid
 flowchart LR
     A["Attract<br/>Free calculators<br/>annuity · life · retirement · tax"] --> B["Activate<br/>Financial profile<br/>+ first AI insight"]
     B --> C{"Convert"}
     C -->|self-directed| D["B2C Premium<br/>$15/mo"]
-    C -->|wants help| E["Advisor match<br/>(regulatory gate)"]
+    C -->|wants help| E["Shares plan with an advisor<br/>(no paid matching)"]
     E --> F["B2B Command Center<br/>$99 · $299 · $1,500+/mo"]
     F --> G["Retain & expand<br/>white-label, seats, data"]
     D --> G
@@ -38,10 +38,10 @@ flowchart LR
 
 | Stage | What the user gets | What the business gets | Where it lives | Status |
 |---|---|---|---|---|
-| **Attract** | Instant answers: guaranteed-income estimate, protection gap, withdrawal-rate check, tax estimate | Organic traffic, top-of-funnel | `POST /api/v1/calculations/*` | Prototype (simplified formulas) |
-| **Activate** | A saved financial profile and a personalised insight | Registered user, first value moment | `/profile`, `/ai`, `/ai-v2` | Prototype |
+| **Attract** | Instant, clearly labelled estimates: annuity income, protection gap, withdrawal-rate check, tax | Organic traffic, top-of-funnel | `POST /api/v1/calculations/*` | Prototype (simplified formulas) |
+| **Activate** | A saved financial profile and an educational AI explanation with disclosures | Registered user, first value moment | `/profile`, `/ai`, `/ai-v2` | Prototype |
 | **Convert (B2C)** | Ongoing tracking, portfolio and crypto views, document vault | Subscription revenue | `/portfolio`, `/market`, `/crypto`, `/documents` | Prototype; vault upload is a stub |
-| **Convert (B2B)** | A qualified, pre-educated client | Advisor SaaS revenue | — | Not built; design in docs |
+| **Convert (B2B)** | Advisors run their own clients' plans in a branded workspace | Advisor SaaS revenue | — | Not built; design in docs |
 | **Retain** | One plan shared between household and advisor | Net revenue retention | — | Not built |
 
 The [roadmap](VALUE_FLOW_AND_REPO_ROADMAP.md) maps open-source projects onto each of these stages.
@@ -55,10 +55,10 @@ The [roadmap](VALUE_FLOW_AND_REPO_ROADMAP.md) maps open-source projects onto eac
 | **Backend API** (`fiduciary-os/backend`) | Express + TypeScript + Prisma. Type-checks, builds, and passes its test suite. |
 | **Database** | SQLite via Prisma (the docs describe PostgreSQL + TimescaleDB as the target). |
 | **Auth** | Email/password with bcrypt and JWT access/refresh tokens. No SSO, MFA, or advisor/firm roles yet. |
-| **Calculators** | Annuity, life insurance, retirement, tax. Rule-of-thumb formulas, not actuarial or tax-code engines. |
-| **AI insights** | Anthropic (`/ai`) and Moonshot Kimi (`/ai-v2`) clients, each with canned fallback text when no key is set. |
-| **Market data** | Alpha Vantage and CoinGecko clients; fall back to **randomised mock prices** when no key is set. |
-| **Insurance quotes** | **Illustrative only.** Generated from a hard-coded table of named carriers, not from any carrier or quoting API. |
+| **Calculators** | Annuity, life insurance, retirement, tax (2024 federal brackets). Rule-of-thumb formulas, labelled illustrative with a disclaimer on every response. |
+| **AI explanations** | Anthropic (`/ai`) and Moonshot Kimi (`/ai-v2`) behind one gateway: education-only system prompt, output guardrails that withhold recommendations or promised returns, PII stripped before model calls, every prompt/response logged to `ai_interactions`, disclosure on every response. Canned sample text without a key; refused in production. |
+| **Market data** | Alpha Vantage and CoinGecko clients. Every response carries `source` (`live` / `mock`). Mock prices are fixed placeholders with zero change, and are refused (HTTP 503) in production. Portfolio risk metrics that are not computed are listed as unavailable rather than invented. |
+| **Insurance figures** | **Illustrative only.** Anonymised carriers ("Illustrative Carrier A–F"), no ratings or logos, `source: illustrative`, and a disclaimer on every response. No carrier or quoting-partner integration exists. |
 | **Document vault** | Metadata records only; no file storage or encryption is implemented. |
 | **Frontend** | **Not in the repo.** Older docs describe a React app under `frontend/`; it does not exist yet. |
 | **Infra** | `docker-compose.yml` references Dockerfiles and `infra/` that do not exist. CI runs the backend only. |
@@ -92,7 +92,13 @@ DATABASE_URL=file:./test.db JWT_SECRET=test npx jest --runInBand
 npm run build
 ```
 
-Optional keys in `.env` switch the AI and market endpoints from fallback to live data: `ANTHROPIC_API_KEY`, `KIMI_API_KEY`, `ALPHA_VANTAGE_API_KEY`.
+Optional keys in `.env` switch the AI and market endpoints from placeholder to live data: `ANTHROPIC_API_KEY`, `KIMI_API_KEY`, `ALPHA_VANTAGE_API_KEY`. With `NODE_ENV=production`, endpoints without a live source return 503 instead of placeholders.
+
+Live AI evaluation (needs an API key, not run in CI):
+
+```bash
+ANTHROPIC_API_KEY=... npm run eval:ai
+```
 
 ### API surface (prefix `/api/v1`)
 
@@ -101,8 +107,8 @@ Optional keys in `.env` switch the AI and market endpoints from fallback to live
 | `auth` | `POST /register` · `/login` · `/refresh` · `/logout` |
 | `users`, `profile`, `portfolio` | CRUD for the signed-in user's own records |
 | `calculations` | `POST /annuity` · `/life-insurance` · `/retirement` · `/tax` |
-| `ai` / `ai-v2` | profile, portfolio, retirement, market insights; "Symphony" playbook |
-| `market` | quotes, batch quotes, portfolio analytics, illustrative insurance quotes, market summary |
+| `ai` / `ai-v2` | profile, portfolio, retirement, market explanations; "Symphony" overview. Responses include `disclosure`, `notARecommendation`, `source`, `guardrail`, `interactionId` |
+| `market` | quotes, batch quotes, portfolio analytics, illustrative insurance figures, coverage rule of thumb, market summary |
 | `crypto` | prices, trending, coin detail, crypto portfolio, market summary |
 | `documents` | list, get, create (metadata), delete |
 | `/health` | `/` · `/ready` · `/live` (no prefix, no auth) |
@@ -126,7 +132,8 @@ Full target spec: [API_Specification.md](API_Specification.md).
 │   └── Competitive_Analysis.md
 │
 ├── Financial model
-│   ├── FINANCIAL_MODEL_PACKAGE.md    ← guide to the CSVs and valuation docs
+│   ├── FINANCIAL_MODEL_PACKAGE.md    ← guide to the model (v2)
+│   ├── model/build_model.py          ← regenerates CSVs 02–07
 │   ├── 01_Assumptions.csv … 07_Scenario_Analysis.csv
 │   ├── Unit_Economics.md · Valuation_Analysis.md · Funding_Strategy.md
 │
@@ -139,6 +146,7 @@ Full target spec: [API_Specification.md](API_Specification.md).
     ├── backend/                      ← the running code
     │   ├── src/{routes,services,middleware,config}
     │   ├── prisma/                   ← schema, migrations, seed
+    │   ├── evals/                    ← live AI evaluation suite (promptfoo)
     │   └── tests/
     ├── docker-compose.yml · Makefile ← partly reference missing frontend/infra
     └── README.md
@@ -154,35 +162,42 @@ Full target spec: [API_Specification.md](API_Specification.md).
 | B2B Growth | $299/mo | Team |
 | B2B Enterprise | $1,500+/mo | White-label, RIA / broker-dealer |
 | B2C Premium | $15/mo | Freemium upgrade |
-| Performance partnership | 25–45% revenue share on placed premium | **See regulatory gate below** |
+| Insurance revenue share | — | **Excluded.** Not modelled until securities/insurance counsel has reviewed it and a licensed channel partner is named |
 
-Base-case model: $1.98M revenue in Year 1 → $28.0M in Year 5 ([FINANCIAL_MODEL_PACKAGE.md](FINANCIAL_MODEL_PACKAGE.md)).
+Base case (model v2, regenerated by `python3 model/build_model.py`):
 
-> [!WARNING]
-> **The LTV/CAC figures in the model overstate unit economics by roughly 10×.** `06_SaaS_Metrics.csv` computes Solo LTV as $59,400, which equals $99 × 600 months (a 50-year lifetime, before gross margin). Using the model's own inputs — 75% gross margin, 1.5% monthly B2B churn, 5% B2C churn — LTV is ARPU × margin ÷ churn:
->
-> | Segment | LTV | CAC | LTV/CAC |
-> |---|---|---|---|
-> | Solo | $4,950 | $500 | **9.9×** (model says 118.8×) |
-> | Growth | $14,950 | $1,500 | **10.0×** (119.6×) |
-> | Enterprise | $75,000 | $8,000 | **9.4×** (112.5×) |
-> | B2C Premium | $225 | $30 | **7.5×** (90.0×) |
->
-> ~10× is still strong, and payback periods are unaffected. Fix the sheet before any investor sees it. Separately, `VC_Executive_Summary.md` targets $51.7M ARR in Year 5 while the model projects $19.95M; pick one.
+| | Year 1 | Year 3 | Year 5 |
+|---|---|---|---|
+| Revenue | $1.44M | $8.00M | $21.05M |
+| ARR | $1.37M | $7.59M | $19.95M |
+| EBITDA | −$1.11M | −$1.36M | $1.99M |
+
+| Segment | LTV | CAC | LTV/CAC | Payback |
+|---|---|---|---|---|
+| Solo | $4,950 | $500 | 9.9× | 6.7 mo |
+| Growth | $14,950 | $1,500 | 10.0× | 6.7 mo |
+| Enterprise | $120,000 | $8,000 | 15.0× | 6.7 mo |
+| B2C Premium | $255 | $30 | 8.5× | 2.4 mo |
+
+All are assumptions until measured. Details: [FINANCIAL_MODEL_PACKAGE.md](FINANCIAL_MODEL_PACKAGE.md).
 
 ---
 
 ## Before go-to-market
 
-These are the gaps between what the documents say and what is true today. Each one is a credibility or regulatory risk if it reaches a customer, partner, or investor as written.
+Status of the gaps found in the October 2026 review.
 
-1. **Remove unearned compliance claims.** Earlier READMEs stated "SOC 2 Type II compliant", "WCAG 2.1 AA compliant", and "bank-grade security". None has been audited or tested. They have been removed from the READMEs; the architecture docs still describe them as targets and should stay worded that way.
-2. **Insurance quotes must not look real.** `generateCarrierQuotes()` attaches premiums, A.M. Best-style ratings, feature lists, and logos to named carriers (Northwestern Mutual, New York Life, MassMutual, State Farm, Prudential, Haven Life) with no carrier relationship. Some of that data is already stale — [Haven Life stopped accepting applications](https://coverager.com/haven-life-no-longer-accepting-applications/). Replace with a licensed quoting partner, or anonymise ("Carrier A") and label every figure illustrative.
-3. **Revenue share on insurance premiums needs a licensed structure.** Commission splits and per-placement revenue share generally require an insurance license, and advisor-matching can be a paid referral arrangement. Get a securities/insurance attorney's opinion and a named licensed channel partner before modelling this revenue. (This is not legal advice.)
-4. **AI output needs guardrails.** The AI endpoints produce personalised financial guidance. Add disclosures, a "not a recommendation" boundary, logging of every prompt/response for supervision, and an evaluation suite (see [roadmap](VALUE_FLOW_AND_REPO_ROADMAP.md#4-trust-compliance-and-ai-safety)).
-5. **Mock data must be visible.** Market endpoints silently return randomised prices when no API key is set. Return a `"source": "mock"` flag, or fail closed in production.
-6. **Fix the financial model** (LTV, ARR mismatch above) and update dates — the package is stamped "December 2024".
-7. **This repository is public** and the financial package is marked "confidential and proprietary". Decide which is true.
+| # | Gap | Status |
+|---|---|---|
+| 1 | Unearned compliance claims ("SOC 2 Type II compliant", "WCAG 2.1 AA compliant", "bank-grade security", "compliance-first") | **Done.** Removed from READMEs and business docs; architecture docs now say *target, not attested* |
+| 2 | Insurance quotes that looked real (named carriers, ratings, logos, features) | **Done in code and docs.** Anonymised, labelled illustrative, disclaimer on every response. Real quotes still need a licensed quoting partner |
+| 3 | Revenue share on insurance premiums | **Done in the model.** Removed from all projections and docs. Still open: counsel's opinion and a named licensed channel partner before it can return (not legal advice) |
+| 4 | AI output guardrails | **Done.** Disclosures, education-only boundary, output guardrails, PII minimisation, supervision log, deterministic tests in CI and a live eval suite (`npm run eval:ai`) |
+| 5 | Silent mock data | **Done.** `source` on every market, crypto, calculator and AI response; placeholders refused in production; simulated price stream disabled in production |
+| 6 | Financial model (LTV, ARR mismatch, dates, financing) | **Done.** Model v2 is reproducible; every doc uses the same figures and is dated October 2026 |
+| 7 | Public repository holding confidential material | **Open.** Repository to be made private once these changes are merged. Note that `fiduciary-os/LICENSE` is MIT, which permits reuse of the code by anyone who obtained it; decide whether that license still fits |
+
+Still to do before launch: confirm the placeholders marked **[Confirm]** in `VC_Executive_Summary.md`, rebuild valuation comparables from a sourced data provider, and run `npm run eval:ai` against the production model.
 
 ---
 

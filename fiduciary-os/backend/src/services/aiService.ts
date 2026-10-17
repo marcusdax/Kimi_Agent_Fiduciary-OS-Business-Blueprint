@@ -1,16 +1,29 @@
 import { logger } from '../utils/logger';
+import type { DataSource } from '../utils/dataSource';
+import { AI_SYSTEM_PROMPT, minimizeForAi } from './aiGuardrails';
 
-export async function generateAIInsight(type: string, data: unknown): Promise<string> {
+export type InsightType = 'profile' | 'portfolio' | 'retirement' | 'symphony';
+
+export interface AnthropicInsight {
+  text: string;
+  source: DataSource;
+  model: string | null;
+  prompt: string;
+}
+
+const DEFAULT_MODEL = 'claude-sonnet-5-5';
+
+export async function generateAIInsight(type: InsightType, data: unknown): Promise<AnthropicInsight> {
+  const prompt = buildPrompt(type, minimizeForAi(data));
   const apiKey = process.env.ANTHROPIC_API_KEY;
+  const model = process.env.ANTHROPIC_MODEL || DEFAULT_MODEL;
 
   if (!apiKey) {
-    logger.warn('ANTHROPIC_API_KEY not configured, returning fallback insight');
-    return getFallbackInsight(type, data);
+    logger.warn('ANTHROPIC_API_KEY not configured, returning fallback text');
+    return { text: getFallbackInsight(type), source: 'fallback', model: null, prompt };
   }
 
   try {
-    const prompt = buildPrompt(type, data);
-
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -19,14 +32,10 @@ export async function generateAIInsight(type: string, data: unknown): Promise<st
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-3-sonnet-20240229',
+        model,
         max_tokens: 1000,
-        messages: [
-          {
-            role: 'user',
-            content: prompt,
-          },
-        ],
+        system: AI_SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: prompt }],
       }),
     });
 
@@ -36,68 +45,49 @@ export async function generateAIInsight(type: string, data: unknown): Promise<st
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result: any = await response.json();
-    return result.content?.[0]?.text || getFallbackInsight(type, data);
+    const text = result.content?.[0]?.text;
+    if (typeof text === 'string' && text.trim()) {
+      return { text, source: 'live', model, prompt };
+    }
+    return { text: getFallbackInsight(type), source: 'fallback', model: null, prompt };
   } catch (error) {
     logger.error('AI insight generation failed:', error);
-    return getFallbackInsight(type, data);
+    return { text: getFallbackInsight(type), source: 'fallback', model: null, prompt };
   }
 }
 
-function buildPrompt(type: string, data: unknown): string {
+export function buildPrompt(type: InsightType, data: unknown): string {
   const dataStr = JSON.stringify(data, null, 2);
 
   switch (type) {
     case 'profile':
-      return `You are a fiduciary financial advisor AI. Analyze this client profile and provide a concise, actionable insight (3-4 paragraphs):
-${dataStr}
-Provide personalized insights on their financial DNA score, key strengths, gaps, and 3 priority actions.`;
+      return `Explain, in 3-4 short paragraphs, what the figures in this financial profile suggest in general terms: strengths, gaps worth looking into, and questions the person could bring to a licensed professional. Do not recommend specific products or transactions.\n\n${dataStr}`;
 
     case 'portfolio':
-      return `As a fiduciary portfolio analyst, review this portfolio and provide specific rebalancing and optimization recommendations in 3-4 paragraphs:
-${dataStr}`;
+      return `Describe this portfolio in general educational terms: how concentrated or diversified it is, what costs or risks a person might ask about, and which questions to raise with a licensed professional. Do not tell the person to buy or sell anything.\n\n${dataStr}`;
 
     case 'retirement':
-      return `As a retirement income specialist, analyze this retirement plan and create a personalized retirement income playbook with withdrawal sequencing, Social Security timing, and risk mitigation strategies:
-${dataStr}`;
+      return `Explain the main retirement-income considerations raised by this information (withdrawal rate, timing of Social Security, longevity, taxes, health costs) as trade-offs and questions, not instructions.\n\n${dataStr}`;
 
     case 'symphony':
-      return `As the Fiduciary OS™ Symphony AI, create a comprehensive financial playbook. Create a holistic 5-part financial symphony: (1) Income Optimization, (2) Investment Strategy, (3) Protection Planning, (4) Tax Efficiency, (5) Legacy Blueprint. Be specific and actionable.
-${dataStr}`;
-
-    default:
-      return `Provide financial insights based on this data:
-${dataStr}`;
+      return `Organize general educational notes for this person under five headings: (1) Income and cash flow, (2) Investing, (3) Protection, (4) Taxes, (5) Estate and legacy. Under each, list topics worth reviewing and questions to ask a licensed professional. Do not recommend specific products or transactions.\n\n${dataStr}`;
   }
 }
 
-function getFallbackInsight(type: string, data: unknown): string {
-  // Extract some basic info from data for personalized fallback
-  const d = data as Record<string, unknown>;
-
+/**
+ * Canned, non-personalised text for development when no model is configured.
+ * Deliberately free of figures, product names and instructions.
+ */
+export function getFallbackInsight(type: InsightType): string {
+  const preface = 'Sample text (no AI model is connected). ';
   switch (type) {
     case 'profile':
-      return `Based on your Financial DNA score of ${d?.dnaScore || 72}, you demonstrate strong retirement fundamentals with opportunities to optimize tax efficiency and investment allocation. Your moderate risk profile aligns well with your time horizon. Priority actions: (1) Maximize 401(k) contributions to capture full employer match, (2) Consider Roth conversions in lower income years, (3) Build emergency fund to 6 months expenses.`;
-
+      return `${preface}A financial profile is usually reviewed across a few areas: emergency savings, retirement saving rate, debt, insurance coverage, and how investments match the time horizon. Questions worth asking a licensed professional include whether current savings keep pace with the retirement goal and whether coverage still fits the household.`;
     case 'portfolio':
-      return `Based on your moderate risk profile with equity allocation, consider shifting 5-10% from US large cap into international developed markets for diversification. Your expense ratio is above optimal — transitioning to index funds could recover significant fee drag over time. Maintain a 6-month emergency fund before increasing equity exposure.`;
-
+      return `${preface}Portfolio reviews commonly look at diversification across asset classes and regions, the total cost of funds held, how much any single holding contributes to risk, and whether the mix still fits the time horizon. A licensed professional can help weigh these against tax consequences before any change.`;
     case 'retirement':
-      return `Your retirement income strategy should prioritize Social Security optimization — delaying to age 70 increases your benefit by 32% vs claiming at 62. Consider a bucket strategy: 2 years cash, 8 years bonds, remainder equities.`;
-
+      return `${preface}Retirement income planning balances the withdrawal rate against portfolio size, the timing of Social Security, expected lifespan, taxes on different account types, and health-care costs. Each choice involves trade-offs that depend on personal circumstances and are worth reviewing with a licensed professional.`;
     case 'symphony':
-      return `**Your Fiduciary Symphony Playbook**
-
-**1. Income Optimization:** Maximize contributions to tax-advantaged accounts — 401(k) to $23,000, IRA to $7,000.
-
-**2. Investment Strategy:** Maintain balanced equity/bond split. Shift 5% annually toward fixed income starting 10 years pre-retirement.
-
-**3. Protection Planning:** Life insurance gap analysis suggests additional term coverage. Long-term care insurance becomes critical at age 55.
-
-**4. Tax Efficiency:** Roth conversion ladder over next 5 years at current brackets. Harvest losses in December.
-
-**5. Legacy Blueprint:** Establish revocable living trust. Review beneficiary designations annually.`;
-
-    default:
-      return 'AI insights are currently unavailable. Please try again later.';
+      return `${preface}**Income and cash flow:** spending, savings rate, emergency reserve.\n\n**Investing:** diversification, costs, fit with time horizon.\n\n**Protection:** life, disability, and long-term-care coverage relative to need.\n\n**Taxes:** account types and timing of income.\n\n**Estate and legacy:** beneficiary designations and core documents. Each area is worth reviewing with a licensed professional.`;
   }
 }

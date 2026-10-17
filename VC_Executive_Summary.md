@@ -1,13 +1,15 @@
-# Fiduciary OS™
-## Executive Summary for Series A Investment
+# Fiduciary OS
+## Executive Summary for Seed Investment
 
 ---
 
-**Document Classification:** Confidential Investment Materials  
-**Prepared For:** Institutional Venture Capital Partners  
-**Date:** June 2025  
-**Funding Round:** Series A  
-**Target Raise:** $12-18 Million
+**Document Classification:** Confidential Investment Materials
+**Updated:** October 2026 (version 2.0; supersedes June 2025)
+**Funding Round:** Seed
+**Target Raise:** $5 Million
+**Financials:** [FINANCIAL_MODEL_PACKAGE.md](FINANCIAL_MODEL_PACKAGE.md) — every figure below comes from `model/build_model.py`
+
+> **Status, stated plainly.** Fiduciary OS is pre-launch and pre-revenue. The repository contains a backend API prototype; there is no production front end and no carrier integration. All financial metrics below are plans or assumptions, not results. Traction figures in v1 (12 beta advisors, $450M AUM influenced, NPS 72, 8 carrier integrations, 18 FTE) were removed because nothing in the repository supports them — add measured figures back only with evidence.
 
 ---
 
@@ -17,18 +19,18 @@
 Fiduciary OS™ is building the operating system for the next generation of financial advice—an AI-powered, dual-sided platform that bridges the gap between professional advisors and the 100+ million underserved American households seeking financial security.
 
 ### Vision
-To democratize access to fiduciary-grade financial guidance while empowering advisors with institutional-quality technology that was previously available only to the largest wealth management firms.
+To give households clear, honest planning tools and give the advisors who serve them institutional-quality technology that was previously available only to the largest wealth management firms.
 
 ### Company Snapshot
 
 | Attribute | Detail |
 |-----------|--------|
 | **Founded** | 2024 |
-| **Headquarters** | [Location] |
-| **Employees** | 18 (FTE) |
-| **Platform Status** | Beta (B2B) / Pre-Launch (B2C) |
+| **Headquarters** | [Confirm] |
+| **Team** | [Confirm current headcount]; key hires funded by the seed round |
+| **Platform Status** | Backend API prototype; consumer and advisor front ends not yet built |
 | **Primary Markets** | United States (Phase 1) |
-| **Business Model** | SaaS + Performance-Based Partnerships + Freemium B2C |
+| **Business Model** | Advisor SaaS subscriptions + freemium consumer subscriptions |
 
 ---
 
@@ -66,9 +68,9 @@ A white-label SaaS platform licensed to financial advisors, RIAs, insurance agen
 
 **Core Capabilities:**
 - **Fleet of Navigators™**: Specialized AI-powered planning engines for annuities, life insurance, investments, and retirement income
-- **Dynamic Source Router™**: Real-time multi-carrier data aggregation and product comparison
+- **Product Illustrations**: Clearly labelled, illustrative comparisons; real quotes only through a licensed quoting partner (planned)
 - **CRM & Pipeline Management**: Integrated client acquisition and nurturing workflows
-- **Proposal Generation**: Institutional-quality, compliant-ready client presentations
+- **Proposal Generation**: Firm-branded client presentations (to be reviewed by each firm's compliance team)
 - **Funnel Analytics**: Conversion tracking from prospect to implemented solution
 
 **Pricing Tiers:**
@@ -83,17 +85,18 @@ A freemium consumer platform designed for mass adoption and lead generation.
 
 **Value Proposition:**
 - **Free Tier**: Financial Security Score™, basic planning tools, educational content
-- **Premium Tier ($15/month)**: Full planning suite, open banking integration, advisor matching
+- **Premium Tier ($15/month)**: Full planning suite and open banking integration
+- **Advisor introductions**: Planned only after counsel confirms a compliant structure; no fees tied to introductions or product placement
 - **Open Banking Integration**: Via Plaid for real-time financial data aggregation
-- **AI-Powered Insights**: Personalized recommendations and proactive alerts
+- **AI Explanations**: General educational insights with disclosures, output guardrails and a supervision log; not personalised recommendations
 
 ### Fleet of Navigators™ (Core IP)
 
 | Navigator | Function | Market Application |
 |-----------|----------|-------------------|
-| **Annuity Navigator™** | Longevity risk modeling, income optimization, carrier comparison | $2.5T annuity market |
-| **Life Insurance Navigator™** | Protection gap analysis, carrier comparison, needs-based modeling | $15T+ life insurance in force |
-| **Investment Navigator™** | Portfolio X-Ray analysis, fee drag quantification, tax-loss harvesting | $35T+ retirement assets |
+| **Annuity Navigator™** | Longevity risk modeling, illustrative income estimates | $2.5T annuity market |
+| **Life Insurance Navigator™** | Protection gap analysis, needs-based modeling, illustrative premiums | $15T+ life insurance in force |
+| **Investment Navigator™** | Portfolio X-Ray analysis, fee drag quantification | $35T+ retirement assets |
 | **Retirement Income Navigator™** | Withdrawal strategy optimization, stress testing, Social Security integration | 10,000+ daily retirees |
 
 ---
@@ -118,21 +121,19 @@ Fiduciary OS™ targets the intersection of three addressable segments:
 3. **Underserved Households**: 100M+ American households with <$500K investable assets
 
 **SAM Calculation:**
-- Advisor/Agency SaaS TAM: ~$3.2B annually
-- Consumer Premium Subscriptions: ~$18B annually
-- Performance-Based Partnership Revenue: ~$8-12B annually
-- **Total SAM: $29-33B**
+- Advisor/Agency SaaS: ~$3.2B annually
+- Consumer premium subscriptions: ~$18B annually
+- **Total SAM: ~$21B** (insurance revenue share excluded — see Section 5)
 
-### Serviceable Obtainable Market (SOM)
-Conservative 5-year capture assumptions:
+*Market-size figures in Sections 2 and 4 are drawn from third-party industry reports and must be cited to their sources before this document is shared externally.*
 
-| Segment | Target Penetration | Annual Revenue |
-|---------|-------------------|----------------|
-| B2B SaaS (2,500 advisors) | 12% of addressable advisors | $7.5M |
-| B2B Enterprise (50 firms) | 5 mid-market, 45 small firms | $4.2M |
-| B2C Premium (200K subscribers) | 0.2% of target households | $36M |
-| Partnership Revenue | Conservative 15bps on $2B flows | $3M |
-| **Year 5 SOM Revenue** | | **$50.7M** |
+### Five-Year Plan (Base Case)
+
+| Segment | Year 5 Customers | Year 5 Revenue |
+|---------|------------------|----------------|
+| B2B advisor SaaS (Solo, Growth, Enterprise) | ~3,740 firms and advisors | $8.90M |
+| B2C premium subscriptions | ~75,000 subscribers | $12.15M |
+| **Total** | | **$21.05M revenue / $19.95M ARR** |
 
 ---
 
@@ -140,54 +141,52 @@ Conservative 5-year capture assumptions:
 
 ### Revenue Streams
 
-| Stream | Model | Gross Margin | Year 1 Target | Year 5 Target |
-|--------|-------|--------------|---------------|---------------|
-| B2B SaaS Subscriptions | Monthly recurring | 85% | $180K ARR | $11.7M ARR |
-| B2C Premium Subscriptions | Monthly recurring | 90% | $0 | $36M ARR |
-| Performance Partnerships | Revenue share (up to 45%) | 70% | $500K | $3M |
-| Implementation Services | One-time fees | 60% | $100K | $1M |
-| **Total Target ARR** | | **82% blended** | **$780K** | **$51.7M** |
+| Stream | Model | Gross Margin (plan) | Year 1 Revenue | Year 5 Revenue |
+|--------|-------|---------------------|----------------|----------------|
+| B2B SaaS subscriptions | Monthly / annual | 75–80% | $0.79M | $8.90M |
+| B2C premium subscriptions | Monthly / annual | 85% | $0.65M | $12.15M |
+| **Total** | | 70% → 80% blended | **$1.44M** | **$21.05M** |
 
-### Unit Economics (Target State)
+**Excluded until cleared:** revenue share on insurance premiums and any fee tied to advisor introductions or product placement. Those generally require an insurance license; they will not be modelled until securities/insurance counsel has reviewed the structure and a licensed channel partner is named.
 
-| Metric | Target | Industry Benchmark |
-|--------|--------|-------------------|
-| Customer Acquisition Cost (B2B) | $1,200 | $2,500+ |
-| Customer Acquisition Cost (B2C) | $25 | $50+ |
-| Lifetime Value (B2B) | $8,500 | $6,000 |
-| Lifetime Value (B2C) | $450 | $300 |
-| LTV:CAC Ratio | 7:1 (B2B) / 18:1 (B2C) | 3:1 |
-| Monthly Churn (B2B) | <2% | 3-5% |
-| Net Revenue Retention | >110% | 100% |
+### Unit Economics (assumptions, not measured)
 
-### Path to Profitability
-- **Break-even**: Month 24 (post-funding)
-- **EBITDA Positive**: Month 30
-- **Rule of 40 Achievement**: Year 4
+| Segment | LTV | CAC | LTV/CAC | Payback |
+|---------|-----|-----|---------|---------|
+| Solo ($99/mo) | $4,950 | $500 | 9.9× | 6.7 months |
+| Growth ($299/mo) | $14,950 | $1,500 | 10.0× | 6.7 months |
+| Enterprise ($1,500/mo) | $120,000 | $8,000 | 15.0× | 6.7 months |
+| B2C Premium ($15/mo) | $255 | $30 | 8.5× | 2.4 months |
+
+LTV = monthly ARPU × gross margin ÷ monthly churn (1.5% Solo/Growth, 1.0% Enterprise, 5.0% consumer).
+
+### Path to Profitability (base case)
+- **EBITDA positive:** Year 5 ($1.99M)
+- **Operating burn through Year 4:** ~$5.6M
+- **Conservative case (70% of revenue, same spend):** not profitable within five years
 
 ---
 
-## 6. Traction & Growth Metrics
+## 6. Traction & Growth Plan
 
-### Current Traction (Beta Phase)
+### Current Status
 
-| Metric | Status | Target (12 Months) |
-|--------|--------|-------------------|
-| Beta Advisors | 12 active | 150 |
-| Beta AUM Influenced | $450M | $5B |
-| Platform NPS | 72 | 75+ |
-| Implementation Time | 48 hours | 24 hours |
-| API Integrations | 8 carriers | 25 carriers |
+| Item | Status |
+|------|--------|
+| Product | Backend API prototype (calculators, profile, portfolio, AI explanations with guardrails) |
+| Customers / beta users | [Confirm with evidence before stating any figure] |
+| Carrier integrations | None; insurance figures are illustrative |
+| Compliance attestations | None yet (SOC 2 and accessibility audits are planned, not completed) |
 
-### Projected Growth Trajectory
+### Projected Growth (base case)
 
-| Year | B2B Advisors | B2C Users | ARR | Team Size |
-|------|--------------|-----------|-----|-----------|
-| Year 1 | 150 | 25,000 | $780K | 25 |
-| Year 2 | 600 | 150,000 | $3.2M | 40 |
-| Year 3 | 1,500 | 500,000 | $12M | 65 |
-| Year 4 | 3,000 | 1,200,000 | $28M | 95 |
-| Year 5 | 5,000 | 2,500,000 | $51.7M | 140 |
+| Year | B2B Customers | B2C Premium Users | ARR |
+|------|---------------|-------------------|-----|
+| Year 1 | 352 | 4,000 | $1.37M |
+| Year 2 | 864 | 12,861 | $3.85M |
+| Year 3 | 1,582 | 26,890 | $7.59M |
+| Year 4 | 2,548 | 47,188 | $12.89M |
+| Year 5 | 3,743 | 75,009 | $19.95M |
 
 ---
 
@@ -200,25 +199,25 @@ Conservative 5-year capture assumptions:
    - B2B advisor network enriches B2C experience
    - Creates defensible ecosystem lock-in
 
-2. **Dynamic Source Router™ IP**
-   - Proprietary multi-carrier aggregation technology
-   - Real-time product comparison across 50+ carriers
-   - 18-24 month technology lead
+2. **Advisor Workflow Depth**
+   - Annuity, life, investment and retirement modules in one workspace
+   - White-label branding for firms
+   - Multi-carrier data only through licensed partners (not yet in place)
 
 3. **Fleet of Navigators™**
-   - Specialized AI models trained on domain-specific data
-   - Modular architecture enables rapid product expansion
-   - Patent-pending recommendation algorithms
+   - Modular architecture for adding planning modules
+   - AI explanations behind deterministic guardrails and supervision logging
+   - Describe as patent-pending only if an application has actually been filed
 
 4. **Data Moat**
-   - Anonymous planning behavior from millions of scenarios
-   - Continuously improving AI recommendations
-   - Carrier performance benchmarking
+   - Aggregated, consented planning data once users exist
+   - Improves explanations and benchmarks over time
+   - Subject to privacy review before use
 
-5. **Regulatory-First Design**
-   - Built for fiduciary compliance from day one
-   - Audit trails and documentation automation
-   - Reduces advisor regulatory risk
+5. **Supervision Built In**
+   - Every AI prompt and response is logged for review
+   - Insurance figures labelled illustrative; placeholder data refused in production
+   - Designed so firm compliance teams can review what clients saw
 
 ---
 
@@ -247,32 +246,30 @@ Conservative 5-year capture assumptions:
 
 | Parameter | Terms |
 |-----------|-------|
-| **Round** | Series A |
-| **Amount** | $12-18 Million |
-| **Instrument** | Preferred Equity |
-| **Pre-Money Valuation** | $35-45 Million |
-| **Target Close** | Q3 2025 |
+| **Round** | Seed |
+| **Amount** | $5 Million |
+| **Instrument** | Priced preferred or SAFE (to be decided with counsel) |
+| **Pre-Money Valuation** | To be set by the market; corrected model implies roughly $6M–$21M in the base case ([Valuation_Analysis.md](Valuation_Analysis.md)) |
+| **Target Close** | Q1 2027 |
 
 ### Use of Funds
 
 | Category | Allocation | Purpose |
 |----------|------------|---------|
-| **Product Development** | 40% ($5.2-7.2M) | Engineering expansion, AI/ML infrastructure, platform scaling |
-| **Sales & Marketing** | 30% ($3.6-5.4M) | B2B sales team, B2C acquisition, brand building |
-| **Partnerships & Integrations** | 15% ($1.8-2.7M) | Carrier integrations, strategic partnerships |
-| **Operations & Compliance** | 10% ($1.2-1.8M) | Regulatory infrastructure, customer success |
-| **Reserve** | 5% ($0.6-0.9M) | Working capital, contingencies |
+| **Product Development** | 50% ($2.5M) | Consumer and advisor front ends, calculators, AI supervision |
+| **Sales & Marketing** | 30% ($1.5M) | First advisor customers, consumer launch |
+| **Operations, Legal & Compliance** | 10% ($0.5M) | Counsel on revenue model and advisor matching; security program |
+| **Working Capital** | 10% ($0.5M) | Contingency |
 
-### Milestones to Series B (18-24 Months)
+### Milestones to Series A (about 18–24 months)
 
 | Milestone | Target |
 |-----------|--------|
-| ARR | $5M+ |
-| Active B2B Advisors | 1,000+ |
-| B2C Registered Users | 500,000+ |
-| Carrier Integrations | 25+ |
-| Gross Margin | >80% |
-| Net Revenue Retention | >105% |
+| ARR | ~$3.9M (model Year 2) |
+| B2B customers | ~860 |
+| B2C premium users | ~12,900 |
+| Measured B2B churn | ≤1.5% per month |
+| Measured LTV/CAC | ≥3× |
 
 ---
 
@@ -291,19 +288,17 @@ Conservative 5-year capture assumptions:
    - Cloud computing costs enable scalable SaaS economics
 
 3. **Competitive Window**
-   - Legacy platforms showing vulnerability (MoneyGuidePro -10% market share)
-   - No dominant AI-native competitor yet established
-   - First-mover advantage in integrated annuity/insurance planning
+   - Incumbent planning software predates modern AI and cloud architecture
+   - No dominant AI-native platform spans annuity, insurance, investment and retirement planning
 
-4. **Proven Unit Economics**
-   - SaaS margins >85%
-   - Strong LTV:CAC ratios projected
-   - Multiple revenue streams reduce risk
+4. **Plausible Unit Economics**
+   - Planned LTV/CAC of 8.5–15× on stated assumptions
+   - Payback under 7 months in every segment (assumed)
+   - Two subscription revenue streams
 
-5. **Mission-Driven Team**
-   - Deep industry expertise
-   - Technical excellence
-   - Committed to fiduciary principles
+5. **Team**
+   - [Founder and leadership backgrounds — confirm before sending]
+   - Key hires funded by the seed round
 
 ---
 
@@ -311,11 +306,12 @@ Conservative 5-year capture assumptions:
 
 | Risk | Likelihood | Impact | Mitigation |
 |------|------------|--------|------------|
-| Regulatory Changes | Medium | High | Compliance-first design, regulatory monitoring |
+| Regulatory treatment of insurance and AI features | Medium | High | Counsel review before launch; illustrative-only insurance outputs; supervised AI |
 | Competitive Response | High | Medium | Speed to market, network effects, IP protection |
-| Technology Execution | Medium | High | Experienced team, agile development, beta validation |
+| Technology Execution | Medium | High | Prototype exists; staged releases; hire senior engineering with seed |
 | Market Adoption | Medium | High | Advisor advisory board, iterative feedback loops |
-| Economic Downturn | Medium | Medium | Diverse revenue streams, efficiency focus |
+| Unproven demand | High | High | Launch and measure before scaling spend |
+| Economic Downturn | Medium | Medium | Two revenue streams; spend gated to milestones |
 
 ---
 
@@ -323,9 +319,9 @@ Conservative 5-year capture assumptions:
 
 Fiduciary OS™ represents a generational opportunity to rebuild the infrastructure of financial advice. By combining AI-powered planning tools with a dual-sided marketplace model, we address the simultaneous crises of trust, complexity, and technology that have plagued the industry for decades.
 
-With strong market tailwinds, a differentiated technology platform, and a mission-driven team, Fiduciary OS™ is positioned to become the operating system for the next generation of financial advice.
+With strong market tailwinds and a working prototype, Fiduciary OS aims to become the operating system for the next generation of financial planning.
 
-**We invite you to join us in democratizing access to fiduciary-grade financial guidance.**
+**We invite you to help build better planning tools for households and the advisors who serve them.**
 
 ---
 
@@ -349,5 +345,5 @@ With strong market tailwinds, a differentiated technology platform, and a missio
 
 ---
 
-**Document Version:** 1.0  
-**Last Updated:** June 2025
+**Document Version:** 2.0  
+**Last Updated:** October 2026

@@ -19,7 +19,7 @@ const router = Router();
 // Get all crypto prices
 router.get('/prices', authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const prices = await getCryptoPrices();
+    const { assets: prices, source } = await getCryptoPrices();
 
     res.json({
       success: true,
@@ -27,7 +27,8 @@ router.get('/prices', authenticateToken, async (req: Request, res: Response, nex
       meta: {
         count: prices.length,
         timestamp: new Date().toISOString(),
-        source: 'CoinGecko',
+        provider: 'CoinGecko',
+        source,
       },
     });
   } catch (error) {
@@ -44,6 +45,7 @@ router.get('/trending', authenticateToken, async (req: Request, res: Response, n
       success: true,
       data: trending,
       meta: {
+        source: 'live',
         count: trending.length,
         timestamp: new Date().toISOString(),
       },
@@ -66,6 +68,7 @@ router.get('/coin/:id', authenticateToken, async (req: Request, res: Response, n
     res.json({
       success: true,
       data: coin,
+      meta: { source: 'live' },
     });
   } catch (error) {
     next(error);
@@ -89,7 +92,7 @@ router.post('/portfolio', authenticateToken, async (req: Request, res: Response,
     }
 
     // Get current prices
-    const prices = await getCryptoPrices();
+    const { assets: prices, source } = await getCryptoPrices();
 
     // Calculate portfolio
     const portfolio = calculateCryptoPortfolio(holdings, prices);
@@ -98,6 +101,7 @@ router.post('/portfolio', authenticateToken, async (req: Request, res: Response,
       success: true,
       data: portfolio,
       meta: {
+        source,
         timestamp: new Date().toISOString(),
         holdingsCount: holdings.length,
       },
@@ -110,7 +114,7 @@ router.post('/portfolio', authenticateToken, async (req: Request, res: Response,
 // Get crypto market summary
 router.get('/market-summary', authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const prices = await getCryptoPrices();
+    const { assets: prices, source } = await getCryptoPrices();
 
     // Calculate market stats
     const totalMarketCap = prices.reduce((sum, p) => sum + p.marketCap, 0);
@@ -130,12 +134,14 @@ router.get('/market-summary', authenticateToken, async (req: Request, res: Respo
         averageChange24h: avgChange,
         topGainers: sortedByChange.slice(0, 5),
         topLosers: sortedByChange.slice(-5).reverse(),
-        btcDominance: prices.find(p => p.symbol === 'BTC')?.marketCap || 0 / totalMarketCap * 100,
-        ethDominance: prices.find(p => p.symbol === 'ETH')?.marketCap || 0 / totalMarketCap * 100,
+        // Share of the tracked coins' combined market cap (not of the whole crypto market).
+        btcDominance: totalMarketCap > 0 ? ((prices.find(p => p.symbol === 'BTC')?.marketCap || 0) / totalMarketCap) * 100 : 0,
+        ethDominance: totalMarketCap > 0 ? ((prices.find(p => p.symbol === 'ETH')?.marketCap || 0) / totalMarketCap) * 100 : 0,
       },
       meta: {
         timestamp: new Date().toISOString(),
-        source: 'CoinGecko',
+        provider: 'CoinGecko',
+        source,
       },
     });
   } catch (error) {

@@ -1,477 +1,226 @@
-# Fiduciary OS™ Funding Strategy
-## Comprehensive Capital Raising and Exit Planning Guide
+# Fiduciary OS Funding Strategy
 
-**Date:** December 2024  
-**Company:** Fiduciary OS™  
-**Stage:** Pre-Seed/Seed Stage  
-**Sector:** Fintech / WealthTech / SaaS
+**Version:** 2.0 · **Updated:** October 2026 · **Supersedes:** v1.0 (December 2024)
+**Stage:** Pre-seed, pre-launch · **Financials:** [FINANCIAL_MODEL_PACKAGE.md](FINANCIAL_MODEL_PACKAGE.md)
 
----
-
-## Executive Summary
-
-| Funding Round | Timing | Amount | Pre-Money | Post-Money | Use of Funds |
-|--------------|--------|--------|-----------|------------|--------------|
-| **Seed** | Q1 2025 | $5M | $45M | $50M | Product, Team, GTM |
-| **Series A** | Q4 2026 | $15M | $80M | $95M | Scale, Expansion |
-| **Series B** | Q2 2028 | $40M | $180M | $220M | Growth, Intl |
-
-**Total Capital Raised:** $60M  
-**Founder Ownership at Exit:** 35-40% (estimated)  
-**Target Exit Timeline:** 7-10 years  
-**Target Exit Valuation:** $500M - $1B+
+*Confidential. Planning document. Not an offer to sell or a solicitation of an offer to buy securities.*
 
 ---
 
-## 1. Funding Roadmap
+## Summary
 
-### 1.1 Recommended Funding Schedule
+| Round | Target timing | Amount | Pre-money | In the 5-year model? |
+|---|---|---|---|---|
+| **Seed** | Q1 2027 (model Year 1) | $5M | Set by the market; model-implied range $6M–$21M (base) | Yes |
+| **Series A** | Q4 2028 (model Year 2) | $15M | Set at the time against achieved ARR | Yes |
+| **Series B** | 2030 or later | ~$40M | — | No — funds international expansion and M&A, which the operating model does not include |
 
-```
-Timeline:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025    2026    2027    2028    2029    2030    2031    2032
-┃       ┃       ┃       ┃       ┃       ┃       ┃       ┃
-Seed────┼───────┼───────┼───────┼───────┼───────┼───────┤
-   $5M  │       │       │       │       │       │       │
-        Series A───────┼───────┼───────┼───────┼───────┤
-           $15M        │       │       │       │       │
-                       Series B───────┼───────┼───────┤
-                          $40M       │       │       │
-                                      Exit?   Exit?   Exit?
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
+v1 dates (Seed Q1 2025, Series A Q4 2026) have passed without the rounds closing and were re-based. The v1 seed pre-money of $45M is withdrawn; see [Valuation_Analysis.md](Valuation_Analysis.md).
 
-### 1.2 Milestone-Based Funding Approach
-
-| Round | Key Milestones | Metrics to Achieve |
-|-------|----------------|-------------------|
-| **Seed** | Product-market fit, initial traction | 50+ B2B customers, 5K+ B2C users |
-| **Series A** | Repeatable sales, unit economics | $3M+ ARR, 100%+ NRR, 5x+ LTV/CAC |
-| **Series B** | Scale, market leadership | $15M+ ARR, 20%+ market share |
-| **Series C** | Expansion, profitability path | $40M+ ARR, positive EBITDA |
+**Capital need in the model.** Base-case operating burn through Year 4 is about $5.6M; Seed + Series A ($20M) leaves roughly $15M of cash at the end of Year 4. The conservative case still holds $5.4M at the end of Year 5 but is losing about $3.9M a year. Round sizes should be revisited once there is measured churn and CAC.
 
 ---
 
-## 2. Seed Round ($5M)
+## 1. Milestone-based plan
 
-### 2.1 Round Details
+| Round | Prove before raising | Metrics |
+|---|---|---|
+| **Seed** | The product exists and someone wants it | Working consumer calculators and advisor workspace; first paying advisors; AI supervision and insurance-illustration controls in place |
+| **Series A** | Repeatable acquisition and retention | ~$3.9M ARR (model Year 2); measured B2B churn ≤1.5%/month; LTV/CAC ≥3× on measured data |
+| **Series B** | Scale and a path to profit | ~$13M+ ARR; EBITDA approaching break-even (model Year 4) |
 
-| Parameter | Value |
-|-----------|-------|
-| **Round Size** | $5,000,000 |
-| **Pre-Money Valuation** | $45,000,000 |
-| **Post-Money Valuation** | $50,000,000 |
-| **Equity Sold** | 10% |
-| **Security Type** | Preferred Equity (Series Seed) |
-| **Target Close** | Q1 2025 |
+### Gates that apply regardless of round
 
-### 2.2 Use of Funds Breakdown
+- No revenue tied to insurance or investment placement until securities/insurance counsel has reviewed the structure and a licensed channel partner is named.
+- No compliance certification (SOC 2, WCAG, FINRA) is claimed until it has been audited or formally assessed.
+- AI features ship only with disclosures, output guardrails, a supervision log, and a passing evaluation suite.
 
-| Category | Amount | % of Round | Timeline |
-|----------|--------|------------|----------|
-| **Product Development** | $1,500,000 | 30% | 18 months |
-| **Engineering Team** | $1,000,000 | 20% | 18 months |
-| **Sales & Marketing** | $1,500,000 | 30% | 18 months |
-| **Operations & G&A** | $500,000 | 10% | 18 months |
-| **Working Capital** | $500,000 | 10% | 18 months |
-| **Total** | **$5,000,000** | **100%** | |
+---
 
-### 2.3 Headcount Plan (Seed Stage)
+## 2. Seed round
 
-| Role | Year 1 | Year 2 | Fully Loaded Cost |
-|------|--------|--------|-------------------|
-| CEO/Founder | 1 | 1 | $200K |
+| Parameter | Plan |
+|---|---|
+| Amount | $5,000,000 |
+| Pre-money | Market-set. At $12M pre, investors would own ~29%; at $20M pre, 20% |
+| Instrument | Priced preferred or SAFE (decide with counsel) |
+| Target close | Q1 2027 |
+
+### Use of funds
+
+| Category | Amount | Share |
+|---|---|---|
+| Product development | $1,500,000 | 30% |
+| Engineering team | $1,000,000 | 20% |
+| Sales & marketing | $1,500,000 | 30% |
+| Operations, legal & compliance | $500,000 | 10% |
+| Working capital | $500,000 | 10% |
+
+Legal and compliance spend should cover securities/insurance counsel on the revenue model and the advisor-matching feature before launch.
+
+### Headcount (seed stage)
+
+| Role | Year 1 | Year 2 | Fully loaded cost |
+|---|---|---|---|
+| CEO / founder | 1 | 1 | $200K |
 | CTO | 1 | 1 | $200K |
 | VP Engineering | 0 | 1 | $180K |
-| Senior Engineers | 2 | 4 | $150K each |
+| Senior engineers | 2 | 4 | $150K each |
 | VP Sales | 0 | 1 | $160K |
-| Account Executives | 1 | 3 | $120K each |
-| Customer Success | 1 | 2 | $90K each |
+| Account executives | 1 | 3 | $120K each |
+| Customer success | 1 | 2 | $90K each |
 | Marketing | 1 | 2 | $100K each |
-| **Total Headcount** | **7** | **16** | |
+| **Total** | **7** | **16** | |
 
-### 2.4 Seed Stage Milestones
+### Seed milestones
 
-| Milestone | Target Date | Success Criteria |
-|-----------|-------------|------------------|
-| Product Launch | Q2 2025 | Full platform live |
-| First 50 B2B Customers | Q3 2025 | Mix of all tiers |
-| First 5,000 B2C Users | Q3 2025 | 5%+ premium conversion |
-| $500K ARR | Q4 2025 | Monthly recurring |
-| Series A Readiness | Q4 2026 | $2M+ ARR, 100+ customers |
+| Milestone | Target | Success criteria |
+|---|---|---|
+| Product launch | Q2 2027 | Consumer calculators and advisor workspace live |
+| First 50 advisor customers | Q4 2027 | Mix of tiers |
+| First 5,000 consumer users | Q4 2027 | Conversion measured, not assumed |
+| ~$1.4M ARR | End of model Year 1 | Base-case plan |
+| Series A readiness | Q4 2028 | ~$3.9M ARR, measured unit economics |
 
 ---
 
-## 3. Series A Round ($15M)
+## 3. Series A
 
-### 3.1 Round Details
+| Parameter | Plan |
+|---|---|
+| Amount | $15,000,000 |
+| Pre-money | Set at the time against achieved ARR and growth |
+| Target close | Q4 2028 |
 
-| Parameter | Value |
-|-----------|-------|
-| **Round Size** | $15,000,000 |
-| **Pre-Money Valuation** | $80,000,000 |
-| **Post-Money Valuation** | $95,000,000 |
-| **Equity Sold** | 15.8% |
-| **Security Type** | Preferred Equity (Series A) |
-| **Target Close** | Q4 2026 |
+### Use of funds
 
-### 3.2 Use of Funds Breakdown
+| Category | Amount | Share |
+|---|---|---|
+| Sales expansion | $5,250,000 | 35% |
+| Product development | $3,750,000 | 25% |
+| Marketing | $3,000,000 | 20% |
+| Customer success | $1,500,000 | 10% |
+| Operations & compliance | $1,500,000 | 10% |
 
-| Category | Amount | % of Round | Purpose |
-|----------|--------|------------|---------|
-| **Sales Expansion** | $5,250,000 | 35% | Scale sales team, territories |
-| **Product Development** | $3,750,000 | 25% | New features, platform expansion |
-| **Marketing** | $3,000,000 | 20% | Brand, demand gen, events |
-| **Customer Success** | $1,500,000 | 10% | Reduce churn, drive expansion |
-| **Operations** | $1,500,000 | 10% | Infrastructure, compliance |
-| **Total** | **$15,000,000** | **100%** | |
+### Headcount
 
-### 3.3 Headcount Plan (Series A)
-
-| Department | Current | Target | New Hires |
-|------------|---------|--------|-----------|
+| Department | Start | Target | New hires |
+|---|---|---|---|
 | Engineering | 6 | 15 | +9 |
 | Sales | 4 | 15 | +11 |
-| Customer Success | 2 | 8 | +6 |
+| Customer success | 2 | 8 | +6 |
 | Marketing | 2 | 6 | +4 |
 | Operations | 2 | 6 | +4 |
 | **Total** | **16** | **50** | **+34** |
 
-### 3.4 Series A Milestones
+---
 
-| Milestone | Target Date | Success Criteria |
-|-----------|-------------|------------------|
-| $5M ARR | Q2 2027 | Consistent growth |
-| 300+ B2B Customers | Q2 2027 | Enterprise focus |
-| 50,000+ B2C Users | Q2 2027 | 6%+ premium conversion |
-| Net Revenue Retention >110% | Q2 2027 | Expansion revenue |
-| Series B Readiness | Q4 2028 | $12M+ ARR, profitability path |
+## 4. Series B (outside the operating model)
+
+Roughly $40M for international expansion, enterprise sales, product, and acquisitions. None of these costs or revenues is in the five-year model; size this round from actuals.
 
 ---
 
-## 4. Series B Round ($40M)
+## 5. Investor prospect lists
 
-### 4.1 Round Details
+These are research lists of firms whose public focus includes fintech or SaaS. Inclusion does **not** indicate any contact, interest, or relationship. Verify each firm's current stage, check size, and focus before outreach.
 
-| Parameter | Value |
-|-----------|-------|
-| **Round Size** | $40,000,000 |
-| **Pre-Money Valuation** | $180,000,000 |
-| **Post-Money Valuation** | $220,000,000 |
-| **Equity Sold** | 18.2% |
-| **Security Type** | Preferred Equity (Series B) |
-| **Target Close** | Q2 2028 |
+### Seed
 
-### 4.2 Use of Funds Breakdown
+| Firm | Focus |
+|---|---|
+| QED Investors | Fintech |
+| Nyca Partners | Fintech, wealthtech |
+| Ribbit Capital | Fintech |
+| Bessemer Venture Partners | Cloud, SaaS, fintech |
+| Index Ventures | Fintech, enterprise |
+| Y Combinator, Techstars | Accelerators |
 
-| Category | Amount | % of Round | Purpose |
-|----------|--------|------------|---------|
-| **International Expansion** | $12,000,000 | 30% | UK, Canada, Australia |
-| **Enterprise Sales** | $10,000,000 | 25% | Dedicated team, solutions |
-| **Product Innovation** | $8,000,000 | 20% | AI/ML, new products |
-| **M&A** | $6,000,000 | 15% | Strategic acquisitions |
-| **Operations Scale** | $4,000,000 | 10% | Infrastructure, compliance |
-| **Total** | **$40,000,000** | **100%** | |
+### Series A and later
 
-### 4.3 Headcount Plan (Series B)
+| Firm | Focus |
+|---|---|
+| Accel, Lightspeed, Insight Partners, Greylock | Enterprise software and fintech |
+| Thoma Bravo, Vista Equity, Silver Lake | Later-stage software buyouts |
 
-| Department | Current | Target | New Hires |
-|------------|---------|--------|-----------|
-| Engineering | 15 | 40 | +25 |
-| Sales | 15 | 50 | +35 |
-| Customer Success | 8 | 25 | +17 |
-| Marketing | 6 | 20 | +14 |
-| Operations | 6 | 20 | +14 |
-| International | 0 | 15 | +15 |
-| **Total** | **50** | **170** | **+120** |
+### Strategic fit (hypotheses, not relationships)
+
+| Company type | Why it could matter |
+|---|---|
+| Custodians and broker-dealers | Distribution to advisors |
+| Wealth-tech platforms | Integration partner or acquirer |
+| Data aggregators | Account connectivity |
 
 ---
 
-## 5. Investor Target List
+## 6. Exit paths (hypotheses)
 
-### 5.1 Seed Stage Investors (Fintech/WealthTech Focus)
+| Path | Typical horizon | Notes |
+|---|---|---|
+| Strategic acquisition | 5–7 years | Most common outcome for advisor-tech platforms |
+| Private equity | 7–10 years | Requires profitability and scale |
+| IPO | 8–12 years | Requires roughly $100M+ ARR, audited history, independent board |
 
-| Investor | Stage | Check Size | Focus Areas | Contact Strategy |
-|----------|-------|------------|-------------|------------------|
-| **Andreessen Horowitz** | Seed-A | $1-5M | Fintech, SaaS | Warm intro through portfolio |
-| **Bessemer Venture Partners** | Seed-A | $1-5M | Cloud, SaaS | Direct outreach + demo |
-| **Index Ventures** | Seed-A | $1-5M | Fintech, Enterprise | Conference meeting |
-| **Ribbit Capital** | Seed-A | $1-5M | Fintech-first | Warm intro essential |
-| **QED Investors** | Seed-A | $1-3M | Fintech | Direct application |
-| **Nyca Partners** | Seed-A | $1-3M | Fintech, WealthTech | Direct outreach |
-| **Financial Venture Studio** | Pre-Seed | $500K-1M | Fintech | Accelerator program |
-| **Y Combinator** | Pre-Seed | $500K | All tech | Batch application |
-| **500 Startups** | Pre-Seed | $250-500K | Fintech | Batch application |
-| **Techstars** | Pre-Seed | $100-250K | Fintech | Program application |
+v1 assigned probabilities and dollar values to named acquirers. Those were not based on any data or conversations and have been removed.
 
-### 5.2 Series A Investors
+### IPO readiness (current status)
 
-| Investor | Typical Lead | Check Size | Notable Portfolio |
-|----------|--------------|------------|-------------------|
-| **Accel** | Yes | $10-20M | Slack, Dropbox, Qualtrics |
-| **Benchmark** | Yes | $10-20M | Uber, Snapchat, WeWork |
-| **Greylock** | Yes | $10-20M | LinkedIn, Workday, Airbnb |
-| **IVP** | Yes | $15-25M | Twitter, Snap, Slack |
-| **Insight Partners** | Yes | $15-30M | Shopify, Qualtrics, Smartsheet |
-| **Lightspeed** | Yes | $10-20M | Snap, Affirm, Nutanix |
-| **Sequoia Capital** | Yes | $10-25M | Apple, Google, Airbnb |
-| **Tiger Global** | Co-lead | $15-30M | Stripe, Coinbase, Databricks |
-
-### 5.3 Series B+ Investors
-
-| Investor | Stage | Check Size | Focus |
-|----------|-------|------------|-------|
-| **SoftBank Vision Fund** | B+ | $50M+ | Growth, scale |
-| **Coatue Management** | B+ | $30M+ | Tech, fintech |
-| **Dragoneer** | B+ | $30M+ | Growth equity |
-| **T. Rowe Price** | C+ | $50M+ | Late-stage |
-| **Fidelity** | C+ | $50M+ | Pre-IPO |
-| **TCV** | B+ | $25M+ | Enterprise SaaS |
-
-### 5.4 Strategic Investors
-
-| Company | Interest | Strategic Value |
-|---------|----------|-----------------|
-| **Fidelity** | High | Distribution, credibility |
-| **Charles Schwab** | Medium | RIA channel access |
-| **Envestnet** | Medium | Technology partnership |
-| **Plaid** | Medium | Data connectivity |
-| **Stripe** | Low-Medium | Payments infrastructure |
+| Requirement | Target | Status |
+|---|---|---|
+| Revenue | $100M+ ARR | Pre-revenue |
+| Growth | 30%+ year over year | Not yet measurable |
+| Gross margin | 75%+ | Plan only (70–80%) |
+| Customer concentration | <10% top customer | No customers yet |
+| Audited financials | 2+ years | Not started |
+| Board | Independent majority | Not started |
 
 ---
 
-## 6. Exit Strategy Analysis
+## 7. Cap table
 
-### 6.1 Exit Scenarios Overview
+Ownership depends on the seed price. Example with a $15M seed pre-money, a 15% post-seed option pool, and a $15M Series A at $45M pre:
 
-| Exit Type | Timeline | Valuation Range | Probability |
-|-----------|----------|-----------------|-------------|
-| **Strategic Acquisition** | 5-7 years | $300M - $800M | 50% |
-| **Private Equity** | 7-10 years | $400M - $1B | 25% |
-| **IPO** | 8-12 years | $500M - $2B | 20% |
-| **Secondary/Stay Private** | 10+ years | $200M+ | 5% |
+| Stage | Founders | Seed | Series A | Option pool |
+|---|---|---|---|---|
+| Founding | 100% | — | — | — |
+| After seed | 60% | 25% | — | 15% |
+| After Series A | 45% | 19% | 25% | 11% |
 
-### 6.2 Strategic Acquisition Analysis
-
-#### Potential Acquirers
-
-| Acquirer | Strategic Fit | Likelihood | Estimated Value |
-|----------|--------------|------------|-----------------|
-| **Fidelity** | Wealth management platform | High | $400-600M |
-| **Charles Schwab** | RIA technology | Medium-High | $350-500M |
-| **Envestnet** | Complementary platform | Medium | $300-450M |
-| **Broadridge** | Financial infrastructure | Medium | $250-400M |
-| **SS&C Technologies** | Wealth tech consolidation | Medium | $300-450M |
-| **Salesforce** | Financial services cloud | Low-Medium | $500M-1B |
-| **Intuit** | Consumer + SMB finance | Low-Medium | $400-700M |
-| **Plaid/Visa** | Financial data layer | Low | $300-500M |
-
-#### Acquisition Value Drivers
-
-| Factor | Impact on Valuation | Fiduciary OS Position |
-|--------|---------------------|----------------------|
-| ARR Scale | 8-12x ARR | Growing rapidly |
-| Growth Rate | Premium for >50% | 75%+ projected |
-| Customer Concentration | Discount if >20% | Diversified base |
-| Technology/IP | Premium for proprietary | Strong moat |
-| Team Quality | 10-20% premium | Experienced |
-| Market Position | Premium for #1 or #2 | Emerging leader |
-
-### 6.3 IPO Analysis
-
-#### IPO Readiness Requirements
-
-| Requirement | Target | Current Status |
-|-------------|--------|----------------|
-| Revenue | $100M+ ARR | Building |
-| Growth Rate | 30%+ YoY | On track |
-| Gross Margin | 75%+ | Achieved |
-| Rule of 40 | 40%+ | Path to achieve |
-| Customer Concentration | <10% top customer | Achieved |
-| Profitability | Path to positive | Year 3+ |
-| Audit History | 2+ years Big 4 | Need to engage |
-| Board Composition | Independent majority | Need to build |
-
-#### Comparable IPOs
-
-| Company | IPO Date | IPO Valuation | Current Market Cap | Revenue at IPO |
-|---------|----------|---------------|-------------------|----------------|
-| **Bill.com** | 2019 | $1.6B | $12.5B | $108M |
-| **Toast** | 2021 | $20B | $14.2B | $823M |
-| **Marqeta** | 2021 | $15B | $3.8B | $290M |
-| **Blend Labs** | 2021 | $1.7B | $1.2B | $96M |
-
-### 6.4 Private Equity Analysis
-
-#### PE Interest Factors
-
-| Factor | Fiduciary OS Profile | PE Attractiveness |
-|--------|---------------------|-------------------|
-| Recurring Revenue | 85%+ | High |
-| Customer Retention | 85%+ | High |
-| Growth Rate | 75%+ | High |
-| Market Size | $15B+ | High |
-| Margin Profile | Path to 30%+ | Medium-High |
-| Competition | Fragmented | High |
-
-#### Potential PE Buyers
-
-| Firm | Focus | Typical Check | Interest Level |
-|------|-------|---------------|----------------|
-| **Thoma Bravo** | Software | $500M-5B | High |
-| **Vista Equity** | Enterprise software | $300M-10B | High |
-| **Silver Lake** | Technology | $500M-5B | Medium |
-| **KKR** | Technology | $300M-3B | Medium |
-| **Bain Capital** | Software | $200M-2B | Medium |
+Illustrative only: the Series A price is a placeholder, not a forecast.
 
 ---
 
-## 7. Cap Table Evolution
+## 8. Cash flow (base case)
 
-### 7.1 Pro Forma Cap Table
-
-| Round | Founders | Seed | Series A | Series B | Options | Total |
-|-------|----------|------|----------|----------|---------|-------|
-| **Founding** | 100% | - | - | - | - | 100% |
-| **Seed** | 70% | 10% | - | - | 20% | 100% |
-| **Series A** | 56% | 8% | 16% | - | 20% | 100% |
-| **Series B** | 44% | 6% | 12% | 18% | 20% | 100% |
-| **Pre-IPO** | 35% | 5% | 10% | 15% | 15% | 80%* |
-
-*Assumes 20% sold in IPO
-
-### 7.2 Founder Economics at Exit
-
-| Exit Valuation | Founder Ownership | Founder Proceeds (pre-tax) |
-|----------------|-------------------|---------------------------|
-| $300M | 35% | $105M |
-| $500M | 35% | $175M |
-| $750M | 35% | $262.5M |
-| $1B | 35% | $350M |
-| $1.5B | 35% | $525M |
+| Year | Revenue | EBITDA | Capex | Free cash flow | Equity raised | Ending cash |
+|---|---|---|---|---|---|---|
+| 1 | $1.44M | −$1.11M | $0.15M | −$1.21M | $5M | $4.29M |
+| 2 | $4.05M | −$1.66M | $0.30M | −$1.97M | $15M | $17.32M |
+| 3 | $8.00M | −$1.36M | $0.45M | −$1.76M | — | $15.56M |
+| 4 | $13.59M | −$0.16M | $0.60M | −$0.64M | — | $14.92M |
+| 5 | $21.05M | $1.99M | $0.75M | $1.47M | — | $16.39M |
 
 ---
 
-## 8. Financial Projections & Funding Needs
-
-### 8.1 Cash Flow Summary
-
-| Year | Revenue | EBITDA | CapEx | Free Cash Flow | Cumulative Cash |
-|------|---------|--------|-------|----------------|-----------------|
-| 1 | $1.98M | -$733K | $150K | -$883K | $4.1M |
-| 2 | $5.48M | -$602K | $300K | -$902K | $3.2M |
-| 3 | $10.75M | $752K | $450K | $302K | $3.5M |
-| 4 | $18.16M | $3.45M | $600K | $2.85M | $6.4M |
-| 5 | $28.02M | $7.56M | $750K | $6.81M | $13.2M |
-
-### 8.2 Funding Timeline
-
-```
-Cash Position Over Time:
-$50M ┤                                    ┌───────
-$40M ┤                              ┌─────┘
-$30M ┤                        ┌─────┘
-$20M ┤                  ┌─────┘
-$10M ┤            ┌─────┘
-  $0 ┼─────┬─────┼─────┬─────┬─────┬─────┬─────┬─────
-     Seed  A     B     Y1    Y2    Y3    Y4    Y5
-     
-     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-     Seed Round ($5M)
-                    ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-                    Series A ($15M)
-                                         ▓▓▓▓▓▓▓▓▓▓▓▓
-                                         Series B ($40M)
-```
-
----
-
-## 9. Risk Mitigation
-
-### 9.1 Funding Risks
+## 9. Funding risks
 
 | Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| Market downturn | Medium | High | Maintain 18-month runway |
-| Investor pullback | Medium | High | Diversify investor base |
-| Down round | Low | High | Hit milestones, control burn |
-| Founder dilution | Medium | Medium | Careful round sizing |
-
-### 9.2 Mitigation Strategies
-
-1. **Maintain Strong Runway**
-   - Target 18-24 months between rounds
-   - Conservative burn management
-   - Contingency planning for 36-month runway
-
-2. **Diversify Funding Sources**
-   - Mix of VCs, strategics, angels
-   - International investor base
-   - Alternative financing (revenue-based, venture debt)
-
-3. **Milestone-Driven Approach**
-   - Clear KPIs for each round
-   - Regular investor updates
-   - Build relationships before fundraising
+|---|---|---|---|
+| Unproven demand | High | High | Launch before raising Series A; measure conversion and churn |
+| Regulatory questions on insurance and AI features | Medium | High | Counsel review; illustrative outputs; supervised AI |
+| Down round | Medium | High | Price the seed on evidence; keep 18–24 months runway |
+| Founder dilution | Medium | Medium | Size rounds to milestones, not to the model's cash buffer |
 
 ---
 
-## 10. Action Plan
+## 10. Next 90 days
 
-### 10.1 Immediate Actions (Next 30 Days)
-
-- [ ] Finalize pitch deck and financial model
-- [ ] Create investor target list with warm intros
-- [ ] Prepare data room with key metrics
-- [ ] Schedule investor meetings
-- [ ] Engage legal counsel for round documentation
-
-### 10.2 Seed Round Preparation (Next 90 Days)
-
-- [ ] Complete 50+ investor meetings
-- [ ] Secure 2-3 term sheets
-- [ ] Conduct due diligence
-- [ ] Negotiate final terms
-- [ ] Close round and announce
-
-### 10.3 Ongoing Investor Relations
-
-- [ ] Monthly investor updates
-- [ ] Quarterly board meetings
-- [ ] Annual strategic planning
-- [ ] Regular milestone reporting
+- [ ] Engage securities and insurance counsel on the revenue model and advisor matching
+- [ ] Ship the consumer calculators and advisor workspace MVP
+- [ ] Instrument the funnel so conversion and churn are measured from day one
+- [ ] Build the data room from the v2 model (`model/build_model.py`)
+- [ ] Prepare the pitch narrative around measured evidence, not projections
 
 ---
 
-## Appendix A: Pitch Deck Outline
-
-1. Problem & Opportunity
-2. Solution & Product Demo
-3. Market Size & TAM
-4. Business Model & Unit Economics
-5. Traction & Metrics
-6. Competitive Landscape
-7. Go-to-Market Strategy
-8. Team & Advisors
-9. Financial Projections
-10. Funding Ask & Use of Funds
-
-## Appendix B: Data Room Contents
-
-- Financial statements (3 years projected)
-- Customer metrics dashboard
-- Product roadmap
-- Technical architecture
-- Legal documents (incorporation, IP, contracts)
-- Team bios and org chart
-- Market research reports
-- Competitive analysis
-
----
-
-*This funding strategy provides a comprehensive roadmap for Fiduciary OS to raise capital efficiently while maintaining founder ownership and positioning for a successful exit.*
-
-**Document Version:** 1.0  
-**Prepared By:** Financial Analysis Team  
-**Date:** December 2024
+**Document version:** 2.0 · **Date:** October 2026

@@ -12,9 +12,9 @@ The code for Fiduciary OS: a planning platform with free tools for households an
 | Module | Backend support today | Frontend |
 |---|---|---|
 | Annuity Navigator | `POST /calculations/annuity` — simplified payout estimate | Planned |
-| Life Insurance Navigator | `POST /calculations/life-insurance` — protection gap; `POST /market/insurance/quotes` — **illustrative quotes only** | Planned |
+| Life Insurance Navigator | `POST /calculations/life-insurance` — protection gap; `POST /market/insurance/quotes` — **illustrative figures only**, anonymised carriers | Planned |
 | Retirement Income Navigator | `POST /calculations/retirement` — withdrawal-rate heuristic | Planned |
-| Tax Planning | `POST /calculations/tax` — hard-coded federal brackets | Planned |
+| Tax Planning | `POST /calculations/tax` — 2024 federal brackets and standard deductions (all filing statuses) | Planned |
 | Investment X-Ray | `GET/POST /market/portfolio-analytics` | Planned |
 | Digital Assets | `/crypto/*` via CoinGecko | Planned |
 | Symphony Composer | `POST /ai/symphony-playbook`, `POST /ai-v2/symphony-playbook` | Planned |
@@ -31,7 +31,7 @@ The code for Fiduciary OS: a planning platform with free tools for households an
 | Data | Prisma + SQLite | PostgreSQL 15, TimescaleDB, Redis |
 | Auth | bcrypt + JWT access/refresh tokens | Firm/advisor/household tenancy, MFA, SSO |
 | Realtime | Socket.io | same |
-| AI | Anthropic and Moonshot Kimi HTTP clients with canned fallbacks | Supervised, logged, evaluated AI |
+| AI | Anthropic and Moonshot Kimi behind `services/aiGateway.ts`: guardrails, disclosures, PII stripping, `ai_interactions` log, CI tests + promptfoo evals | Human review workflow on top of the log |
 | Frontend | — | React, TypeScript, Tailwind ([recommended stack](../VALUE_FLOW_AND_REPO_ROADMAP.md#1-experience--aesthetics)) |
 | CI | GitHub Actions: type-check, test, build ([workflow](../.github/workflows/backend-ci.yml)) | + frontend, images, deploy |
 
@@ -59,9 +59,9 @@ The `Makefile` and `docker-compose.yml` still reference `frontend/` and `infra/`
 
 ## Security posture
 
-Implemented: bcrypt password hashing, separate access and refresh tokens, Helmet headers, CORS allow-list, rate limiting, per-user scoping on every data route, validated-field-only writes on profile updates.
+Implemented: bcrypt password hashing, separate access and refresh tokens, Helmet headers, CORS allow-list, rate limiting, per-user scoping on every data route, validated-field-only writes on profile updates, PII stripped before AI calls, an AI prompt/response supervision log, and placeholder data refused when `NODE_ENV=production`.
 
-**Not** implemented or attested: SOC 2, WCAG conformance testing, encryption of stored documents, MFA, audit logging, penetration testing. The [Security Architecture](../Security_Architecture.md) document describes the target controls.
+**Not** implemented or attested: SOC 2, WCAG conformance testing, encryption of stored documents, MFA, general audit logging (beyond the AI log), penetration testing. The [Security Architecture](../Security_Architecture.md) document describes the target controls.
 
 Report security issues privately to the repository owner rather than in a public issue.
 

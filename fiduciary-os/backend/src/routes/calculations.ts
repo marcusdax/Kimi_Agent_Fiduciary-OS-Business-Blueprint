@@ -6,6 +6,15 @@ import { validateRequest } from '../middleware/validateRequest';
 
 const router = Router();
 
+// Every calculator returns simplified, illustrative estimates (rule-of-thumb formulas, fixed
+// assumed rates, one tax year's brackets). Responses say so explicitly; clients must show it.
+const CALCULATOR_DISCLAIMER =
+  'Illustrative estimate from a simplified formula with assumed rates. It is not a quote, ' +
+  'offer, or recommendation, and it is not tax, insurance, or investment advice. Review any ' +
+  'decision with a licensed professional.';
+
+const illustrative = { source: 'illustrative' as const, illustrative: true, disclaimer: CALCULATOR_DISCLAIMER };
+
 // Annuity calculation
 router.post(
   '/annuity',
@@ -48,6 +57,8 @@ router.post(
       annualIncome: annual,
       yieldRate: rate * 100,
       tenYearTotal: monthly * 120,
+      assumedPayoutRate: true,
+      ...illustrative,
     });
   }
 );
@@ -89,6 +100,7 @@ router.post(
       protectionGap: gap,
       monthlyPremium: Math.floor(monthly),
       lifetimeCost: Math.floor(monthly * 12 * years),
+      ...illustrative,
     });
   }
 );
@@ -140,6 +152,8 @@ router.post(
       withdrawalRate,
       sustainableMonthly,
       projectedShortfall: shortfall,
+      method: 'withdrawal-rate heuristic, not a simulation',
+      ...illustrative,
     });
   }
 );
@@ -162,12 +176,13 @@ router.post(
     const { filingStatus, annualIncome, contribution401k, rothConversion, capitalLossHarvest, hsaContribution, qcdAmount } = req.body;
 
     const standardDeductions: Record<string, number> = {
-      single: 15000,
-      married: 30000,
-      head: 22500,
+      // Tax year 2024 (IRS Rev. Proc. 2023-34), kept consistent with the brackets below.
+      single: 14600,
+      married: 29200,
+      head: 21900,
     };
 
-    const standardDeduction = standardDeductions[filingStatus] || 15000;
+    const standardDeduction = standardDeductions[filingStatus] || 14600;
 
     const brackets: Record<string, [number, number][]> = {
       single: [
@@ -189,11 +204,11 @@ router.post(
         [Infinity, 0.37],
       ],
       head: [
-        [11600, 0.1],
-        [47150, 0.12],
-        [100525, 0.22],
+        [16550, 0.1],
+        [63100, 0.12],
+        [100500, 0.22],
         [191950, 0.24],
-        [243725, 0.32],
+        [243700, 0.32],
         [609350, 0.35],
         [Infinity, 0.37],
       ],
@@ -232,6 +247,8 @@ router.post(
       taxAfterStrategy: afterResult.tax,
       totalSavings: savings,
       niitApplies: annualIncome > 250000,
+      taxYearAssumed: 2024,
+      ...illustrative,
     });
   }
 );
