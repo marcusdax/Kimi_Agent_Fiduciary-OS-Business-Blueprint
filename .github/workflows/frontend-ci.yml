@@ -19,6 +19,7 @@ jobs:
           cache: npm
           cache-dependency-path: fiduciary-os/frontend/package-lock.json
       - run: npm ci
+      - run: npm run lint:styles
       - run: npm run type-check
       - run: npm test
       - run: npm run build

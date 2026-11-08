@@ -7,6 +7,19 @@
   --gold: #ffd700;
   --text: #e8e8ef;
   --muted: #b0b0c2;
+  /* Shared static machined-metal system; no animated neon. */
+  --steel-line: #657586;
+  --chrome-edge: linear-gradient(125deg, #465361 0%, #bbc6d0 15%, #455260 29%, #71808e 48%, #d5dee6 52%, #3d4a58 69%, #8593a1 100%);
+  --card-fill: linear-gradient(145deg, #20232e, #151820 48%, #101218);
+  --card-sheen: linear-gradient(115deg, rgba(235, 243, 250, 0.035), transparent 36%, rgba(235, 243, 250, 0.015) 70%, transparent);
+  --card-brush: repeating-linear-gradient(0deg, rgba(220, 232, 242, 0.012) 0 1px, transparent 1px 4px);
+  --card-bevel: inset 0 1px 0 rgba(236, 244, 252, 0.09), inset 0 -1px 0 rgba(0, 0, 0, 0.65);
+  --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+  --card-radius: 12px;
+  --card-padding: 24px;
+  --card-padding-compact: 20px;
+  --chart-surface: #101218;
+  --interaction-duration: 140ms;
   color-scheme: dark;
 }
 :root {
@@ -405,7 +418,7 @@ main {
 .stat {
   border: 1px solid var(--line);
   border-radius: 9px;
-  padding: 18px 19px;
+  padding: var(--card-padding-compact);
   background: var(--surface);
 }
 .stat > span {
@@ -434,7 +447,7 @@ main {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 10px;
-  padding: 24px;
+  padding: var(--card-padding);
   margin-bottom: 20px;
 }
 .section-heading {
@@ -533,12 +546,9 @@ main {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 9px;
-  padding: 21px;
+  padding: var(--card-padding-compact);
   color: var(--text);
   position: relative;
-}
-.goal-card:hover {
-  border-color: var(--line);
 }
 .goal-card.chosen {
   border: 2px solid var(--line);
@@ -1148,10 +1158,13 @@ body {
   background: #0f0f14;
 }
 main {
+  /* Steel major rails and fine milled grid, outside opaque reading cards. */
   background-image:
-    linear-gradient(rgba(0, 240, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 240, 255, 0.025) 1px, transparent 1px);
-  background-size: 40px 40px;
+    linear-gradient(rgba(210, 225, 238, 0.12) 0 1px, rgba(210, 225, 238, 0.035) 1px 2px, transparent 2px),
+    linear-gradient(90deg, rgba(210, 225, 238, 0.12) 0 1px, rgba(210, 225, 238, 0.035) 1px 2px, transparent 2px),
+    linear-gradient(rgba(181, 198, 214, 0.035) 0 1px, transparent 1px),
+    linear-gradient(90deg, rgba(181, 198, 214, 0.035) 0 1px, transparent 1px);
+  background-size: 192px 192px, 192px 192px, 48px 48px, 48px 48px;
 }
 p,
 .intro,
@@ -1183,19 +1196,50 @@ nav button[aria-current="page"] {
   background: rgba(0, 240, 255, 0.09);
   box-shadow: inset 3px 0 var(--cyan);
 }
-.panel,
-.stat,
-.module-card {
-  background: linear-gradient(
-    135deg,
-    rgba(21, 21, 30, 0.98),
-    rgba(15, 15, 20, 0.98)
-  );
-  border-color: var(--line);
+:is(.panel, .stat, .module-card, .goal-card, .board-card, .hero) {
+  border: 1px solid transparent;
+  border-radius: var(--card-radius);
+  background:
+    var(--card-sheen) padding-box,
+    var(--card-brush) padding-box,
+    var(--card-fill) padding-box,
+    var(--chrome-edge) border-box;
+  box-shadow: var(--card-bevel), var(--card-shadow);
 }
 .hero {
-  background: linear-gradient(120deg, #111622, #15151e);
-  border: 1px solid #29404a;
+  --card-fill: linear-gradient(120deg, #15232d, #101218);
+}
+.sidebar {
+  border-right-color: var(--steel-line);
+}
+.topbar {
+  border-bottom-color: var(--steel-line);
+  box-shadow: inset 0 -1px 0 rgba(224, 236, 246, 0.06);
+}
+/* Only actual controls receive hover feedback; reading cards stay stationary. */
+:is(button.goal-card, button.board-card) {
+  transition: border-color var(--interaction-duration) ease, box-shadow var(--interaction-duration) ease;
+}
+:is(button.goal-card, button.board-card):not(:disabled):not(.chosen):not(.selected):hover {
+  border-color: var(--steel-line);
+  box-shadow: var(--card-bevel), 0 0 0 1px rgba(190, 213, 230, 0.12), var(--card-shadow);
+}
+:is(button.goal-card, button.board-card):focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 4px;
+}
+.goal-card.chosen,
+.board-card.selected {
+  border: 1px solid var(--cyan);
+  background:
+    var(--card-sheen) padding-box,
+    var(--card-brush) padding-box,
+    var(--card-fill) padding-box,
+    var(--chrome-edge) border-box;
+  box-shadow: var(--card-bevel), inset 3px 0 var(--cyan), var(--card-shadow);
+}
+.board-card.selected {
+  padding: 14px;
 }
 .hero h2 {
   font-family: "Segoe UI", system-ui, sans-serif;
@@ -1318,6 +1362,9 @@ textarea {
   margin-bottom: 8px;
 }
 .financial-chart {
+  /* Flat plot surface: no decorative machining behind data marks. */
+  background: var(--chart-surface);
+  border-radius: 6px;
   width: 100%;
   height: auto;
   display: block;
