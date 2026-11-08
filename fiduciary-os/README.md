@@ -3,7 +3,7 @@
 The code for Fiduciary OS: a planning platform with free tools for households and a white-label workspace for financial advisors. For the business plan, value flow, and go-to-market gates, start at the [repository README](../README.md).
 
 > [!NOTE]
-> Only the **backend API** is implemented. The frontend, Docker images, Kubernetes manifests, and Terraform described in the architecture docs are not in this repository yet.
+> The **backend API prototype** and a new **interactive frontend preview** are implemented. The frontend uses sample data in memory and does not call the backend. Docker images, Kubernetes manifests, and Terraform remain unimplemented.
 
 ---
 
@@ -32,12 +32,22 @@ The code for Fiduciary OS: a planning platform with free tools for households an
 | Auth | bcrypt + JWT access/refresh tokens | Firm/advisor/household tenancy, MFA, SSO |
 | Realtime | Socket.io | same |
 | AI | Anthropic and Moonshot Kimi behind `services/aiGateway.ts`: guardrails, disclosures, PII stripping, `ai_interactions` log, CI tests + promptfoo evals | Human review workflow on top of the log |
-| Frontend | — | React, TypeScript, Tailwind ([recommended stack](../VALUE_FLOW_AND_REPO_ROADMAP.md#1-experience--aesthetics)) |
+| Frontend | React + TypeScript + Vite; responsive sample decision workspace | Backend integration, household/firm access, durable decision records |
 | CI | GitHub Actions: type-check, test, build ([workflow](../.github/workflows/backend-ci.yml)) | + frontend, images, deploy |
 
 ---
 
-## Quick start
+## Frontend preview
+
+```bash
+cd frontend
+npm ci                     # Node 22.22.2+
+npm run dev
+```
+
+Read [frontend/README.md](frontend/README.md) for tests, implemented flows, and limitations. All sample actions and authorizations reset on reload; no real account or document access is implemented.
+
+## Backend quick start
 
 ```bash
 cd backend
@@ -50,10 +60,11 @@ npm run dev                 # http://localhost:3001  ·  health: /health
 Tests:
 
 ```bash
+DATABASE_URL=file:./test.db npx prisma migrate deploy
 DATABASE_URL=file:./test.db JWT_SECRET=test npx jest --runInBand
 ```
 
-The `Makefile` and `docker-compose.yml` still reference `frontend/` and `infra/`; only the `*-backend` and `db-*` targets work today.
+Frontend `dev-frontend`, `test-frontend`, `type-check`, and `build-frontend` Makefile targets now work. Docker/infra, lint, format, and browser-e2e targets still need updates; no deployment is configured.
 
 ---
 
