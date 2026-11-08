@@ -10,7 +10,8 @@
     "type-check": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "export-preview": "node scripts/export-preview.mjs"
+    "export-preview": "node scripts/export-preview.mjs",
+    "lint:styles": "node --test scripts/check-chrome-styles.mjs"
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
