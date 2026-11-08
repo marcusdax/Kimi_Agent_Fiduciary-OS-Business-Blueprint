@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, type KeyboardEvent } from "react";
 import ConnectedWorkspace from "./ConnectedWorkspace";
 import {
   ArrowRight,
@@ -25,6 +25,32 @@ import {
   type Action,
   type Stage,
 } from "./workflow";
+// Native focus enters the scroll region; explicit keys make horizontal access
+// predictable without trapping Tab or intercepting future child controls.
+function scrollComparison(event: KeyboardEvent<HTMLDivElement>) {
+  if (event.target !== event.currentTarget) return;
+  const region = event.currentTarget;
+  const end = Math.max(0, region.scrollWidth - region.clientWidth);
+  let position: number;
+  switch (event.key) {
+    case "ArrowRight":
+      position = Math.min(end, region.scrollLeft + 80);
+      break;
+    case "ArrowLeft":
+      position = Math.max(0, region.scrollLeft - 80);
+      break;
+    case "Home":
+      position = 0;
+      break;
+    case "End":
+      position = end;
+      break;
+    default:
+      return;
+  }
+  event.preventDefault();
+  region.scrollLeft = position;
+}
 const navigation = [
   { label: "Overview", icon: LayoutDashboard },
   { label: "My plan", icon: Compass },
@@ -448,50 +474,64 @@ export default function App() {
                   </p>
                 ) : (
                   comparison && (
-                    <div className="table-wrap">
-                      <table>
-                        <caption>
-                          Illustrative comparison: a longer horizon spreads the
-                          same savings over more years.
-                        </caption>
-                        <thead>
-                          <tr>
-                            <th scope="col">Scenario</th>
-                            <th scope="col">Horizon</th>
-                            <th scope="col">Annual portfolio draw</th>
-                            <th scope="col">Annual spending gap</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {[
-                            Number(years),
-                            Number(years) > 55
-                              ? Number(years) - 5
-                              : Number(years) + 5,
-                          ].map((n) => {
-                            const c = compareIncome(
-                              Number(assets),
-                              Number(spending),
-                              Math.min(n, 60),
-                            );
-                            return (
-                              <tr key={n}>
-                                <th scope="row">
-                                  {n === Number(years)
-                                    ? "Your example"
-                                    : Number(years) > 55
-                                      ? "Shorter horizon"
-                                      : "Longer horizon"}
-                                </th>
-                                <td>{Math.min(n, 60)} years</td>
-                                <td>{money(c.annualDraw)}</td>
-                                <td>{money(c.annualGap)}</td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
+                    <>
+                      <p className="scroll-help" id="comparison-scroll-help">
+                        If columns extend beyond the screen, focus the
+                        comparison and use Left/Right arrow keys to scroll.
+                        Home/End move to the first/last column.
+                      </p>
+                      <div
+                        className="table-wrap"
+                        role="region"
+                        aria-label="Illustrative planning comparison"
+                        aria-describedby="comparison-scroll-help"
+                        tabIndex={0}
+                        onKeyDown={scrollComparison}
+                      >
+                        <table>
+                          <caption>
+                            Illustrative comparison: a longer horizon spreads
+                            the same savings over more years.
+                          </caption>
+                          <thead>
+                            <tr>
+                              <th scope="col">Scenario</th>
+                              <th scope="col">Horizon</th>
+                              <th scope="col">Annual portfolio draw</th>
+                              <th scope="col">Annual spending gap</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {[
+                              Number(years),
+                              Number(years) > 55
+                                ? Number(years) - 5
+                                : Number(years) + 5,
+                            ].map((n) => {
+                              const c = compareIncome(
+                                Number(assets),
+                                Number(spending),
+                                Math.min(n, 60),
+                              );
+                              return (
+                                <tr key={n}>
+                                  <th scope="row">
+                                    {n === Number(years)
+                                      ? "Your example"
+                                      : Number(years) > 55
+                                        ? "Shorter horizon"
+                                        : "Longer horizon"}
+                                  </th>
+                                  <td>{Math.min(n, 60)} years</td>
+                                  <td>{money(c.annualDraw)}</td>
+                                  <td>{money(c.annualGap)}</td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    </>
                   )
                 )}
                 <details open>

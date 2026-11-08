@@ -31,7 +31,7 @@ After building, `npm run export-preview` writes `dist/fiduciary-os-preview.html`
 - Six sections: Overview, My plan, Compare choices, Next steps, Documents, and Planning team.
 - Responsive ink/ivory/teal identity, goal-led overview, clear example-data boundaries, progressive detail, and plain-language actions.
 - Household/planning-team audience switch for previewing content only. **It is not access control.**
-- Illustrative income comparison with transparent arithmetic, an accessible table, and validation. No taxes, inflation, returns, sustainable-withdrawal analysis, or product recommendations.
+- Illustrative income comparison with transparent arithmetic, an accessible table, and validation. Its named, focusable horizontal scroll region has visible keyboard help: Left/Right scroll, Home/End reach either edge, and Tab leaves normally. The header stacks below 420 CSS pixels. Browser confirmation of these responsive fixes is tracked separately from jsdom keyboard-handler tests. No taxes, inflation, returns, sustainable-withdrawal analysis, or product recommendations.
 - Sample board and saved workspace are deliberately separate. Sample cards are never imported automatically.
 - Compare choices can create a new, unapproved sample discussion containing a fixed copy of that example's portfolio, annual spending, horizon and computed results. Later input edits do not change that record or carry its demo authorization into a new discussion. These snapshots stay in memory and are never saved to the API.
 - Review-date changes append sample history without reopening completed actions, changing authorization, or scheduling reminders.

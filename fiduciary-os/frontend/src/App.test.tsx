@@ -213,3 +213,40 @@ describe("sample snapshot carry-forward", () => {
     ).toBeVisible();
   });
 });
+
+it("exposes a named comparison scroll region in the tab order and reaches the last column with End without trapping Tab", async () => {
+  const user = userEvent.setup();
+  render(<App />);
+  await user.click(screen.getByRole("button", { name: "Compare choices" }));
+  const region = screen.getByRole("region", {
+    name: "Illustrative planning comparison",
+  });
+  expect(region).toHaveAttribute("aria-describedby", "comparison-scroll-help");
+  expect(region).toHaveAccessibleDescription(/Left\/Right arrow keys/);
+  screen.getByLabelText("Planning horizon (years)").focus();
+  await user.tab();
+  expect(region).toHaveFocus();
+  // jsdom does not lay out CSS. Model dimensions only to test the keyboard
+  // handler; actual viewport reachability requires the offline browser check.
+  Object.defineProperties(region, {
+    clientWidth: { value: 250 },
+    scrollWidth: { value: 510 },
+  });
+  await user.keyboard("{ArrowRight}");
+  expect(region.scrollLeft).toBe(80);
+  await user.keyboard("{End}");
+  expect(region.scrollLeft).toBe(260);
+  await user.keyboard("{ArrowRight}");
+  expect(region.scrollLeft).toBe(260);
+  await user.keyboard("{ArrowLeft}");
+  expect(region.scrollLeft).toBe(180);
+  await user.keyboard("{Home}{ArrowLeft}");
+  expect(region.scrollLeft).toBe(0);
+  expect(
+    within(region).getByRole("columnheader", { name: "Annual spending gap" }),
+  ).toBeInTheDocument();
+  await user.tab();
+  expect(
+    screen.getByText("Assumptions, method, and limitations"),
+  ).toHaveFocus();
+});
