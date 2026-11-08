@@ -1,0 +1,2 @@
+CREATE TABLE "ToolScenario" ("id" TEXT NOT NULL PRIMARY KEY, "userId" TEXT NOT NULL, "kind" TEXT NOT NULL, "inputs" TEXT NOT NULL, "version" INTEGER NOT NULL DEFAULT 1, "updatedAt" DATETIME NOT NULL, CONSTRAINT "ToolScenario_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users" ("id") ON DELETE CASCADE ON UPDATE CASCADE);
+CREATE UNIQUE INDEX "ToolScenario_userId_kind_key" ON "ToolScenario"("userId", "kind");
