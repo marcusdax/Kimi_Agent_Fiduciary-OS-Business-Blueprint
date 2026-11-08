@@ -1,6 +1,7 @@
 import express, { json } from 'express';
 import request from 'supertest';
 
+import { prisma } from '../../src/config/database';
 import { errorHandler } from '../../src/middleware/errorHandler';
 import { authRouter } from '../../src/routes/auth';
 import { toolsRouter } from '../../src/routes/tools';
@@ -118,6 +119,26 @@ describe('Blueprint scenarios', () => {
       .send({ version: 0, inputs });
     expect(save.status).toBe(200);
     expect(save.body.version).toBe(1);
+    expect(save.body.replayStatus).toBe('saved-snapshot');
+    const replay = (await request(app).get('/tools/scenarios').auth(a, { type: 'bearer' })).body[0];
+    expect(replay.result).toEqual(save.body.result);
+    expect(replay.result.methodVersion).toBe('blueprint-educational-v1');
+    // An archived output must not be overwritten by the current engine at read time.
+    const historical = {
+      ...save.body.result,
+      methodVersion: 'archived-test-method-v0',
+      calculatedAt: '2026-01-01T00:00:00.000Z',
+    };
+    await prisma.toolScenario.updateMany({
+      data: { methodVersion: historical.methodVersion, resultSnapshot: JSON.stringify(historical) },
+    });
+    expect(
+      (await request(app).get('/tools/scenarios').auth(a, { type: 'bearer' })).body[0].result
+    ).toEqual(historical);
+    await prisma.toolScenario.updateMany({ data: { methodVersion: null, resultSnapshot: null } });
+    expect(
+      (await request(app).get('/tools/scenarios').auth(a, { type: 'bearer' })).body[0].replayStatus
+    ).toBe('legacy-recalculated');
     expect((await request(app).get('/tools/scenarios').auth(b, { type: 'bearer' })).body).toEqual(
       []
     );

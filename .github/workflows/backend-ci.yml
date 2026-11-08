@@ -1,7 +1,6 @@
 name: CI
 
-# Backend pipeline; the frontend has its own workflow. Dockerfiles and infra/
-# referenced in older docs are not in this repository yet.
+# Backend pipeline; the frontend has its own workflow.
 # Lives at the repo root because GitHub only runs workflows from /.github/;
 # the old fiduciary-os/.github/workflows/ci.yml never executed.
 
@@ -9,6 +8,9 @@ on:
   push:
     branches: [main]
   pull_request:
+
+permissions:
+  contents: read
 
 jobs:
   backend:
@@ -21,10 +23,10 @@ jobs:
       JWT_SECRET: ci-test-secret
       BCRYPT_ROUNDS: '4'
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # verified v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # verified v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: npm
           cache-dependency-path: fiduciary-os/backend/package-lock.json
       - run: npm ci
@@ -33,6 +35,11 @@ jobs:
       - run: npx prisma migrate deploy
       - run: npx jest --runInBand --coverage
       - run: npm run build
+      - run: npm run lint:security
+      - run: node ../scripts/backup-restore-drill.mjs
+      - run: npm audit --omit=dev
+      - run: npm sbom --omit=dev --sbom-format=cyclonedx > /tmp/fiduciary-backend-runtime-sbom.json
+      - run: docker build -t fiduciary-api-release-check .
       # New planning endpoints/tests must pass strict lint.
       - name: Planning API lint (blocking)
         run: npm run lint:planning

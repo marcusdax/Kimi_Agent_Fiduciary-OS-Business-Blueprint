@@ -1,5 +1,5 @@
 import BlueprintTools from "./BlueprintTools";
-import { useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { api, ApiError } from "./planning-api";
 
 type Balances = {
@@ -78,7 +78,10 @@ function checked(value: unknown): Plan | null {
     throw new Error("Invalid plan response. Reload before saving.");
   return p;
 }
-export default function FinancialWorkspace() {
+export default function FinancialWorkspace({
+  requestedTool,
+  toolRequestId,
+}: { requestedTool?: string; toolRequestId?: number } = {}) {
   const [token, setToken] = useState<string | null>(null);
   const [register, setRegister] = useState(false);
   const [name, setName] = useState("");
@@ -94,7 +97,7 @@ export default function FinancialWorkspace() {
   const uncertain = useRef(false);
   const dirty = plan
     ? JSON.stringify(draft) !== JSON.stringify(plan.inputs)
-    : true;
+    : JSON.stringify(draft) !== JSON.stringify(blank());
   function clearSession() {
     setToken(null);
     setPlan(null);
@@ -104,6 +107,25 @@ export default function FinancialWorkspace() {
     setName("");
     uncertain.current = false;
     setBlocked(false);
+  }
+  async function revokeSessions(all = false) {
+    setBusy(true);
+    try {
+      await api(all ? "/auth/logout-all" : "/auth/logout", token!, "POST");
+      clearSession();
+      setStatus(
+        all
+          ? "All server sessions revoked and local session cleared."
+          : "Server session revoked and local session cleared.",
+      );
+    } catch {
+      clearSession();
+      setStatus(
+        "Local session cleared; server revocation was not confirmed. Sign in again to revoke all sessions.",
+      );
+    } finally {
+      setBusy(false);
+    }
   }
   async function work(fn: () => Promise<void>, mutation = false) {
     if (inFlight.current || (mutation && uncertain.current)) return;
@@ -128,6 +150,28 @@ export default function FinancialWorkspace() {
       setBusy(false);
     }
   }
+  useEffect(() => {
+    const guard = (event: Event) => {
+      if (token && (dirty || blocked || busy)) {
+        event.preventDefault();
+        setStatus(
+          "Save or discard pending plan changes before navigating tools.",
+        );
+      }
+    };
+    const unload = (event: BeforeUnloadEvent) => {
+      if (token && (dirty || blocked || busy)) {
+        event.preventDefault();
+        event.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", unload);
+    window.addEventListener("fiduciary:tool-navigation", guard);
+    return () => {
+      window.removeEventListener("fiduciary:tool-navigation", guard);
+      window.removeEventListener("beforeunload", unload);
+    };
+  }, [dirty, blocked, busy, token]);
   async function load(current = token) {
     const saved = checked(await api<unknown>("/financial-plan", current));
     setPlan(saved);
@@ -308,21 +352,21 @@ export default function FinancialWorkspace() {
         </section>
       ) : (
         <>
-          <BlueprintTools key={token} token={token} />
+          <BlueprintTools
+            key={token}
+            token={token}
+            requestedTool={requestedTool}
+            toolRequestId={toolRequestId}
+          />
           <div className="financial-toolbar">
             <button disabled={busy} onClick={() => void work(() => load())}>
               Reload saved plan (discard edits)
             </button>
-            <button
-              disabled={busy}
-              onClick={() => {
-                clearSession();
-                setStatus(
-                  "Local session cleared. Existing tokens expire within 15 minutes; server-side revocation remains a production requirement.",
-                );
-              }}
-            >
+            <button disabled={busy} onClick={() => void revokeSessions()}>
               Clear local session
+            </button>
+            <button disabled={busy} onClick={() => void revokeSessions(true)}>
+              Sign out all sessions
             </button>
           </div>
           {blocked && (

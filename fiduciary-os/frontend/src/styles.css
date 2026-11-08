@@ -1463,3 +1463,18 @@ textarea {
 .observation a { overflow-wrap: anywhere; }
 .blueprint-tools .table-wrap { overflow: auto; max-width: 100%; }
 .blueprint-tools table { width: 100%; }
+
+/* Tool discovery uses the existing chrome system, native modal focus/inertness. */
+.tools-trigger { min-height: 44px; }
+.tools-dialog { color: var(--text); background: var(--bg); border: 1px solid var(--steel-line); border-radius: var(--card-radius); padding: 24px; width: min(680px, calc(100% - 32px)); max-height: 85dvh; overflow: auto; }
+.tools-dialog::backdrop { background: rgb(0 0 0 / 65%); }
+.tools-dialog label { display: block; margin: 12px 0 8px; }
+.tools-dialog input:not([type=checkbox]) { width: 100%; }
+.tools-dialog input[type=checkbox] { width: auto; margin-right: 8px; }
+.tools-dialog li { margin: 12px 0; }
+.tools-dialog li span { display: block; font-size: 12px; color: var(--muted); }
+.tools-dialog button { min-height: 44px; white-space: normal; text-align: left; }
+.under-hood { margin: 16px 0; border-top: 1px solid var(--steel-line); padding-top: 12px; }
+.under-hood summary { cursor: pointer; min-height: 44px; }
+.under-hood pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px; }
+@media(max-width:640px) { .tools-dialog { padding: 16px; } }

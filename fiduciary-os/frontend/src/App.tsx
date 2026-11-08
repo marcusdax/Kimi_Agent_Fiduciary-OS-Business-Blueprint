@@ -1,3 +1,4 @@
+import ToolDiscovery from "./ToolDiscovery";
 import { useRef, useState, type KeyboardEvent } from "react";
 import FinancialWorkspace from "./FinancialWorkspace";
 import ConnectedWorkspace from "./ConnectedWorkspace";
@@ -93,6 +94,8 @@ export default function App() {
   const offline = location.protocol === "file:";
   const [savedMode, setSavedMode] = useState(false);
   const [page, setPage] = useState("Overview");
+  const [requestedTool, setRequestedTool] = useState<string | undefined>();
+  const [toolRequestId, setToolRequestId] = useState(0);
   const [audience, setAudience] = useState("Household");
   const [actions, setActions] = useState<Action[]>(() =>
     structuredClone(sampleActions),
@@ -110,6 +113,17 @@ export default function App() {
   const active = actions.find((a) => a.id === selected)!;
   const open = actions.filter((a) => a.stage !== "Verified complete").length;
   function navigate(to: string) {
+    if (to === page) return;
+    if (
+      !window.dispatchEvent(
+        new Event("fiduciary:tool-navigation", { cancelable: true }),
+      )
+    ) {
+      setNotice(
+        "Resolve unsaved or uncertain changes before leaving this workspace.",
+      );
+      return;
+    }
     setPage(to);
     setTimeout(() => titleRef.current?.focus(), 0);
   }
@@ -208,6 +222,20 @@ export default function App() {
           <span className="breadcrumb">
             Workspace <ChevronRight size={14} /> {page}
           </span>
+          <ToolDiscovery
+            onSelect={(key) => {
+              if (
+                !window.dispatchEvent(
+                  new Event("fiduciary:tool-navigation", { cancelable: true }),
+                )
+              )
+                return false;
+              setRequestedTool(key);
+              setToolRequestId((n) => n + 1);
+              navigate("Financial workspace");
+              return true;
+            }}
+          />
           <div className="view-picker">
             <label htmlFor="view">View as</label>
             <select
@@ -412,7 +440,10 @@ export default function App() {
                 offline exports cannot save financial data.
               </p>
             ) : (
-              <FinancialWorkspace />
+              <FinancialWorkspace
+                requestedTool={requestedTool}
+                toolRequestId={toolRequestId}
+              />
             ))}
           {page === "My plan" && (
             <section className="panel">

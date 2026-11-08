@@ -30,6 +30,37 @@ const response = (data: unknown, status = 200) =>
   });
 afterEach(() => vi.unstubAllGlobals());
 describe("Blueprint tools", () => {
+  it("resolves requested tools after catalog load and repeats a specific tool request", async () => {
+    const extended = {
+      ...catalog,
+      tax: { title: "Tax fixture", note: "Synthetic catalog", fields: [] },
+    };
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) =>
+        url.endsWith("/catalog") ? response(extended) : response([scenario]),
+      ),
+    );
+    const view = render(
+      <BlueprintTools
+        token="synthetic-token"
+        requestedTool="tax"
+        toolRequestId={1}
+      />,
+    );
+    await screen.findByRole("heading", { name: "Tax fixture" });
+    fireEvent.click(screen.getByRole("button", { name: "Profile & goals" }));
+    await screen.findByRole("heading", { name: "Profile & goals" });
+    view.rerender(
+      <BlueprintTools
+        token="synthetic-token"
+        requestedTool="tax"
+        toolRequestId={2}
+      />,
+    );
+    await screen.findByRole("heading", { name: "Tax fixture" });
+  });
+
   it("loads saved sources, preserves confirmed charts and saves expected version", async () => {
     const fetcher = vi.fn(async (url: string, options?: RequestInit) =>
       url.endsWith("/catalog")

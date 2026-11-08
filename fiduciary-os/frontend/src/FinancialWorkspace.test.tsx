@@ -69,6 +69,39 @@ async function login() {
 }
 afterEach(() => vi.unstubAllGlobals());
 describe("financial workspace", () => {
+  it("allows untouched navigation and blocks dirty plan navigation/reload", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValueOnce(response({ accessToken: "test" }))
+        .mockResolvedValueOnce(response(plan)),
+    );
+    render(<FinancialWorkspace />);
+    expect(
+      window.dispatchEvent(
+        new Event("fiduciary:tool-navigation", { cancelable: true }),
+      ),
+    ).toBe(true);
+    await login();
+    expect(
+      window.dispatchEvent(
+        new Event("fiduciary:tool-navigation", { cancelable: true }),
+      ),
+    ).toBe(true);
+    fireEvent.change(screen.getByLabelText("Plan name"), {
+      target: { value: "Changed fixture" },
+    });
+    expect(
+      window.dispatchEvent(
+        new Event("fiduciary:tool-navigation", { cancelable: true }),
+      ),
+    ).toBe(false);
+    const reload = new Event("beforeunload", { cancelable: true });
+    expect(window.dispatchEvent(reload)).toBe(false);
+    expect(screen.getByLabelText("Plan name")).toHaveValue("Changed fixture");
+  });
+
   it("shows manual-data boundaries, saved allocation, accessible chart and exact table", async () => {
     vi.stubGlobal(
       "fetch",
@@ -143,22 +176,26 @@ describe("financial workspace", () => {
     expect(fetcher).toHaveBeenCalledTimes(4);
     expect(screen.getByText(/Saved v2/)).toBeInTheDocument();
   });
-  it("clears private saved data when local session is cleared", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi
-        .fn()
-        .mockResolvedValueOnce(response({ accessToken: "test" }))
-        .mockResolvedValueOnce(response(plan)),
-    );
-    render(<FinancialWorkspace />);
-    await login();
-    fireEvent.click(
-      screen.getByRole("button", { name: "Clear local session" }),
-    );
-    expect(
-      screen.queryByRole("img", { name: /Saved financial plan balances/ }),
-    ).not.toBeInTheDocument();
-    expect(screen.getByLabelText("Email")).toHaveValue("");
-  });
+  it.each(["Clear local session", "Sign out all sessions"])(
+    "revokes and clears private saved data using %s",
+    async (action) => {
+      vi.stubGlobal(
+        "fetch",
+        vi
+          .fn()
+          .mockResolvedValueOnce(response({ accessToken: "test" }))
+          .mockResolvedValueOnce(response(plan))
+          .mockResolvedValueOnce(response({ message: "Session revoked" })),
+      );
+      render(<FinancialWorkspace />);
+      await login();
+      fireEvent.click(screen.getByRole("button", { name: action }));
+      await waitFor(() =>
+        expect(screen.getByLabelText("Email")).toHaveValue(""),
+      );
+      expect(
+        screen.queryByRole("img", { name: /Saved financial plan balances/ }),
+      ).not.toBeInTheDocument();
+    },
+  );
 });

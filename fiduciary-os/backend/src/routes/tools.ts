@@ -16,6 +16,8 @@ function serialize(p: {
   inputs: string;
   version: number;
   updatedAt: Date;
+  methodVersion: string | null;
+  resultSnapshot: string | null;
 }) {
   const inputs = JSON.parse(p.inputs);
   return {
@@ -24,7 +26,11 @@ function serialize(p: {
     version: p.version,
     updatedAt: p.updatedAt,
     inputs,
-    result: calculate(p.kind as ToolKind, inputs),
+    result: p.resultSnapshot ? JSON.parse(p.resultSnapshot) : calculate(p.kind as ToolKind, inputs),
+    replayStatus: p.resultSnapshot ? 'saved-snapshot' : 'legacy-recalculated',
+    methodVersion: p.methodVersion ?? 'blueprint-educational-v1',
+    roundingPolicy:
+      'IEEE-754 double; outputs Math.round(x*100)/100; balances carry unrounded doubles; tax totals rounded to cents before incremental difference',
   };
 }
 router.get('/catalog', (_req, res) => res.json(catalog));
@@ -57,7 +63,10 @@ router.put('/scenarios/:kind', async (req, res, next) => {
     return;
   }
   const scenario = inputSchema(kind.data).safeParse(body.data.inputs);
-  if (!scenario.success) { next(new AppError(400, 'Invalid scenario fields, source or date.')); return; }
+  if (!scenario.success) {
+    next(new AppError(400, 'Invalid scenario fields, source or date.'));
+    return;
+  }
   try {
     calculate(kind.data, scenario.data);
   } catch {
@@ -71,6 +80,11 @@ router.put('/scenarios/:kind', async (req, res, next) => {
   }
   try {
     const userId = req.user!.userId;
+    const result = calculate(kind.data, scenario.data);
+    const snapshot = {
+      methodVersion: result.methodVersion,
+      resultSnapshot: JSON.stringify({ ...result, calculatedAt: new Date().toISOString() }),
+    };
     const saved = await prisma.$transaction(async tx => {
       const existing = await tx.toolScenario.findUnique({
         where: { userId_kind: { userId, kind: kind.data } },
@@ -79,12 +93,12 @@ router.put('/scenarios/:kind', async (req, res, next) => {
         if (body.data.version !== 0)
           throw new AppError(409, 'Scenario changed. Reload before saving.');
         return tx.toolScenario.create({
-          data: { userId, kind: kind.data, inputs: JSON.stringify(scenario.data) },
+          data: { userId, kind: kind.data, inputs: JSON.stringify(scenario.data), ...snapshot },
         });
       }
       const updated = await tx.toolScenario.updateMany({
         where: { id: existing.id, userId, version: body.data.version },
-        data: { inputs: JSON.stringify(scenario.data), version: { increment: 1 } },
+        data: { inputs: JSON.stringify(scenario.data), version: { increment: 1 }, ...snapshot },
       });
       if (updated.count !== 1) throw new AppError(409, 'Scenario changed. Reload before saving.');
       return tx.toolScenario.findUniqueOrThrow({ where: { id: existing.id } });

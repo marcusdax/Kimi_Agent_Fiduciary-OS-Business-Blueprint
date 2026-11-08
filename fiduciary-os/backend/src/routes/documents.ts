@@ -1,8 +1,9 @@
 import { Router } from 'express';
 import type { Request, Response, NextFunction } from 'express';
+
+import { prisma } from '../config/database';
 import { authenticateToken } from '../middleware/auth';
 import { AppError } from '../middleware/errorHandler';
-import { prisma } from '../config/database';
 
 const router = Router();
 
@@ -48,52 +49,12 @@ router.get('/:id', authenticateToken, async (req: Request, res: Response, next: 
   }
 });
 
-// Upload document (placeholder - would integrate with S3/MinIO)
-router.post('/', authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    // TODO: Implement actual file upload to S3/MinIO
-    // For now, just create a placeholder record
-    const document = await prisma.document.create({
-      data: {
-        userId: req.user!.userId,
-        name: req.body.name || 'unnamed.pdf',
-        type: req.body.type || 'application/pdf',
-        size: req.body.size || 0,
-        path: '/placeholder/path',
-        encrypted: true,
-      },
-    });
-
-    res.status(201).json(document);
-  } catch (error) {
-    next(error);
-  }
-});
-
-// Delete document
-router.delete('/:id', authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const document = await prisma.document.findFirst({
-      where: {
-        id: req.params.id,
-        userId: req.user!.userId,
-      },
-    });
-
-    if (!document) {
-      throw new AppError(404, 'Document not found');
-    }
-
-    // TODO: Delete from S3/MinIO
-
-    await prisma.document.delete({
-      where: { id: req.params.id },
-    });
-
-    res.json({ message: 'Document deleted successfully' });
-  } catch (error) {
-    next(error);
-  }
-});
+// Never create placeholder records or claim that unavailable storage encrypted a file.
+router.post('/', authenticateToken, (_req: Request, _res: Response, next: NextFunction) =>
+  next(new AppError(503, 'Document vault storage is not configured; no file was stored'))
+);
+router.delete('/:id', authenticateToken, (_req: Request, _res: Response, next: NextFunction) =>
+  next(new AppError(503, 'Document vault storage is not configured; no file was deleted'))
+);
 
 export { router as documentsRouter };

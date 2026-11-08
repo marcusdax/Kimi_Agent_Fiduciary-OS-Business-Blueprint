@@ -25,6 +25,7 @@ model User {
   planningActions PlanningAction[]
   financialPlan FinancialPlan?
   toolScenarios ToolScenario[]
+  authSessions AuthSession[]
 
   @@map("users")
 }
@@ -185,6 +186,8 @@ model FinancialPlan {
 }
 
 model ToolScenario {
+  methodVersion String?
+  resultSnapshot String?
   id String @id @default(cuid())
   userId String
   kind String
@@ -193,4 +196,23 @@ model ToolScenario {
   updatedAt DateTime @updatedAt
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@unique([userId, kind])
+}
+
+model AuthSession {
+  id String @id
+  userId String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  revokedAt DateTime?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshTokens SessionRefresh[]
+  @@index([userId])
+}
+model SessionRefresh {
+  digest String @id
+  sessionId String
+  expiresAt DateTime
+  usedAt DateTime?
+  session AuthSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  @@index([sessionId])
 }

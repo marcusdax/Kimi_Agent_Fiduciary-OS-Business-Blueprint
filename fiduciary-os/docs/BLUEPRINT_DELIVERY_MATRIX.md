@@ -49,3 +49,11 @@ API: 79 tests / 8 suites; frontend: 58 tests / 6 files; six chrome/style checks;
 Final local real-HTTP acceptance saved all ten modules, verified source/method/version, rejected stale writes and unauthenticated access, checked cross-owner isolation and re-login persistence, then reran the earlier financial-plan acceptance. Actual providers returned five fresh quotes (03:18:59 CST), 31 BTC historical points (latest 03:17:40 CST) and 12 monthly Treasury observations (latest reported date 2026-10-31). Date-only Treasury observations are never shifted across time zones. Synthetic test accounts only; no credentials logged.
 
 Sandbox deploy/health/provider checks are separate release gates, not implied by this local evidence. Authenticated visual/mobile/keyboard/assistive-technology browser review is still required.
+
+## Follow-up: tool discovery and security release gates (November 8, 2026 CST)
+
+The same ten implemented tools are now reachable through a labeled grouped/searchable **Tools** dialog with synonyms and contextual **Under the hood**. Research/unavailable entries require explicit opt-in and cannot launch fake engines. Main navigation and reload warnings preserve dirty/uncertain drafts; primary dashboard and chrome surfaces remain. No unported HTML family above is relabeled complete.
+
+Fresh saves additionally persist `methodVersion` and exact `resultSnapshot`/calculation timestamp; legacy null rows say `legacy-recalculated`. Public quote valuations are separately refreshed observations, not historical price snapshots. Tax schedule totals round to cents before the incremental difference; other balances carry IEEE754 doubles without intermediate cent rounding. Output rounding uses `Math.round(x*100)/100`. No signed immutable audit-trail claim.
+
+Identity now uses server-checked persisted session families, one-use refresh/reuse revocation, authenticated logout/logout-all; old stateless tokens require re-login. Unconfigured MFA/reset/email delivery return503. Legacy document placeholder writes/deletes return503. Unused sockets are not mounted. See [all thirteen finding states, compatibility and release gates](RELEASE_GATES_20261108.md) and [truthful investor demo runbook](INVESTOR_DEMO_RUNBOOK.md). A new PR/local run does not establish deployed or customer-production readiness.

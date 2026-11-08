@@ -49,7 +49,7 @@ coverage/
 dump.rdb
 
 # Docker
-.dockerignore
+# Service .dockerignore files are versioned build-context security controls.
 
 # Terraform
 .terraform/
