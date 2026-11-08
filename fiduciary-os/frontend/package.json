@@ -9,7 +9,8 @@
     "preview": "vite preview --host 0.0.0.0",
     "type-check": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "export-preview": "node scripts/export-preview.mjs"
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0"

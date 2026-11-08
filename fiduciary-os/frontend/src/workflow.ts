@@ -13,6 +13,7 @@ export type Action = {
   outcome: string;
   owner: string;
   stage: Stage;
+  authorized: boolean;
   source: string;
   assumptions: string;
   alternatives: string;
@@ -24,8 +25,8 @@ export type Action = {
 export const sampleActions: Action[] = [
   {
     id: "income",
-    title: "Compare retirement dates",
-    outcome: "Understand how timing changes the income gap.",
+    title: "Compare planning horizons",
+    outcome: "See how the assumed horizon changes a simple annual draw.",
     owner: "You and your planning team",
     stage: "Analyze choices",
     source: "Illustrative household estimates; not verified",
@@ -37,6 +38,7 @@ export const sampleActions: Action[] = [
       "No product has been selected. Any future fees and conflicts need separate disclosure.",
     reviewDate: "",
     evidence: "",
+    authorized: false,
     history: [
       "Example record created; no client recommendation or authorization exists.",
     ],
@@ -55,6 +57,7 @@ export const sampleActions: Action[] = [
       "Premiums, exclusions, surrender charges, and compensation are not yet known.",
     reviewDate: "",
     evidence: "",
+    authorized: false,
     history: ["Example record created."],
   },
   {
@@ -71,13 +74,13 @@ export const sampleActions: Action[] = [
     costs: "Legal fees and tax consequences require professional review.",
     reviewDate: "",
     evidence: "",
+    authorized: false,
     history: ["Example checklist prepared; not legal advice."],
   },
 ];
 export function transition(
   action: Action,
   target: Stage,
-  confirmation: boolean,
   evidence: string,
 ): Action {
   const current = stages.indexOf(action.stage);
@@ -86,9 +89,9 @@ export function transition(
     throw new Error(
       "Move one step at a time so review and authorization are not skipped.",
     );
-  if (target === "In progress" && !confirmation)
+  if (target === "In progress" && !action.authorized)
     throw new Error(
-      "Confirm the specific demo action before recording simulated authorization.",
+      "Record demo authorization separately before starting follow-through.",
     );
   if (target === "Verified complete" && !evidence.trim())
     throw new Error(
@@ -96,7 +99,7 @@ export function transition(
     );
   const entry =
     target === "In progress"
-      ? "Demo authorization recorded; no real action is authorized or executed."
+      ? "Demo follow-through started; no real action is authorized or executed."
       : target === "Verified complete"
         ? `Demo completion evidence: ${evidence.trim()}`
         : `Demo status changed to ${target}.`;
@@ -124,5 +127,20 @@ export function compareIncome(assets: number, spending: number, years: number) {
   return {
     annualDraw: assets / years,
     annualGap: Math.max(0, spending - assets / years),
+  };
+}
+
+export function authorizeDemo(action: Action, confirmation: boolean): Action {
+  if (action.stage !== "Waiting for approval" || !confirmation)
+    throw new Error(
+      "Confirm the specific sample action while waiting for approval.",
+    );
+  return {
+    ...action,
+    authorized: true,
+    history: [
+      ...action.history,
+      "Demo planning authorization recorded separately; no real action is authorized.",
+    ],
   };
 }

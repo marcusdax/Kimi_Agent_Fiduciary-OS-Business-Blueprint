@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import ConnectedWorkspace from "./ConnectedWorkspace";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -16,6 +17,7 @@ import {
 import {
   compareIncome,
   sampleActions,
+  authorizeDemo,
   stages,
   transition,
   type Action,
@@ -36,6 +38,8 @@ const money = (n: number) =>
     maximumFractionDigits: 0,
   }).format(n);
 export default function App() {
+  const offline = location.protocol === "file:";
+  const [savedMode, setSavedMode] = useState(false);
   const [page, setPage] = useState("Overview");
   const [audience, setAudience] = useState("Household");
   const [actions, setActions] = useState<Action[]>(() =>
@@ -59,12 +63,16 @@ export default function App() {
   }
   function select(id: string) {
     setSelected(id);
+    setNotice(
+      `Opened ${actions.find((a) => a.id === id)?.title}. Review the action details.`,
+    );
+    setTimeout(() => document.getElementById("action-title")?.focus(), 0);
     setConfirmed(false);
     setEvidence("");
   }
   function move(to: Stage) {
     try {
-      const changed = transition(active, to, confirmed, evidence);
+      const changed = transition(active, to, evidence);
       setActions(actions.map((a) => (a.id === active.id ? changed : a)));
       setConfirmed(false);
       setEvidence("");
@@ -119,7 +127,7 @@ export default function App() {
             >
               <Icon size={19} />
               {label}
-              {label === "Next steps" && (
+              {label === "Next steps" && !savedMode && (
                 <span className="nav-count">{open}</span>
               )}
             </button>
@@ -137,7 +145,7 @@ export default function App() {
           <div className="profile">
             <span className="avatar">S</span>
             <div>
-              <strong>Sample household</strong>
+              <strong>Fiduciary workspace</strong>
               <small>Interactive preview</small>
             </div>
           </div>
@@ -163,7 +171,9 @@ export default function App() {
         <div className="preview">
           <span className="dot" /> Interactive preview{" "}
           <span className="preview-detail">
-            Sample data only. Changes reset on reload. No accounts connected.
+            {offline
+              ? "Offline sample preview. Changes reset on reload; saved actions require the local app and API."
+              : "Sample tools use example data. Saved workspace records persist in the configured API. No financial accounts connected."}
           </span>
         </div>
         <main id="main">
@@ -184,7 +194,10 @@ export default function App() {
               </p>
             </div>
             <span className="sample-pill">
-              <span className="dot" /> Sample plan
+              <span className="dot" />{" "}
+              {page === "Next steps" && savedMode
+                ? "Saved planning workspace"
+                : "Sample plan"}
             </span>
           </div>
           {page === "Overview" && (
@@ -206,7 +219,7 @@ export default function App() {
                     className="button white"
                     onClick={() => navigate("Compare choices")}
                   >
-                    Compare retirement choices <ArrowRight size={17} />
+                    Compare planning horizons <ArrowRight size={17} />
                   </button>
                   <span className="hero-note">
                     No account connection needed to explore.
@@ -252,7 +265,7 @@ export default function App() {
                       <Compass size={23} />
                     </span>
                     <div>
-                      <h3>Compare retirement dates</h3>
+                      <h3>Compare planning horizons</h3>
                       <p>
                         See how your planning horizon affects the income
                         available from a sample portfolio.
@@ -504,6 +517,33 @@ export default function App() {
             </>
           )}
           {page === "Next steps" && (
+            <div
+              className="workspace-tabs"
+              role="group"
+              aria-label="Choose planning workspace"
+            >
+              <button
+                aria-pressed={!savedMode}
+                onClick={() => setSavedMode(false)}
+              >
+                Explore sample board
+              </button>
+              <button
+                aria-pressed={savedMode}
+                disabled={offline}
+                title={
+                  offline
+                    ? "Run the local app and API to use saved records"
+                    : undefined
+                }
+                onClick={() => setSavedMode(true)}
+              >
+                Saved planning workspace
+              </button>
+            </div>
+          )}
+          {page === "Next steps" && savedMode && <ConnectedWorkspace />}
+          {page === "Next steps" && !savedMode && (
             <>
               <div className="board-toolbar">
                 <div>
@@ -633,16 +673,44 @@ export default function App() {
                               ? "Record the evidence that supports completion."
                               : "Complete the current review step before continuing."}
                       </p>
-                      {next === "In progress" && (
-                        <label className="checkbox">
-                          <input
-                            type="checkbox"
-                            checked={confirmed}
-                            onChange={(e) => setConfirmed(e.target.checked)}
-                          />
-                          I understand this records a demo authorization for “
-                          {active.title}” only, not a real transaction.
-                        </label>
+                      {next === "In progress" && !active.authorized && (
+                        <>
+                          <label className="checkbox">
+                            <input
+                              type="checkbox"
+                              checked={confirmed}
+                              onChange={(e) => setConfirmed(e.target.checked)}
+                            />
+                            I understand this records a demo authorization for “
+                            {active.title}” only, not a real transaction.
+                          </label>
+                          <button
+                            className="button"
+                            disabled={!confirmed}
+                            onClick={() => {
+                              setActions(
+                                actions.map((a) =>
+                                  a.id === active.id
+                                    ? authorizeDemo(a, confirmed)
+                                    : a,
+                                ),
+                              );
+                              setConfirmed(false);
+                              setNotice(
+                                "Demo authorization recorded. The sample card has not moved.",
+                              );
+                              setTimeout(
+                                () =>
+                                  document
+                                    .getElementById("demo-advance")
+                                    ?.focus(),
+                                0,
+                              );
+                            }}
+                          >
+                            Record demo planning authorization
+                          </button>
+                        </>
                       )}
                       {next === "Verified complete" && (
                         <label>
@@ -656,10 +724,11 @@ export default function App() {
                       )}
                       <button
                         className="button"
+                        id="demo-advance"
                         aria-label={`Move ${active.title} to ${next}`}
                         onClick={() => move(next)}
                         disabled={
-                          (next === "In progress" && !confirmed) ||
+                          (next === "In progress" && !active.authorized) ||
                           (next === "Verified complete" && !evidence.trim())
                         }
                       >

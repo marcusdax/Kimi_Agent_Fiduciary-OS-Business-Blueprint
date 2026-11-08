@@ -3,7 +3,7 @@
 The code for Fiduciary OS: a planning platform with free tools for households and a white-label workspace for financial advisors. For the business plan, value flow, and go-to-market gates, start at the [repository README](../README.md).
 
 > [!NOTE]
-> The **backend API prototype** and a new **interactive frontend preview** are implemented. The frontend uses sample data in memory and does not call the backend. Docker images, Kubernetes manifests, and Terraform remain unimplemented.
+> The **backend API prototype** and a new **interactive frontend preview** are implemented. The frontend has sample tools in memory plus an authenticated saved planning-action workspace using the backend. Financial execution, real account linking, and advisor delegation remain out of scope. Docker images, Kubernetes manifests, and Terraform remain unimplemented.
 
 ---
 
@@ -32,7 +32,7 @@ The code for Fiduciary OS: a planning platform with free tools for households an
 | Auth | bcrypt + JWT access/refresh tokens | Firm/advisor/household tenancy, MFA, SSO |
 | Realtime | Socket.io | same |
 | AI | Anthropic and Moonshot Kimi behind `services/aiGateway.ts`: guardrails, disclosures, PII stripping, `ai_interactions` log, CI tests + promptfoo evals | Human review workflow on top of the log |
-| Frontend | React + TypeScript + Vite; responsive sample decision workspace | Backend integration, household/firm access, durable decision records |
+| Frontend | React + TypeScript + Vite; responsive sample tools and saved owner-scoped action workflow | Household/firm delegation, verified sources, retention and evidence integrity |
 | CI | GitHub Actions: type-check, test, build ([workflow](../.github/workflows/backend-ci.yml)) | + frontend, images, deploy |
 
 ---
@@ -45,7 +45,7 @@ npm ci                     # Node 22.22.2+
 npm run dev
 ```
 
-Read [frontend/README.md](frontend/README.md) for tests, implemented flows, and limitations. All sample actions and authorizations reset on reload; no real account or document access is implemented.
+Read [frontend/README.md](frontend/README.md) for tests, implemented flows, and limitations. Sample actions and demo permissions reset on reload. Under Next steps, Saved planning workspace persists records through the API after development-account sign-in. Session tokens remain in memory only; financial accounts, secure document storage, and advisor sharing are not implemented.
 
 ## Backend quick start
 
@@ -72,7 +72,7 @@ Frontend `dev-frontend`, `test-frontend`, `type-check`, and `build-frontend` Mak
 
 Implemented: bcrypt password hashing, separate access and refresh tokens, Helmet headers, CORS allow-list, rate limiting, per-user scoping on every data route, validated-field-only writes on profile updates, PII stripped before AI calls, an AI prompt/response supervision log, and placeholder data refused when `NODE_ENV=production`.
 
-**Not** implemented or attested: SOC 2, WCAG conformance testing, encryption of stored documents, MFA, general audit logging (beyond the AI log), penetration testing. The [Security Architecture](../Security_Architecture.md) document describes the target controls.
+**Not** implemented or attested: SOC 2, WCAG conformance testing, encryption of stored documents, MFA, general audit logging (beyond AI and planning-event history), server-side JWT revocation, penetration testing. The [Security Architecture](../Security_Architecture.md) document describes the target controls.
 
 Report security issues privately to the repository owner rather than in a public issue.
 

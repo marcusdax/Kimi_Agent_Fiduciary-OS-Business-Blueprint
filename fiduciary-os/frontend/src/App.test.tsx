@@ -10,7 +10,7 @@ describe("Fiduciary OS workspace", () => {
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Your next step, clearer.",
     );
-    expect(screen.getByText(/Changes reset on reload/)).toBeVisible();
+    expect(screen.getByText(/Sample tools use example data/)).toBeVisible();
     for (const page of [
       "My plan",
       "Compare choices",
@@ -25,7 +25,7 @@ describe("Fiduciary OS workspace", () => {
         "page",
       );
     }
-    expect(screen.getByText(/No accounts connected/)).toBeVisible();
+    expect(screen.getByText(/No financial accounts connected/)).toBeVisible();
   });
   it("updates a goal without connecting any accounts", async () => {
     const u = userEvent.setup();
@@ -55,34 +55,58 @@ describe("Fiduciary OS workspace", () => {
       screen.getByRole("heading", { name: "Client action board" }),
     ).toBeVisible();
   });
+  it("opens action details from the keyboard, focuses their heading, and announces the selected record", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "Next steps" }));
+    const card = screen.getByRole("button", {
+      name: /Review beneficiary information.*Review action/,
+    });
+    card.focus();
+    await user.keyboard("{Enter}");
+    await waitFor(() =>
+      expect(
+        screen.getByRole("heading", { name: "Review beneficiary information" }),
+      ).toHaveFocus(),
+    );
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Opened Review beneficiary information",
+    );
+  });
   it("supports keyboard-only status changes, announces them, gates authorization and completion", async () => {
     const u = userEvent.setup();
     render(<App />);
     await u.click(screen.getByRole("button", { name: /Next steps/ }));
     const move = screen.getByRole("button", {
-      name: "Move Compare retirement dates to Ready for review",
+      name: "Move Compare planning horizons to Ready for review",
     });
     move.focus();
     await u.keyboard("{Enter}");
     expect(screen.getByRole("status")).toHaveTextContent("Ready for review");
     expect(
       screen.getByRole("button", {
-        name: "Move Compare retirement dates to Waiting for approval",
+        name: "Move Compare planning horizons to Waiting for approval",
       }),
     ).toHaveFocus();
     await u.keyboard("{Enter}");
     const authorization = screen.getByRole("button", {
-      name: "Move Compare retirement dates to In progress",
+      name: "Move Compare planning horizons to In progress",
     });
     expect(authorization).toBeDisabled();
     const checkbox = screen.getByRole("checkbox");
     checkbox.focus();
     await u.keyboard(" ");
     await u.tab();
-    expect(authorization).toHaveFocus();
+    const recordAuthorization = screen.getByRole("button", {
+      name: "Record demo planning authorization",
+    });
+    expect(recordAuthorization).toHaveFocus();
+    await u.keyboard("{Enter}");
+    await waitFor(() => expect(authorization).toHaveFocus());
+    expect(screen.getByRole("status")).toHaveTextContent("card has not moved");
     await u.keyboard("{Enter}");
     const completion = screen.getByRole("button", {
-      name: "Move Compare retirement dates to Verified complete",
+      name: "Move Compare planning horizons to Verified complete",
     });
     expect(completion).toBeDisabled();
     const proof = screen.getByLabelText("Sample completion evidence");
@@ -93,7 +117,7 @@ describe("Fiduciary OS workspace", () => {
     await u.keyboard("{Enter}");
     await waitFor(() =>
       expect(
-        screen.getByRole("heading", { name: "Compare retirement dates" }),
+        screen.getByRole("heading", { name: "Compare planning horizons" }),
       ).toHaveFocus(),
     );
     expect(screen.getByRole("status")).toHaveTextContent("Verified complete");

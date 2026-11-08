@@ -582,7 +582,7 @@ textarea {
   padding: 10px 11px;
   color: #264d3b;
   background: #fff;
-  border: 1px solid #aebdaf;
+  border: 1px solid #687b67;
   border-radius: 5px;
   margin-top: 7px;
 }
@@ -1051,4 +1051,47 @@ details p {
     animation: none !important;
     transition: none !important;
   }
+}
+
+.workspace-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.workspace-tabs button {
+  padding: 10px 16px;
+  border: 1px solid #687b67;
+  border-radius: 6px;
+  background: #fff;
+  color: #244a38;
+}
+.workspace-tabs button[aria-pressed="true"] {
+  background: #1e5446;
+  color: #fff;
+}
+.toolbar-buttons {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.align-end {
+  align-self: end;
+}
+.event-details {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+  padding: 15px;
+  background: #f2f5ee;
+}
+.connected-workspace dd {
+  overflow-wrap: anywhere;
+}
+.connected-workspace textarea {
+  min-height: 85px;
+}
+.connected-workspace .transition-area > .button {
+  margin-right: 12px;
+  margin-bottom: 12px;
 }
