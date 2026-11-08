@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import {
+  render,
+  screen,
+  waitFor,
+  within,
+  fireEvent,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import axe from "axe-core";
 import App from "./App";
@@ -23,6 +29,9 @@ describe("Fiduciary OS workspace", () => {
       expect(screen.getByRole("button", { name: page })).toHaveAttribute(
         "aria-current",
         "page",
+      );
+      await waitFor(() =>
+        expect(screen.getByRole("heading", { level: 1 })).toHaveFocus(),
       );
     }
     expect(screen.getByText(/No financial accounts connected/)).toBeVisible();
@@ -135,4 +144,72 @@ describe("Fiduciary OS workspace", () => {
       expect(result.violations.map((v) => v.id)).toEqual([]);
     }
   }, 20000);
+});
+
+describe("sample snapshot carry-forward", () => {
+  it("creates a new unapproved discussion, retains old inputs after edits, and focuses its details", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "Compare choices" }));
+    const create = () =>
+      screen.getByRole("button", {
+        name: "Create sample discussion from these inputs",
+      });
+    await user.click(create());
+    const detailHeading = screen.getByRole("heading", {
+      name: "Compare planning horizons",
+    });
+    await waitFor(() => expect(detailHeading).toHaveFocus());
+    const captured = screen.getByRole("region", {
+      name: "Captured sample comparison",
+    });
+    expect(captured).toHaveTextContent("$600,000");
+    expect(captured).toHaveTextContent("25 years");
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "No authorization inherited",
+    );
+    await user.click(screen.getByRole("button", { name: "Compare choices" }));
+    await user.clear(screen.getByLabelText("Example portfolio (USD)"));
+    expect(create()).toBeDisabled();
+    await user.type(screen.getByLabelText("Example portfolio (USD)"), "900000");
+    await user.click(screen.getByRole("button", { name: "Next steps" }));
+    expect(
+      screen.getByRole("region", { name: "Captured sample comparison" }),
+    ).toHaveTextContent("$600,000");
+    await user.click(screen.getByRole("button", { name: "Compare choices" }));
+    await user.click(create());
+    expect(
+      screen.getByRole("region", { name: "Captured sample comparison" }),
+    ).toHaveTextContent("$900,000");
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "No authorization inherited",
+    );
+    expect(
+      screen.getByRole("button", {
+        name: "Move Compare planning horizons to Ready for review",
+      }),
+    ).toBeEnabled();
+  });
+  it("announces sample review-date changes and includes them in decision history without moving the action", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "Next steps" }));
+    const details = screen.getByRole("region", {
+      name: "Compare planning horizons",
+    });
+    fireEvent.change(
+      screen.getByLabelText(
+        "Review date (optional; does not schedule a reminder)",
+      ),
+      { target: { value: "2026-12-01" } },
+    );
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "stage and authorization unchanged",
+    );
+    expect(within(details).getByText("Analyze choices")).toBeVisible();
+    await user.click(within(details).getByText(/Sample decision history/));
+    expect(
+      within(details).getByText(/Sample review date set to 2026-12-01/),
+    ).toBeVisible();
+  });
 });

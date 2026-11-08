@@ -1,10 +1,11 @@
-import express from 'express';
+import express, { json } from 'express';
 import request from 'supertest';
+
+import { errorHandler } from '../../src/middleware/errorHandler';
 import { authRouter } from '../../src/routes/auth';
 import { planningRouter } from '../../src/routes/planning';
-import { errorHandler } from '../../src/middleware/errorHandler';
 const app = express();
-app.use(express.json());
+app.use(json());
 app.use('/auth', authRouter);
 app.use('/planning', planningRouter);
 app.use(errorHandler);

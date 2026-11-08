@@ -1,7 +1,7 @@
 name: CI
 
-# Backend-only pipeline. The frontend, Dockerfiles and infra/ referenced in older
-# docs are not in this repository yet; add their jobs back when they land.
+# Backend pipeline; the frontend has its own workflow. Dockerfiles and infra/
+# referenced in older docs are not in this repository yet.
 # Lives at the repo root because GitHub only runs workflows from /.github/;
 # the old fiduciary-os/.github/workflows/ci.yml never executed.
 
@@ -33,7 +33,12 @@ jobs:
       - run: npx prisma migrate deploy
       - run: npx jest --runInBand --coverage
       - run: npm run build
-      # Lint has ~240 pre-existing findings (mostly explicit `any` and a broken
-      # import resolver config). Reported, not blocking, until that debt is paid.
-      - run: npm run lint
+      # New planning endpoints/tests must pass strict lint.
+      - name: Planning API lint (blocking)
+        run: npm run lint:planning
+      # Full-repository lint still reports inherited style/type findings.
+      # The resolver and source/test project setup are now fixed.
+      # See fiduciary-os/backend/LINT_STATUS.md; this step is not a pass gate.
+      - name: Full backend lint (known debt, nonblocking)
+        run: npm run lint
         continue-on-error: true

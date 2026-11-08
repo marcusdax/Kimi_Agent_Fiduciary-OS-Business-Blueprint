@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import {
   compareIncome,
+  createComparisonAction,
+  scheduleDemoReview,
   sampleActions,
   authorizeDemo,
   stages,
@@ -506,12 +508,34 @@ export default function App() {
                 </details>
                 <button
                   className="button"
+                  disabled={!comparison}
                   onClick={() => {
-                    select("income");
+                    const action = createComparisonAction(
+                      {
+                        assets: Number(assets),
+                        spending: Number(spending),
+                        years: Number(years),
+                      },
+                      `comparison-${crypto.randomUUID()}`,
+                    );
+                    setActions((current) => [...current, action]);
+                    setSelected(action.id);
+                    setSavedMode(false);
+                    setFilter("All");
+                    setConfirmed(false);
+                    setEvidence("");
                     navigate("Next steps");
+                    setNotice(
+                      "New sample discussion created from the captured inputs. No authorization inherited.",
+                    );
+                    setTimeout(
+                      () => document.getElementById("action-title")?.focus(),
+                      0,
+                    );
                   }}
                 >
-                  Review the sample next step <ArrowRight size={17} />
+                  Create sample discussion from these inputs{" "}
+                  <ArrowRight size={17} />
                 </button>
               </section>
             </>
@@ -595,7 +619,7 @@ export default function App() {
                           onClick={() => select(a.id)}
                         >
                           <span className="card-tag">
-                            {a.id === "income"
+                            {a.id === "income" || a.comparisonSnapshot
                               ? "INCOME"
                               : a.id === "legacy"
                                 ? "LEGACY"
@@ -644,20 +668,73 @@ export default function App() {
                     </div>
                   ))}
                 </dl>
+                {active.comparisonSnapshot && (
+                  <section
+                    className="callout"
+                    aria-label="Captured sample comparison"
+                  >
+                    <h3>Inputs captured for this sample discussion</h3>
+                    <dl className="record-grid">
+                      {[
+                        [
+                          "Example portfolio",
+                          money(active.comparisonSnapshot.assets),
+                        ],
+                        [
+                          "Example annual spending",
+                          money(active.comparisonSnapshot.spending),
+                        ],
+                        [
+                          "Planning horizon",
+                          `${active.comparisonSnapshot.years} years`,
+                        ],
+                        [
+                          "Illustrative annual draw",
+                          money(active.comparisonSnapshot.annualDraw),
+                        ],
+                        [
+                          "Illustrative annual spending gap",
+                          money(active.comparisonSnapshot.annualGap),
+                        ],
+                      ].map(([term, value]) => (
+                        <div key={term}>
+                          <dt>{term}</dt>
+                          <dd>{value}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                    <p>
+                      This is a fixed sample snapshot, not a financial
+                      recommendation. Editing Compare choices does not change
+                      this record or transfer its demo authorization. Create a
+                      new discussion after input changes. Nothing here is saved
+                      to the API.
+                    </p>
+                  </section>
+                )}
                 <label className="review-date">
                   Review date (optional; does not schedule a reminder)
                   <input
                     type="date"
                     value={active.reviewDate}
-                    onChange={(e) =>
-                      setActions(
-                        actions.map((a) =>
-                          a.id === active.id
-                            ? { ...a, reviewDate: e.target.value }
-                            : a,
-                        ),
-                      )
-                    }
+                    onChange={(e) => {
+                      try {
+                        const changed = scheduleDemoReview(
+                          active,
+                          e.target.value,
+                        );
+                        setActions((current) =>
+                          current.map((a) =>
+                            a.id === active.id ? changed : a,
+                          ),
+                        );
+                        setNotice(
+                          "Sample review date updated; stage and authorization unchanged. No reminder is scheduled.",
+                        );
+                      } catch (error) {
+                        setNotice((error as Error).message);
+                      }
+                    }}
                   />
                 </label>
                 <div className="transition-area">

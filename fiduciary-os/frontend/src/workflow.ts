@@ -7,6 +7,14 @@ export const stages = [
   "Verified complete",
 ] as const;
 export type Stage = (typeof stages)[number];
+export type ComparisonInputs = {
+  assets: number;
+  spending: number;
+  years: number;
+};
+export type ComparisonSnapshot = Readonly<
+  ComparisonInputs & { annualDraw: number; annualGap: number }
+>;
 export type Action = {
   id: string;
   title: string;
@@ -21,6 +29,7 @@ export type Action = {
   reviewDate: string;
   evidence: string;
   history: string[];
+  comparisonSnapshot?: ComparisonSnapshot;
 };
 export const sampleActions: Action[] = [
   {
@@ -93,6 +102,10 @@ export function transition(
     throw new Error(
       "Record demo authorization separately before starting follow-through.",
     );
+  if (target === "Verified complete" && !action.authorized)
+    throw new Error(
+      "Record demo authorization before completing this sample action.",
+    );
   if (target === "Verified complete" && !evidence.trim())
     throw new Error(
       "Add completion evidence before marking this action complete.",
@@ -141,6 +154,53 @@ export function authorizeDemo(action: Action, confirmation: boolean): Action {
     history: [
       ...action.history,
       "Demo planning authorization recorded separately; no real action is authorized.",
+    ],
+  };
+}
+
+// Carry forward the reference design's snapshot/review-date invariants without
+// importing its audience-based permissions or coupled consent/stage transition.
+export function createComparisonAction(
+  inputs: ComparisonInputs,
+  id: string,
+): Action {
+  const { assets, spending, years } = inputs;
+  const result = compareIncome(assets, spending, years);
+  return {
+    ...sampleActions[0],
+    id,
+    stage: "Analyze choices",
+    authorized: false,
+    evidence: "",
+    reviewDate: "",
+    source:
+      "Editable example inputs captured for this sample discussion; not verified account data.",
+    comparisonSnapshot: Object.freeze({ assets, spending, years, ...result }),
+    history: [
+      "New sample discussion created from the captured inputs. No authorization inherited; no real action is executed.",
+    ],
+  };
+}
+
+export function scheduleDemoReview(action: Action, date: string): Action {
+  if (date) {
+    const parsed = new Date(`${date}T12:00:00Z`);
+    if (
+      !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
+      !Number.isFinite(parsed.getTime()) ||
+      parsed.toISOString().slice(0, 10) !== date
+    )
+      throw new Error("Choose a valid sample review date.");
+  }
+  if (date === action.reviewDate) return action;
+  return {
+    ...action,
+    reviewDate: date,
+    history: [
+      ...action.history,
+      date
+        ? `Sample review date set to ${date}; status and authorization unchanged. No reminder is scheduled.`
+        : "Sample review date cleared; status and authorization unchanged.",
     ],
   };
 }

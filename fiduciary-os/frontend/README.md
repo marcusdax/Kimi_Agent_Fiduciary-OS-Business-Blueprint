@@ -33,6 +33,8 @@ After building, `npm run export-preview` writes `dist/fiduciary-os-preview.html`
 - Household/planning-team audience switch for previewing content only. **It is not access control.**
 - Illustrative income comparison with transparent arithmetic, an accessible table, and validation. No taxes, inflation, returns, sustainable-withdrawal analysis, or product recommendations.
 - Sample board and saved workspace are deliberately separate. Sample cards are never imported automatically.
+- Compare choices can create a new, unapproved sample discussion containing a fixed copy of that example's portfolio, annual spending, horizon and computed results. Later input edits do not change that record or carry its demo authorization into a new discussion. These snapshots stay in memory and are never saved to the API.
+- Review-date changes append sample history without reopening completed actions, changing authorization, or scheduling reminders.
 - Keyboard-operable sequential stages. Recording action-specific planning authorization and starting follow-through are separate operations. Completion requires evidence; review dates never erase completed history or schedule reminders.
 - Saved workspace supports sign-in, empty states, action creation, loading/errors, reload, review notes, separate authorization/revocation, evidence, optional review dates, server-owned actor/time, and versioned history.
 - Conflicting versions are rejected without silently retrying a mutation. Reload before making another decision. API sessions stay in memory, not localStorage/cookies; reload, leaving this workspace, expiry, or clearing the local session requires another sign-in.
@@ -54,3 +56,9 @@ Vitest/Testing Library covers sample tools and saved-workspace interactions usin
 Future financial-scenario approvals must bind to immutable scenario/input versions and require fresh approval after substantive input changes. Current saved authorizations cover only the static planning context shown, not the separate sample comparison.
 
 Before real users: verify source data and jurisdiction/year-versioned engines; implement advisor/household tenancy, secure document storage and invitations; define retention and evidence integrity; independently review authentication/security/privacy; run browser and assistive-technology acceptance tests; validate product positioning and disclosures with users and qualified professionals. Nothing has been merged or deployed as part of this work.
+
+## Consolidation notes
+
+The preserved reference implementation supplied useful sample-snapshot/review-date invariants and an offline export utility. They are adapted here rather than merging the competing frontend or coupling authorization to a status change. Its Escape/focus behavior applies to a collapsed mobile menu, which this implementation does not have: this interface keeps a native horizontally scrolling navigation row visible at phone width. Navigation changes focus the destination heading, tested for all six sections.
+
+Full backend lint still fails on inherited findings; the repaired resolver and new blocking planning lint are described in [backend lint status](../backend/LINT_STATUS.md).
