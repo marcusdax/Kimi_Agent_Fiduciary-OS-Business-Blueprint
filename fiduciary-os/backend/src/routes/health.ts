@@ -2,6 +2,7 @@ import { Router } from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import { prisma } from '../config/database';
 import { getRedis } from '../config/redis';
+import { operationalMetrics } from '../middleware/requestLogger';
 
 const router = Router();
 
@@ -12,6 +13,8 @@ router.get('/', async (req: Request, res: Response) => {
     uptime: process.uptime(),
     version: process.env.npm_package_version || '1.0.0',
     environment: process.env.NODE_ENV || 'development',
+    sourceCommit: process.env.RAILWAY_GIT_COMMIT_SHA || 'local-unversioned',
+    operations: operationalMetrics(),
     services: {
       database: 'unknown',
       redis: 'unknown',

@@ -1,0 +1,14 @@
+# Truthful sandbox investor demonstration
+
+Scope: synthetic/test facts only. This runbook does not claim production readiness or permission to contact investors. First require exact API+web source commit terminal SUCCESS, strict deployed smoke and parent browser acceptance. A build failure or old healthy homepage is not acceptance of the new feature set.
+
+1. Open the existing chrome-card dashboard. Read the sample/preview labels aloud; these are not customers/assets or linked accounts.
+2. Use visible **Tools**. Search **Roth**, **fees**, **Bitcoin**, **will**; the same canonical catalog groups ten available scenario tools. Primary dashboard remains visible. Include research tools only to show transparent unvalidated/disconnected limitations; those entries have no fake launch button.
+3. Use an explicitly provisioned synthetic test account through the normal private sign-in process; no shared credentials in slides/chat/logs. Enter only fictional, clearly labelled facts and source/date. Do not connect banks, wallets, calendar, carrier or AI services.
+4. Save an investment or retirement scenario. Explain deterministic assumptions, fee/timing/inflation limits, accessible chart and exact table. Open **Under the hood** for saved inputs, version, rounding and provenance. Alter an input without saving and demonstrate old chart remains tied to confirmed save; resolve draft before tool navigation.
+5. Reload the saved case and show replay status. A competing stale write gets409 and deliberate reload, never automatic overwrite. Server ownership is the boundary, not the preview persona switch.
+6. Public observations: show actual provider, observed timestamp versus server fetch timestamp, units/currency, TTL and status. Treasury is an average outstanding-bills interest rate, not a current investable Treasury market yield. Stale/unavailable means unavailable valuation, not a canned fallback. Do not describe prices as account balances or trading recommendations.
+7. Show attorney checklist/estate inventory as discussion organization, not executed legal documents. Vault upload/carrier quotes/connected accounts/AI remain unavailable with requirements, not aspirational buttons claiming success.
+8. Use **Sign out all sessions** and confirm server revocation when online. If revocation cannot be confirmed, say so; local clearing is not proof of server success.
+
+Parent browser acceptance checklist: native-dialog focus containment/return and Escape; touch/mobile320px/200%zoom; contrast/manual screen-reader spot check; loading/error/stale states; repeated same-tool search request; blank initial account can access tools; draft guards across main navigation/reload; chart/table consistency; sensitive values absent from URL/logs. Record date/build and tested browsers. Do not mark this passed from JSDOM alone.

@@ -1,20 +1,22 @@
 import type { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-import { AppError } from './errorHandler';
+import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
+
 import { prisma } from '../config/database';
+import { verifySessionToken } from '../services/sessions';
+
+import { AppError } from './errorHandler';
 
 interface JwtPayload {
   userId: string;
   email: string;
   role: string;
   tokenType?: 'access' | 'refresh';
+  sessionId: string;
 }
 
-declare global {
-  namespace Express {
-    interface Request {
-      user?: JwtPayload;
-    }
+declare module 'express-serve-static-core' {
+  interface Request {
+    user?: JwtPayload;
   }
 }
 
@@ -36,13 +38,21 @@ export async function authenticateToken(
       throw new AppError(500, 'JWT secret not configured');
     }
 
-    const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
+    const decoded = verifySessionToken(token);
+    const session = await prisma.authSession.findUnique({ where: { id: decoded.sid as string } });
+    if (
+      !session ||
+      session.userId !== decoded.userId ||
+      session.revokedAt ||
+      session.expiresAt <= new Date()
+    )
+      throw new AppError(401, 'Session expired or revoked');
 
     // Refresh tokens are long-lived; they must never authorize API calls.
     if (decoded.tokenType !== 'access') {
       throw new AppError(401, 'Invalid token');
     }
-    
+
     // Verify user exists in database
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
@@ -55,17 +65,18 @@ export async function authenticateToken(
 
     req.user = {
       userId: user.id,
+      sessionId: session.id,
       email: user.email,
       role: user.role,
     };
 
     next();
   } catch (error) {
-    if (error instanceof jwt.JsonWebTokenError) {
+    if (error instanceof JsonWebTokenError) {
       next(new AppError(401, 'Invalid token'));
       return;
     }
-    if (error instanceof jwt.TokenExpiredError) {
+    if (error instanceof TokenExpiredError) {
       next(new AppError(401, 'Token expired'));
       return;
     }

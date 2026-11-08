@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
+
 import { logger } from '../utils/logger';
 
 export class AppError extends Error {
@@ -19,19 +20,17 @@ export function errorHandler(
   res: Response,
   _next: NextFunction
 ): void {
-  // Log error
-  logger.error('Error:', {
-    message: err.message,
-    stack: err.stack,
-    path: req.path,
-    method: req.method,
+  // Only bounded operational labels; no exception message, stack, URL, body or credentials.
+  logger.error('Request failed', {
+    requestId: res.locals.requestId,
+    status: err instanceof AppError ? err.statusCode : 500,
+    category: err instanceof AppError ? 'operational' : 'internal',
   });
 
   // Handle AppError
   if (err instanceof AppError) {
     res.status(err.statusCode).json({
       error: err.message,
-
     });
     return;
   }
@@ -70,6 +69,5 @@ export function errorHandler(
   // Default error response
   res.status(500).json({
     error: 'Internal server error',
-
   });
 }

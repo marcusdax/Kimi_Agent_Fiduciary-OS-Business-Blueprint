@@ -1,3 +1,4 @@
+import ToolDiscovery, { toolInfo } from "./ToolDiscovery";
 import { useEffect, useState } from "react";
 
 type Field = {
@@ -17,6 +18,7 @@ type Row = {
 };
 type Scenario = {
   kind: string;
+  replayStatus?: string;
   version: number;
   updatedAt: string;
   inputs: Record<string, string | number>;
@@ -115,7 +117,15 @@ function Plot({
     </svg>
   );
 }
-export default function BlueprintTools({ token }: { token: string }) {
+export default function BlueprintTools({
+  token,
+  requestedTool,
+  toolRequestId,
+}: {
+  token: string;
+  requestedTool?: string;
+  toolRequestId?: number;
+}) {
   const [catalog, setCatalog] = useState<Catalog>({});
   const [saved, setSaved] = useState<Scenario[]>([]);
   const [kind, setKind] = useState("profile");
@@ -196,6 +206,52 @@ export default function BlueprintTools({ token }: { token: string }) {
     const timer = window.setInterval(() => setClock(Date.now()), 30000);
     return () => window.clearInterval(timer);
   }, [token]);
+  function selectTool(key: string) {
+    if (busy || dirty || locked) {
+      setMessage(
+        "Save or discard edits and resolve any uncertain save before switching tools.",
+      );
+      return false;
+    }
+    if (!catalog[key]) return false;
+    setKind(key);
+    fill(key, saved);
+    return true;
+  }
+  useEffect(() => {
+    if (
+      requestedTool &&
+      requestedTool !== kind &&
+      catalog[requestedTool] &&
+      !dirty &&
+      !locked
+    ) {
+      setKind(requestedTool);
+      fill(requestedTool, saved);
+    }
+  }, [requestedTool, toolRequestId, locked, catalog]);
+  useEffect(() => {
+    const guard = (event: Event) => {
+      if (dirty || locked || busy) {
+        event.preventDefault();
+        setMessage(
+          "Save or discard edits and resolve uncertain saves before navigating to another tool.",
+        );
+      }
+    };
+    const unload = (event: BeforeUnloadEvent) => {
+      if (dirty || locked || busy) {
+        event.preventDefault();
+        event.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", unload);
+    window.addEventListener("fiduciary:tool-navigation", guard);
+    return () => {
+      window.removeEventListener("fiduciary:tool-navigation", guard);
+      window.removeEventListener("beforeunload", unload);
+    };
+  }, [dirty, locked, busy]);
   const current = saved.find((s) => s.kind === kind);
   const definition = catalog[kind];
   const state = (feed: Feed) =>
@@ -294,6 +350,7 @@ export default function BlueprintTools({ token }: { token: string }) {
   return (
     <section className="blueprint-tools" aria-labelledby="blueprint-heading">
       <h2 id="blueprint-heading">Blueprint tools</h2>
+      <ToolDiscovery onSelect={selectTool} />
       <p>
         Private saved facts, transparent calculated scenarios and public
         observations are separate. No financial accounts connected. Blank fields
@@ -334,6 +391,39 @@ export default function BlueprintTools({ token }: { token: string }) {
         <section className="panel">
           <h3>{definition.title}</h3>
           <p>{definition.note}</p>
+          <details className="under-hood">
+            <summary>Under the hood — method, inputs and provenance</summary>
+            <p>{toolInfo[kind]?.method}</p>
+            <p>
+              Method:{" "}
+              {current?.result.methodVersion ?? "blueprint-educational-v1"}.
+              Annual scenario timing unless stated otherwise; not the monthly
+              saved-plan engine. IEEE-754 double arithmetic; results rounded
+              with Math.round(value × 100) / 100. Balance iterations carry
+              unrounded doubles; tax schedule totals are rounded before
+              computing the incremental difference. Educational scenarios, not
+              financial advice.
+            </p>
+            <p>
+              Source and as-of date are your entered notes, not independently
+              verified facts. Displayed results use confirmed saved inputs, not
+              unsaved edits.{" "}
+              {current
+                ? `Record v${current.version}; ${current.replayStatus === "saved-snapshot" ? "saved result snapshot, not recalculated on read" : "legacy record recomputed; explicitly re-save to record a snapshot"}.`
+                : "No saved result yet."}
+            </p>
+            {current && (
+              <pre aria-label="Saved scenario inputs">
+                {JSON.stringify(current.inputs, null, 2)}
+              </pre>
+            )}
+            <p>
+              Public feed observations separately expose provider, observed
+              date, fetched time, units, TTL and stale/unavailable state. No
+              observation is automatically an expected return or connected
+              account balance.
+            </p>
+          </details>
           <form className="financial-form" onSubmit={save}>
             <label>
               Source / assumptions

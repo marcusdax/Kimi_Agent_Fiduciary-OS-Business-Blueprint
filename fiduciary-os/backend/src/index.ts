@@ -2,10 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
-import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import { createServer } from 'http';
-import { Server } from 'socket.io';
 import dotenv from 'dotenv';
 
 import { errorHandler } from './middleware/errorHandler';
@@ -27,7 +25,6 @@ import { cryptoRouter } from './routes/crypto';
 import { logger } from './utils/logger';
 import { connectDatabase } from './config/database';
 import { connectRedis } from './config/redis';
-import { setupWebSocketHandlers } from './services/websocketService';
 
 dotenv.config();
 if (process.env.NODE_ENV === 'production' && (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32)) {
@@ -38,15 +35,13 @@ const app = express();
 app.disable('x-powered-by');
 app.set('trust proxy', 1);
 const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  cors: {
-    origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
-    methods: ['GET', 'POST'],
-  },
-});
+// Realtime transport is retired until a validated authenticated feature is configured.
 
 const PORT = process.env.PORT || 3001;
 const API_PREFIX = process.env.API_PREFIX || '/api/v1';
+
+// Redacted request diagnostics also cover rejected bodies and rate limits.
+app.use(requestLogger);
 
 // Security middleware
 app.use(helmet({
@@ -80,9 +75,7 @@ app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 // Compression
 app.use(compression());
 
-// Logging
-app.use(morgan(process.env.LOG_FORMAT || 'combined'));
-app.use(requestLogger);
+// Request diagnostics are registered before security/body middleware.
 
 // Health check (no auth required)
 app.use('/health', healthRouter);
@@ -111,7 +104,7 @@ app.use((req, res) => {
 });
 
 // WebSocket setup
-setupWebSocketHandlers(io);
+// No Socket.IO server is attached; malformed legacy events cannot reach handlers.
 
 // Start server
 async function startServer() {
@@ -125,7 +118,7 @@ async function startServer() {
       await connectRedis();
       logger.info('Redis connected successfully');
     } catch (redisError) {
-      logger.warn('Redis not available - continuing without caching:', redisError);
+      logger.warn('Redis not available - continuing without caching');
     }
 
     // Start HTTP server
@@ -135,7 +128,7 @@ async function startServer() {
       logger.info(`💚 Health Check: http://localhost:${PORT}/health`);
     });
   } catch (error) {
-    logger.error('Failed to start server:', error);
+    logger.error('Failed to start server');
     process.exit(1);
   }
 }
