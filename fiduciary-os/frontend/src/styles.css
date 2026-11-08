@@ -1365,11 +1365,13 @@ button svg {
 }
 @media (max-width: 640px) {
   .sidebar {
+    visibility: hidden;
     transform: translateX(-100%);
     width: 242px;
     box-shadow: 10px 0 30px #183f3620;
   }
   .sidebar.is-open {
+    visibility: visible;
     transform: translateX(0);
     top: 62px;
   }
@@ -1768,4 +1770,29 @@ button svg {
   .footer button {
     font-size: 10px;
   }
+}
+
+.review-date-form {
+  margin: 20px 0 28px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.review-date-form input {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--green);
+}
+.review-date-form .caption {
+  margin: 10px 0;
+}
+.help-panel ul {
+  padding-left: 20px;
+  font-size: 13px;
+  line-height: 1.7;
 }

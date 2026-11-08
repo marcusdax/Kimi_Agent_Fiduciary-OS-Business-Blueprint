@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { render, screen, within, waitFor } from "@testing-library/react";
+import {
+  render,
+  screen,
+  within,
+  waitFor,
+  fireEvent,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import axe from "axe-core";
 import App from "./App";
@@ -44,6 +50,55 @@ describe("Fiduciary OS workspace", () => {
     ).toHaveTextContent(
       "This preview has no upload, download, or storage integration.",
     );
+  });
+  it("discloses backend prototypes without claiming connected tax, insurance or storage tools", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(
+      screen.getByRole("button", { name: "About this preview" }),
+    );
+    const help = screen.getByRole("region", { name: "About this preview" });
+    expect(help).toHaveTextContent("2024 federal rules");
+    expect(help).toHaveTextContent("illustrative, not offers");
+    expect(help).toHaveTextContent("metadata only, not uploaded files");
+    expect(help).toHaveTextContent("Estate and risk tools remain planned");
+  });
+  it("focuses the navigation when opened and returns to the toggle on Escape", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    const toggle = screen.getByRole("button", { name: "Toggle navigation" });
+    await user.click(toggle);
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+    expect(
+      within(
+        screen.getByRole("navigation", { name: "Main navigation" }),
+      ).getByRole("button", { name: "Overview" }),
+    ).toHaveFocus();
+    await user.keyboard("{Escape}");
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    expect(toggle).toHaveFocus();
+  });
+  it("records a review date independently of status and keeps unknown costs and conflicts visible", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(
+      screen.getByRole("button", { name: /Compare retirement income choices/ }),
+    );
+    expect(screen.getByLabelText("Review date (optional)")).toBeDisabled();
+    await user.selectOptions(screen.getByLabelText("Demo audience"), "advisor");
+    const date = screen.getByLabelText("Review date (optional)");
+    fireEvent.change(date, { target: { value: "2026-12-01" } });
+    await user.click(screen.getByRole("button", { name: "Save review date" }));
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "No reminder is sent.",
+    );
+    const details = screen.getByRole("region", {
+      name: "Selected action details",
+    });
+    expect(details).toHaveTextContent("Analyze choices");
+    expect(details).toHaveTextContent("have not been assessed");
+    expect(details).toHaveTextContent("Not approved.");
+    expect(screen.getByText("Review on 2026-12-01")).toBeInTheDocument();
   });
   it("recalculates the comparison and refuses invalid inputs", async () => {
     const user = userEvent.setup();

@@ -139,3 +139,43 @@ describe("decision safeguards", () => {
     expect(action.stage).toBe("Analyze choices");
   });
 });
+
+describe("review dates preserve decision history", () => {
+  it("keeps the stage and approval intact when scheduling or clearing a review", () => {
+    const approved = Planning.transition(reviewed(), "In progress", {
+      audience: "household",
+      note: "I approve this specific sample discussion.",
+      consent: true,
+    });
+    const complete = Planning.transition(
+      approved,
+      "Verified complete",
+      team("Illustrative discussion completed; evidence recorded."),
+    );
+    const scheduled = Planning.scheduleReview(complete, "2026-12-01");
+    expect(scheduled.stage).toBe("Verified complete");
+    expect(scheduled.authorization).toBe(complete.authorization);
+    expect(scheduled.review).toBe(complete.review);
+    expect(scheduled.reviewDate).toBe("2026-12-01");
+    expect(complete.reviewDate).toBe("");
+    expect(scheduled.history).toHaveLength(complete.history.length + 1);
+    expect(Planning.scheduleReview(scheduled, scheduled.reviewDate)).toBe(
+      scheduled,
+    );
+    expect(Planning.scheduleReview(scheduled, "").stage).toBe(
+      "Verified complete",
+    );
+    const linked = Planning.linkedReview(scheduled);
+    expect(linked.parentId).toBe(complete.id);
+    expect(linked.reviewDate).toBe("");
+    expect(linked.authorization).toBe("");
+  });
+  it.each(["2026-02-30", "2026-13-01", "not-a-date", "2026-1-1"])(
+    "rejects invalid review dates %s",
+    (date) => {
+      expect(() => Planning.scheduleReview(SAMPLE_ACTIONS[0], date)).toThrow(
+        "valid review date",
+      );
+    },
+  );
+});

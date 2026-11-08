@@ -24,7 +24,8 @@ npm run preview          # serve the production build locally
 - A sample retirement-income comparison recalculated from visible portfolio, spending, and income assumptions. Formula: max(0, spending − income) × 12 ÷ portfolio. No simulated returns, success probability, taxes, inflation, or insurer guarantees.
 - A keyboard-operable action board. A team prepares evidence and alternatives, records a review, the household explicitly approves that specific sample action, and the team records completion evidence. Forward transitions cannot skip stages.
 - A snapshot of the assumptions attached to each income discussion. Changing comparison inputs creates a new unreviewed discussion, not a silent change to an approved record.
-- Completed records stay completed. New circumstances create a linked review with no inherited approval. “Revisit” is a flag, not a workflow lane that erases completion.
+- Completed records stay completed. New circumstances create a linked review with no inherited approval. “Revisit” is a flag, not a workflow lane that erases completion. Optional review dates do not change status, inherit consent, or schedule notifications.
+- Per-action sources, assumptions, costs and unknown conflicts remain visible; unknown values are not represented as confirmed advice.
 - Screen-reader announcements, focus preservation, skip navigation, visible focus indicators, non-drag controls, reduced-motion styles, semantic comparison tables, and mobile navigation.
 
 ## Deliberate boundaries
@@ -33,7 +34,7 @@ All sample data is labeled illustrative. **Do not enter real personal or financi
 
 The audience selector rehearses UI states; **it is not authentication, authorization, tenancy, or evidence of a real professional review**. Workflow checks are client-side demonstration rules only and can be bypassed by changing the JavaScript. No real consent or audit record is created. Documents is a checklist, not a secure vault. Planning-team roles are explanatory, not actual assigned professionals. The product name does not establish a fiduciary credential.
 
-The existing Express backend is intentionally unchanged. Its calculator endpoints require authentication and use simplified assumptions; adding a second login/token system or exposing their heuristic success figures would enlarge scope and undermine the proposed trust language. Production integration must use server-enforced household/advisor permissions, durable versioned decisions and approvals, existing backend provenance/disclosures, and an appropriately reviewed financial rules engine.
+The existing Express backend is intentionally unchanged. Its tax prototype uses 2024 federal rules, insurance quotes are illustrative, and Documents supports metadata rather than uploaded files; estate and risk modules remain planned. These limits are visible in the preview information panel. Its calculator endpoints require authentication and use simplified assumptions; adding a second login/token system or exposing their heuristic success figures would enlarge scope and undermine the proposed trust language. Production integration must use server-enforced household/advisor permissions, durable versioned decisions and approvals, existing backend provenance/disclosures, and an appropriately reviewed financial rules engine.
 
 ## Acceptance checks
 

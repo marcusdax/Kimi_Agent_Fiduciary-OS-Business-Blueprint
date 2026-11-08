@@ -103,6 +103,8 @@ export default function App() {
   const [help, setHelp] = useState(false);
   const [document, setDocument] = useState("");
   const heading = useRef<HTMLHeadingElement>(null);
+  const navigation = useRef<HTMLElement>(null);
+  const menuToggle = useRef<HTMLButtonElement>(null);
   const updateButton = useRef<HTMLButtonElement>(null);
   const inputError = Planning.validate(inputs);
   const estimate = inputError ? null : Planning.estimate(inputs);
@@ -120,7 +122,15 @@ export default function App() {
     updateButton.current?.focus();
   }, [action.stage]);
 
+  useLayoutEffect(() => {
+    if (menu)
+      navigation.current
+        ?.querySelector<HTMLButtonElement>("nav button")
+        ?.focus();
+  }, [menu]);
+
   function navigate(next: View) {
+    if (next === view) heading.current?.focus();
     setView(next);
     setMenu(false);
     setError("");
@@ -174,6 +184,15 @@ export default function App() {
         Skip to main content
       </a>
       <aside
+        ref={navigation}
+        id="workspace-navigation"
+        onKeyDown={(event) => {
+          if (event.key === "Escape" && menu) {
+            event.preventDefault();
+            setMenu(false);
+            menuToggle.current?.focus();
+          }
+        }}
         className={`sidebar ${menu ? "is-open" : ""}`}
         aria-label="Workspace navigation"
       >
@@ -248,6 +267,8 @@ export default function App() {
             <button
               className="menu-button icon-button"
               onClick={() => setMenu(!menu)}
+              ref={menuToggle}
+              aria-controls="workspace-navigation"
               aria-label="Toggle navigation"
               aria-expanded={menu}
             >
@@ -310,6 +331,25 @@ export default function App() {
                 simulation. “Fiduciary OS” is a product name, not a regulatory
                 credential.
               </p>
+              <h3>Existing backend prototypes are not connected here</h3>
+              <ul>
+                <li>
+                  The tax calculator uses 2024 federal rules, not current-year
+                  tax advice.
+                </li>
+                <li>
+                  Insurance quote figures are illustrative, not offers from
+                  carriers.
+                </li>
+                <li>
+                  The Documents API stores metadata only, not uploaded files.
+                  This preview stores neither.
+                </li>
+                <li>
+                  Estate and risk tools remain planned; this interface does not
+                  provide them.
+                </li>
+              </ul>
             </section>
           )}
           <div className="page-heading">
@@ -853,6 +893,11 @@ export default function App() {
                             </span>
                             {item.owner}
                           </span>
+                          {item.reviewDate && (
+                            <span className="revisit-flag">
+                              Review on {item.reviewDate}
+                            </span>
+                          )}
                           {item.revisit && (
                             <span className="revisit-flag">
                               Review requested
@@ -877,6 +922,11 @@ export default function App() {
                   </div>
                   <span className="pill neutral">{action.stage}</span>
                 </div>
+                {error && (
+                  <p role="alert" className="error">
+                    {error}
+                  </p>
+                )}
                 <div className="detail-grid">
                   <div>
                     {action.snapshot && (
@@ -898,6 +948,22 @@ export default function App() {
                         <dd>{action.owner}</dd>
                       </div>
                       <div>
+                        <dt>Source</dt>
+                        <dd>{action.source}</dd>
+                      </div>
+                      <div>
+                        <dt>Assumptions</dt>
+                        <dd>{action.assumptions}</dd>
+                      </div>
+                      <div>
+                        <dt>Costs</dt>
+                        <dd>{action.costs}</dd>
+                      </div>
+                      <div>
+                        <dt>Conflicts</dt>
+                        <dd>{action.conflicts}</dd>
+                      </div>
+                      <div>
                         <dt>Evidence</dt>
                         <dd>
                           {action.evidence || "Information not yet confirmed."}
@@ -916,6 +982,64 @@ export default function App() {
                         <dd>{action.authorization || "Not approved."}</dd>
                       </div>
                     </dl>
+                    <form
+                      className="review-date-form"
+                      onSubmit={(event) => {
+                        event.preventDefault();
+                        const data = new FormData(event.currentTarget);
+                        try {
+                          if (audience !== "advisor")
+                            throw new Error(
+                              "Use the planning-team demo view to set a review date.",
+                            );
+                          const updated = Planning.scheduleReview(
+                            action,
+                            String(data.get("review-date") ?? ""),
+                          );
+                          setActions((items) =>
+                            items.map((item) =>
+                              item.id === updated.id ? updated : item,
+                            ),
+                          );
+                          setError("");
+                          setNotice(
+                            updated.reviewDate
+                              ? `Review date saved for ${action.title}. No reminder is sent.`
+                              : `Review date cleared for ${action.title}.`,
+                          );
+                        } catch (err) {
+                          setError(
+                            err instanceof Error
+                              ? err.message
+                              : "Unable to set the review date.",
+                          );
+                        }
+                      }}
+                    >
+                      <label className="field-label" htmlFor="review-date">
+                        Review date (optional)
+                      </label>
+                      <input
+                        key={`${action.id}-${action.reviewDate}`}
+                        id="review-date"
+                        name="review-date"
+                        type="date"
+                        defaultValue={action.reviewDate}
+                        aria-describedby="review-date-guidance"
+                        disabled={audience !== "advisor"}
+                      />
+                      <p id="review-date-guidance" className="caption">
+                        Planning-team demo view only. A date does not change
+                        status, approve an action, or send a reminder.
+                      </p>
+                      <button
+                        className="button secondary"
+                        type="submit"
+                        disabled={audience !== "advisor"}
+                      >
+                        Save review date
+                      </button>
+                    </form>
                     <h3>Recorded activity</h3>
                     <ol className="history">
                       {action.history.map((entry, i) => (
@@ -969,11 +1093,6 @@ export default function App() {
                               authorization to transact.
                             </span>
                           </label>
-                        )}
-                        {error && (
-                          <p role="alert" className="error">
-                            {error}
-                          </p>
                         )}
                         <button
                           ref={updateButton}

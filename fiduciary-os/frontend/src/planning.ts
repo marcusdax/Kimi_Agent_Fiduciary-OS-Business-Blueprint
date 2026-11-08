@@ -32,6 +32,12 @@ export interface PlanningAction {
   authorization: string;
   history: string[];
   revisit: boolean;
+  reviewDate: string;
+  source: string;
+  assumptions: string;
+  costs: string;
+  conflicts: string;
+  parentId?: string;
   snapshot?: Inputs;
 }
 export interface TransitionInput {
@@ -57,6 +63,15 @@ export const SAMPLE_ACTIONS: PlanningAction[] = [
     authorization: "",
     history: ["Sample action created for this walkthrough."],
     revisit: false,
+    reviewDate: "",
+    source:
+      "Illustrative household inputs entered in this preview; no provider is connected.",
+    assumptions:
+      "Income and spending stay level. Returns, inflation, taxes and fees are not modeled.",
+    costs:
+      "No product or service has been selected. Any future fees require separate disclosure.",
+    conflicts:
+      "No professional or provider is assigned. Compensation and conflicts have not been assessed.",
     snapshot: { ...INITIAL_INPUTS },
   },
   {
@@ -71,6 +86,14 @@ export const SAMPLE_ACTIONS: PlanningAction[] = [
     authorization: "",
     history: ["Sample action; no beneficiary records are held here."],
     revisit: false,
+    reviewDate: "",
+    source:
+      "Illustrative checklist only; no beneficiary or estate documents are connected.",
+    assumptions:
+      "Ownership, jurisdiction and existing designations need professional confirmation.",
+    costs: "Legal fees and possible tax consequences have not been assessed.",
+    conflicts:
+      "No estate professional is assigned; engagement terms and conflicts are unknown.",
   },
   {
     id: "protection",
@@ -87,6 +110,15 @@ export const SAMPLE_ACTIONS: PlanningAction[] = [
       "Sample evidence and alternatives prepared; no policy recommendation.",
     ],
     revisit: false,
+    reviewDate: "",
+    source:
+      "Illustrative coverage checklist; no policy documents have been reviewed.",
+    assumptions:
+      "Coverage, premiums, exclusions and household needs remain unverified.",
+    costs:
+      "No quote is requested. Premiums, surrender charges and compensation are unknown.",
+    conflicts:
+      "No carrier or producer is selected. Commissions and conflicts require disclosure before any recommendation.",
   },
 ];
 
@@ -197,11 +229,35 @@ export class Planning {
       ],
     };
   }
+  static scheduleReview(action: PlanningAction, date: string): PlanningAction {
+    if (date) {
+      const parsed = new Date(`${date}T12:00:00Z`);
+      if (
+        !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
+        !Number.isFinite(parsed.getTime()) ||
+        parsed.toISOString().slice(0, 10) !== date
+      )
+        throw new Error("Choose a valid review date.");
+    }
+    if (date === action.reviewDate) return action;
+    return {
+      ...action,
+      reviewDate: date,
+      history: [
+        ...action.history,
+        date
+          ? `Review date set to ${date}; status and approval unchanged. No reminder is sent.`
+          : "Review date cleared; status and approval unchanged.",
+      ],
+    };
+  }
   static linkedReview(action: PlanningAction): PlanningAction {
     return {
       ...action,
       id: Planning.id(`${action.id}-review`),
       title: `Review: ${action.title}`,
+      parentId: action.id,
+      reviewDate: "",
       stage: "Gather information",
       evidence: "",
       alternatives: "",
