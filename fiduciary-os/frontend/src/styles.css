@@ -1,3 +1,14 @@
+/* Fiduciary OS legacy visual system: Wealth Symphony reference; layout and real workflow remain current. */
+:root {
+  --bg: #050508;
+  --surface: #15151e;
+  --line: #343448;
+  --cyan: #00f0ff;
+  --gold: #ffd700;
+  --text: #e8e8ef;
+  --muted: #b0b0c2;
+  color-scheme: dark;
+}
 :root {
   font-family:
     Inter,
@@ -6,8 +17,8 @@
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
-  color: #233c38;
-  background: #f6f7f3;
+  color: var(--text);
+  background: var(--surface);
   font-synthesis: none;
   line-height: 1.55;
   font-size: 14px;
@@ -71,7 +82,7 @@ h3 {
   font-weight: 600;
 }
 p {
-  color: #5d6d68;
+  color: var(--text);
 }
 button {
   border: 0;
@@ -82,8 +93,8 @@ button {
 }
 .sidebar {
   width: 238px;
-  background: #fff;
-  border-right: 1px solid #e2e7df;
+  background: var(--surface);
+  border-right: 1px solid var(--line);
   position: fixed;
   inset: 0 auto 0 0;
   display: flex;
@@ -95,20 +106,20 @@ button {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #1b3c36;
+  color: var(--text);
   text-decoration: none;
   font-size: 24px;
   font-weight: 600;
   letter-spacing: -1px;
 }
 .brand-mark {
-  background: #194e44;
+  background: var(--surface);
   width: 38px;
   height: 42px;
   display: grid;
   place-items: center;
   border-radius: 12px 3px;
-  color: #fff;
+  color: var(--text);
 }
 .brand small {
   display: block;
@@ -124,7 +135,7 @@ button {
 .workspace-label {
   font-size: 11px;
   letter-spacing: 1.6px;
-  color: #6b7972;
+  color: var(--text);
   margin: 49px 14px 14px;
 }
 nav {
@@ -140,21 +151,21 @@ nav button {
   text-align: left;
   padding: 12px 14px;
   border-radius: 7px;
-  color: #596d64;
+  color: var(--text);
   font-size: 13px;
 }
 nav button[aria-current="page"] {
-  background: #edf3ee;
-  color: #1d5145;
+  background: var(--surface);
+  color: var(--text);
   font-weight: 600;
 }
 nav button:hover {
-  background: #f2f5f0;
+  background: var(--surface);
 }
 .nav-count {
   margin-left: auto;
   border-radius: 5px;
-  background: #d8e6dc;
+  background: var(--surface);
   font-size: 11px;
   padding: 0 6px;
 }
@@ -163,7 +174,7 @@ nav button:hover {
   padding-top: 50px;
 }
 .guidance {
-  background: #f6f7f2;
+  background: var(--surface);
   padding: 19px 15px;
   border-radius: 9px;
   font-size: 12px;
@@ -171,7 +182,7 @@ nav button:hover {
 .guidance svg {
   display: block;
   margin-bottom: 12px;
-  color: #69836b;
+  color: var(--text);
 }
 .guidance strong {
   font-size: 13px;
@@ -186,14 +197,14 @@ nav button:hover {
   display: flex;
   align-items: center;
   gap: 10px;
-  border-top: 1px solid #e9ece6;
+  border-top: 1px solid var(--line);
   margin-top: 22px;
   padding-top: 19px;
   font-size: 11px;
 }
 .profile small {
   display: block;
-  color: #596b60;
+  color: var(--text);
   font-size: 11px;
 }
 .avatar {
@@ -201,7 +212,7 @@ nav button:hover {
   height: 32px;
   display: grid;
   place-items: center;
-  background: #eeece2;
+  background: var(--surface);
   border-radius: 50%;
   font-weight: 600;
 }
@@ -211,8 +222,8 @@ nav button:hover {
 }
 .topbar {
   height: 71px;
-  border-bottom: 1px solid #e3e7df;
-  background: #fff;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -222,7 +233,7 @@ nav button:hover {
   display: flex;
   gap: 12px;
   align-items: center;
-  color: #65766e;
+  color: var(--text);
   font-size: 11px;
 }
 .view-picker {
@@ -242,18 +253,18 @@ nav button:hover {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #365a4b;
-  background: #edf2e8;
-  border-bottom: 1px solid #dee6d6;
+  color: var(--text);
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
 }
 .preview-detail {
-  color: #5d6b59;
+  color: var(--text);
 }
 .dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #55724b;
+  background: var(--surface);
   display: inline-block;
   flex-shrink: 0;
 }
@@ -273,7 +284,7 @@ main {
   font-size: 11px;
   letter-spacing: 1.8px;
   font-weight: 600;
-  color: #627568;
+  color: var(--text);
   margin-bottom: 10px;
 }
 .intro {
@@ -281,7 +292,7 @@ main {
   margin-bottom: 0;
 }
 .sample-pill {
-  border: 1px solid #dce3d6;
+  border: 1px solid var(--line);
   border-radius: 25px;
   display: flex;
   align-items: center;
@@ -296,16 +307,16 @@ main {
   justify-content: space-between;
   overflow: hidden;
   position: relative;
-  background: #163f37;
+  background: var(--surface);
   border-radius: 13px;
   min-height: 270px;
   padding: 30px 32px;
-  color: white;
+  color: var(--text);
 }
 .light-label {
   font-size: 11px;
   letter-spacing: 1.8px;
-  color: #c8dabd;
+  color: var(--text);
 }
 .hero h2 {
   font-family: Georgia, serif;
@@ -316,7 +327,7 @@ main {
   letter-spacing: -0.5px;
 }
 .hero p {
-  color: #c7d7ce;
+  color: var(--text);
   font-size: 11px;
   line-height: 1.8;
   margin-bottom: 22px;
@@ -326,22 +337,22 @@ main {
   align-items: center;
   justify-content: center;
   gap: 13px;
-  background: #1e5446;
-  color: #fff;
+  background: var(--surface);
+  color: var(--text);
   border-radius: 6px;
   padding: 11px 16px;
   font-weight: 500;
   font-size: 12px;
 }
 .white {
-  background: #f6f7ed;
-  color: #214c3d;
+  background: var(--surface);
+  color: var(--text);
 }
 .hero-note {
   display: block;
   font-size: 11px;
   margin-top: 11px;
-  color: #bed0bf;
+  color: var(--text);
 }
 .hero-art {
   width: 34%;
@@ -353,7 +364,7 @@ main {
 }
 .orbit {
   position: absolute;
-  border: 1px solid #4b6f5c;
+  border: 1px solid var(--line);
   border-radius: 50%;
   width: 205px;
   height: 205px;
@@ -361,7 +372,7 @@ main {
 .orbit-two {
   width: 155px;
   height: 155px;
-  border-color: #789273;
+  border-color: var(--line);
 }
 .orbit-three {
   width: 258px;
@@ -371,8 +382,8 @@ main {
 .art-center {
   width: 100px;
   height: 100px;
-  background: #2d5749;
-  color: #d5e2c2;
+  background: var(--surface);
+  color: var(--text);
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -382,7 +393,7 @@ main {
   bottom: 9px;
   font-family: Georgia, serif;
   font-size: 12px;
-  color: #c8dabd;
+  color: var(--text);
   white-space: nowrap;
 }
 .stats {
@@ -392,15 +403,15 @@ main {
   margin: 22px 0 28px;
 }
 .stat {
-  border: 1px solid #dfe5db;
+  border: 1px solid var(--line);
   border-radius: 9px;
   padding: 18px 19px;
-  background: #fff;
+  background: var(--surface);
 }
 .stat > span {
   font-size: 11px;
   letter-spacing: 1.4px;
-  color: #65786d;
+  color: var(--text);
 }
 .stat strong {
   display: block;
@@ -411,7 +422,7 @@ main {
   letter-spacing: -0.35px;
 }
 .stat small {
-  color: #596b60;
+  color: var(--text);
   font-size: 11px;
 }
 .two-column {
@@ -420,8 +431,8 @@ main {
   gap: 20px;
 }
 .panel {
-  background: #fff;
-  border: 1px solid #dfe5db;
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: 10px;
   padding: 24px;
   margin-bottom: 20px;
@@ -439,11 +450,11 @@ main {
 }
 .badge {
   display: inline-block;
-  background: #f1f0e4;
-  border: 1px solid #e5e3cf;
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: 5px;
   padding: 3px 7px;
-  color: #6d6335;
+  color: var(--text);
   font-size: 11px;
   white-space: nowrap;
 }
@@ -462,17 +473,17 @@ main {
 }
 .icon-tile {
   flex-shrink: 0;
-  background: #edf3ec;
+  background: var(--surface);
   width: 43px;
   height: 43px;
   border-radius: 8px;
   display: grid;
   place-items: center;
-  color: #507351;
+  color: var(--text);
   margin-bottom: 12px;
 }
 .muted {
-  color: #5f6d61;
+  color: var(--text);
   font-size: 11px !important;
 }
 .text-button {
@@ -480,7 +491,7 @@ main {
   gap: 9px;
   align-items: center;
   background: transparent;
-  color: #315a43;
+  color: var(--text);
   padding: 5px 0;
   font-size: 11px;
   font-weight: 600;
@@ -506,8 +517,8 @@ main {
   width: 21px;
   height: 21px;
   border-radius: 50%;
-  background: #edf3e7;
-  color: #5d7a49;
+  background: var(--surface);
+  color: var(--text);
 }
 .section-space {
   margin-top: 8px;
@@ -519,23 +530,23 @@ main {
 }
 .goal-card {
   text-align: left;
-  background: #fff;
-  border: 1px solid #dfe5db;
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: 9px;
   padding: 21px;
-  color: #233c38;
+  color: var(--text);
   position: relative;
 }
 .goal-card:hover {
-  border-color: #70866c;
+  border-color: var(--line);
 }
 .goal-card.chosen {
-  border: 2px solid #35614d;
-  background: #f5f8f0;
+  border: 2px solid var(--line);
+  background: var(--surface);
 }
 .goal-number {
   font-size: 11px;
-  color: #576c53;
+  color: var(--text);
 }
 .goal-card h3 {
   font-family: Georgia, serif;
@@ -551,12 +562,12 @@ main {
   position: absolute;
   top: 19px;
   right: 18px;
-  color: #53674c;
+  color: var(--text);
 }
 footer {
   margin-top: 40px;
   padding-top: 20px;
-  border-top: 1px solid #e0e5dc;
+  border-top: 1px solid var(--line);
   display: flex;
   align-items: center;
   gap: 16px;
@@ -571,7 +582,7 @@ footer p {
   margin: 0;
 }
 footer small {
-  color: #596b60;
+  color: var(--text);
   font-size: 11px;
   width: 100%;
 }
@@ -581,15 +592,15 @@ textarea {
   display: block;
   width: 100%;
   padding: 10px 11px;
-  color: #264d3b;
-  background: #fff;
-  border: 1px solid #687b67;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: 5px;
   margin-top: 7px;
 }
 label {
   font-size: 12px;
-  color: #3e5545;
+  color: var(--text);
   display: block;
 }
 .input-grid {
@@ -604,7 +615,7 @@ label {
 }
 .scroll-help {
   font-size: 12px;
-  color: #3e5545;
+  color: var(--text);
 }
 table {
   width: 100%;
@@ -615,21 +626,21 @@ table {
 caption {
   text-align: left;
   font-size: 12px;
-  color: #5d6d68;
+  color: var(--text);
   padding-bottom: 15px;
 }
 th,
 td {
   text-align: left;
   padding: 15px 12px;
-  border-bottom: 1px solid #e0e6dd;
+  border-bottom: 1px solid var(--line);
 }
 thead th {
-  background: #f1f5ed;
+  background: var(--surface);
 }
 details {
   margin: 20px 0;
-  border-top: 1px solid #e0e6dd;
+  border-top: 1px solid var(--line);
   padding-top: 16px;
   font-size: 12px;
 }
@@ -642,8 +653,8 @@ details p {
 }
 .callout {
   padding: 20px;
-  background: #f4f6ed;
-  border-left: 3px solid #839766;
+  background: var(--surface);
+  border-left: 3px solid var(--line);
   margin: 22px 0;
   font-size: 12px;
 }
@@ -673,7 +684,7 @@ details p {
   margin: 18px 0 20px;
 }
 .lane {
-  background: #edf0e9;
+  background: var(--surface);
   padding: 12px;
   min-width: 204px;
   max-width: 240px;
@@ -688,7 +699,7 @@ details p {
   margin: 0 0 15px;
 }
 .lane h3 > span {
-  background: #dfe6d9;
+  background: var(--surface);
   border-radius: 4px;
   padding: 2px 7px;
 }
@@ -697,21 +708,21 @@ details p {
   scroll-margin-inline: 8px;
   text-align: left;
   width: 100%;
-  background: white;
-  border: 1px solid #d7dfd1;
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: 7px;
   padding: 14px;
   margin-bottom: 10px;
-  color: #2b4535;
+  color: var(--text);
 }
 .board-card.selected {
-  border: 2px solid #527552;
+  border: 2px solid var(--line);
   padding: 13px;
 }
 .card-tag {
   font-size: 11px;
   letter-spacing: 1.4px;
-  color: #60734f;
+  color: var(--text);
 }
 .board-card strong {
   display: block;
@@ -725,16 +736,16 @@ details p {
 }
 .card-owner {
   display: block;
-  border-top: 1px solid #e5e9df;
+  border-top: 1px solid var(--line);
   padding-top: 10px;
   font-size: 11px;
-  color: #66775a;
+  color: var(--text);
 }
 .card-status {
   display: block;
   font-size: 11px;
   margin: 8px 0;
-  color: #566c4a;
+  color: var(--text);
 }
 .card-link {
   display: flex;
@@ -744,7 +755,7 @@ details p {
 }
 .empty-lane {
   font-size: 11px;
-  color: #53674c;
+  color: var(--text);
 }
 .record-grid {
   display: grid;
@@ -758,11 +769,11 @@ details p {
 }
 .record-grid dd {
   margin: 0;
-  color: #61705d;
+  color: var(--text);
 }
 .transition-area {
   padding: 20px;
-  background: #f2f5ee;
+  background: var(--surface);
   border-radius: 7px;
   margin: 20px 0;
   font-size: 12px;
@@ -785,11 +796,11 @@ details p {
   margin-bottom: 16px;
 }
 .error {
-  color: #a02f20;
+  color: var(--text);
   font-weight: 500;
 }
 .success {
-  color: #285239;
+  color: var(--text);
 }
 .document-list {
   list-style: none;
@@ -800,7 +811,7 @@ details p {
   align-items: center;
   gap: 12px;
   padding: 16px 0;
-  border-bottom: 1px solid #e5eadf;
+  border-bottom: 1px solid var(--line);
   font-size: 12px;
 }
 .document-list li .badge {
@@ -824,8 +835,8 @@ details p {
   z-index: 100;
   transform: translateY(-200%);
   padding: 12px;
-  background: white;
-  color: #174c39;
+  background: var(--surface);
+  color: var(--text);
 }
 .skip:focus {
   transform: none;
@@ -916,7 +927,7 @@ details p {
     width: 100%;
     padding: 18px 16px 10px;
     border-right: 0;
-    border-bottom: 1px solid #dfe5db;
+    border-bottom: 1px solid var(--line);
   }
   .brand {
     font-size: 21px;
@@ -1090,14 +1101,14 @@ details p {
 }
 .workspace-tabs button {
   padding: 10px 16px;
-  border: 1px solid #687b67;
+  border: 1px solid var(--line);
   border-radius: 6px;
-  background: #fff;
-  color: #244a38;
+  background: var(--surface);
+  color: var(--text);
 }
 .workspace-tabs button[aria-pressed="true"] {
-  background: #1e5446;
-  color: #fff;
+  background: var(--surface);
+  color: var(--text);
 }
 .toolbar-buttons {
   display: flex;
@@ -1112,7 +1123,7 @@ details p {
   overflow-wrap: anywhere;
   font-size: 12px;
   padding: 15px;
-  background: #f2f5ee;
+  background: var(--surface);
 }
 .connected-workspace dd {
   overflow-wrap: anywhere;
@@ -1123,4 +1134,272 @@ details p {
 .connected-workspace .transition-area > .button {
   margin-right: 12px;
   margin-bottom: 12px;
+}
+
+:root {
+  background: var(--bg);
+  color: var(--text);
+}
+body {
+  background: var(--bg);
+}
+.sidebar,
+.topbar {
+  background: #0f0f14;
+}
+main {
+  background-image:
+    linear-gradient(rgba(0, 240, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.025) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+p,
+.intro,
+.breadcrumb,
+.eyebrow,
+.workspace-label,
+.stat small,
+.profile small {
+  color: var(--muted);
+}
+h1,
+h2,
+h3,
+.brand,
+.stat strong {
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+.brand,
+.os,
+.eyebrow,
+nav button[aria-current="page"] {
+  color: var(--cyan);
+}
+.brand-mark {
+  color: var(--bg);
+  background: var(--cyan);
+}
+nav button[aria-current="page"] {
+  background: rgba(0, 240, 255, 0.09);
+  box-shadow: inset 3px 0 var(--cyan);
+}
+.panel,
+.stat,
+.module-card {
+  background: linear-gradient(
+    135deg,
+    rgba(21, 21, 30, 0.98),
+    rgba(15, 15, 20, 0.98)
+  );
+  border-color: var(--line);
+}
+.hero {
+  background: linear-gradient(120deg, #111622, #15151e);
+  border: 1px solid #29404a;
+}
+.hero h2 {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-weight: 600;
+}
+.hero p,
+.light-label,
+.hero-note,
+.art-label {
+  color: var(--muted);
+}
+.art-center {
+  background: #122a33;
+  color: var(--cyan);
+}
+.orbit {
+  border-color: #245565;
+}
+.preview {
+  background: #101e25;
+  color: var(--text);
+}
+.preview-detail {
+  color: var(--muted);
+}
+.dot {
+  background: var(--cyan);
+}
+.button,
+button.primary {
+  background: var(--cyan);
+  color: #050508;
+  border: 1px solid var(--cyan);
+  font-weight: 650;
+}
+.button.white {
+  background: transparent;
+  color: var(--cyan);
+}
+button:not(.button):not(.primary) {
+  color: var(--text);
+}
+button.text-button,
+a {
+  color: var(--cyan);
+}
+:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 4px;
+}
+input,
+select,
+textarea {
+  background: #0a0a0f;
+  color: var(--text);
+  border: 1px solid var(--line);
+}
+.validation {
+  color: #ff9fae;
+}
+.success {
+  color: #78eabd;
+}
+.financial-workspace {
+  min-width: 0;
+}
+.financial-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 20px;
+}
+.financial-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+}
+.financial-form input {
+  width: 100%;
+  min-width: 0;
+  padding: 11px;
+  border-radius: 6px;
+}
+.financial-form .wide {
+  grid-column: 1/-1;
+}
+.financial-form button,
+.financial-toolbar button {
+  padding: 12px 18px;
+  min-height: 44px;
+  border-radius: 6px;
+}
+.financial-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 20px 0;
+}
+.financial-toolbar button {
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+.financial-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+.financial-kpis strong,
+.financial-kpis small {
+  display: block;
+}
+.financial-kpis strong {
+  font-size: clamp(18px, 2vw, 26px);
+  font-variant-numeric: tabular-nums;
+}
+.financial-kpis small {
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.financial-chart {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 20px 0;
+  color: var(--muted);
+}
+.financial-chart text {
+  fill: currentColor;
+  font-size: 13px;
+}
+.financial-workspace table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.financial-workspace td,
+.financial-workspace th {
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+.financial-workspace caption {
+  text-align: left;
+  color: var(--muted);
+  padding: 12px 0;
+}
+.financial-workspace summary {
+  cursor: pointer;
+  padding: 12px 0;
+  color: var(--cyan);
+}
+.financial-workspace .table-wrap {
+  overflow: auto;
+}
+.financial-workspace .table-wrap table {
+  min-width: 570px;
+}
+.method-note {
+  margin-top: 20px;
+}
+.allocation {
+  display: flex;
+  width: 100%;
+  height: 24px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 18px 0;
+}
+.asset-cash {
+  background: #00f0ff;
+}
+.asset-bonds {
+  background: #ffd700;
+}
+.asset-equities {
+  background: #c17ce8;
+}
+.asset-other {
+  background: #78eabd;
+}
+@media (max-width: 640px) {
+  .financial-form,
+  .financial-kpis {
+    grid-template-columns: 1fr;
+  }
+  .financial-form .wide {
+    grid-column: auto;
+  }
+  .financial-toolbar {
+    flex-direction: column;
+  }
+  .financial-workspace .panel {
+    padding: 18px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 }

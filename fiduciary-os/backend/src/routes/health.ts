@@ -35,7 +35,7 @@ router.get('/', async (req: Request, res: Response) => {
   } catch (error) {
     health.services.redis = 'disconnected';
     // Only mark unhealthy if Redis is required (not in development)
-    if (process.env.REDIS_URL && process.env.NODE_ENV === 'production') {
+    if (process.env.REDIS_ENABLED !== 'false' && process.env.REDIS_URL && process.env.NODE_ENV === 'production') {
       health.status = 'unhealthy';
     }
   }

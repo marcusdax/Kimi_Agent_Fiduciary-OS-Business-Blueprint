@@ -1,0 +1,2 @@
+CREATE TABLE "financial_plans" ("id" TEXT NOT NULL PRIMARY KEY, "userId" TEXT NOT NULL, "inputs" TEXT NOT NULL, "version" INTEGER NOT NULL DEFAULT 1, "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" DATETIME NOT NULL, CONSTRAINT "financial_plans_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users" ("id") ON DELETE CASCADE ON UPDATE CASCADE);
+CREATE UNIQUE INDEX "financial_plans_userId_key" ON "financial_plans"("userId");

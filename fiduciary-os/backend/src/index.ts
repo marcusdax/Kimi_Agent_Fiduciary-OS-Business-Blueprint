@@ -16,6 +16,7 @@ import { userRouter } from './routes/users';
 import { profileRouter } from './routes/profile';
 import { portfolioRouter } from './routes/portfolio';
 import { calculationsRouter } from './routes/calculations';
+import { financialPlanRouter } from './routes/financial-plan';
 import { planningRouter } from './routes/planning';
 import { documentsRouter } from './routes/documents';
 import { aiRouter } from './routes/ai';
@@ -28,8 +29,13 @@ import { connectRedis } from './config/redis';
 import { setupWebSocketHandlers } from './services/websocketService';
 
 dotenv.config();
+if (process.env.NODE_ENV === 'production' && (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32)) {
+  throw new Error('A strong environment-specific JWT secret is required');
+}
 
 const app = express();
+app.disable('x-powered-by');
+app.set('trust proxy', 1);
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
@@ -67,8 +73,8 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // Body parsing
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
 // Compression
 app.use(compression());
@@ -81,7 +87,8 @@ app.use(requestLogger);
 app.use('/health', healthRouter);
 
 // API routes
-app.use(`${API_PREFIX}/auth`, authRouter);
+app.use(`${API_PREFIX}/auth`, rateLimit({ windowMs: 15 * 60 * 1000, max: 30, standardHeaders: true, legacyHeaders: false }), authRouter);
+app.use(`${API_PREFIX}/financial-plan`, financialPlanRouter);
 app.use(`${API_PREFIX}/users`, userRouter);
 app.use(`${API_PREFIX}/profile`, profileRouter);
 app.use(`${API_PREFIX}/portfolio`, portfolioRouter);

@@ -63,3 +63,10 @@ Before real users: verify source data and jurisdiction/year-versioned engines; i
 The preserved reference implementation supplied useful sample-snapshot/review-date invariants and an offline export utility. They are adapted here rather than merging the competing frontend or coupling authorization to a status change. Its Escape/focus behavior applies to a collapsed mobile menu, which this implementation does not have: this interface keeps a native horizontally scrolling navigation row visible at phone width. Navigation changes focus the destination heading, tested for all six sections.
 
 Full backend lint still fails on inherited findings; the repaired resolver and new blocking planning lint are described in [backend lint status](../backend/LINT_STATUS.md).
+
+
+## Saved financial workspace (working branch)
+
+The **Financial workspace** navigation entry now provides test-account registration/login, owner-scoped manual asset balances, monthly cash flow, versioned persistence, deterministic nominal/real balance charts, allocation and exact data tables. Existing sample cards stay separate; no data provider or bank is linked. Chart values update only after a confirmed save. Use synthetic inputs only.
+
+The earlier dark/cyan Fiduciary visual system is independently adapted without discarding current workflow/accessibility fixes. See [source research, methods, limitations and production gates](../docs/RESEARCH_AND_PRODUCTION_GATES.md). It remains a pre-launch sandbox, not production financial advice or a certified platform.

@@ -1,7 +1,7 @@
 {
   "name": "@fiduciary-os/backend",
   "version": "1.0.0",
-  "description": "Fiduciary OS™ Backend API - Node.js/Express + TypeScript",
+  "description": "Fiduciary OS\u2122 Backend API - Node.js/Express + TypeScript",
   "main": "dist/index.js",
   "type": "commonjs",
   "scripts": {
@@ -21,7 +21,8 @@
     "db:generate": "prisma generate",
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
-    "lint:planning": "eslint src/routes/planning.ts tests/unit/planning.test.ts --report-unused-disable-directives --max-warnings 0"
+    "lint:planning": "eslint src/routes/planning.ts tests/unit/planning.test.ts --report-unused-disable-directives --max-warnings 0",
+    "lint:financial": "eslint src/services/financial-plan.ts src/routes/financial-plan.ts tests/unit/financial-plan.test.ts --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
     "@prisma/client": "^5.10.2",
@@ -39,7 +40,7 @@
     "morgan": "^1.12.1",
     "socket.io": "^4.7.4",
     "winston": "^3.12.0",
-    "zod": "^3.22.4"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -71,5 +72,8 @@
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
+  },
+  "overrides": {
+    "qs": "^6.17.1"
   }
 }

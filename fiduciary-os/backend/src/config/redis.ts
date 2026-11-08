@@ -4,6 +4,7 @@ import { logger } from '../utils/logger';
 let redis: Redis | null = null;
 
 export async function connectRedis(): Promise<Redis> {
+  if (process.env.REDIS_ENABLED === 'false') throw new Error('Redis explicitly disabled');
   const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
   
   // Skip Redis if URL is explicitly empty

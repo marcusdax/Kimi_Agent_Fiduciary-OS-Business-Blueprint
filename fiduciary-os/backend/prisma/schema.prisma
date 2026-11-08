@@ -23,6 +23,7 @@ model User {
   sessions      Session[]
   aiInteractions AiInteraction[]
   planningActions PlanningAction[]
+  financialPlan FinancialPlan?
 
   @@map("users")
 }
@@ -167,4 +168,17 @@ model PlanningEvent {
 
   @@unique([actionId, version])
   @@map("planning_events")
+}
+
+// One owner-scoped, versioned manual-input plan. No market prices or execution.
+model FinancialPlan {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  inputs    String
+  version   Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("financial_plans")
 }

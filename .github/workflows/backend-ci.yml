@@ -36,6 +36,8 @@ jobs:
       # New planning endpoints/tests must pass strict lint.
       - name: Planning API lint (blocking)
         run: npm run lint:planning
+      - name: Financial API lint (blocking)
+        run: npm run lint:financial
       # Full-repository lint still reports inherited style/type findings.
       # The resolver and source/test project setup are now fixed.
       # See fiduciary-os/backend/LINT_STATUS.md; this step is not a pass gate.
