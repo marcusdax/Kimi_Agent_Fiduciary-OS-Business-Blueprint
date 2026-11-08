@@ -1,0 +1,31 @@
+{
+  "name": "@fiduciary-os/trust-core",
+  "version": "1.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Production data-provenance, evidence-ledger and deterministic planning engines for Fiduciary OS",
+  "engines": {
+    "node": ">=22.6.0"
+  },
+  "scripts": {
+    "start": "node src/server.ts",
+    "mcp": "node src/mcp/main.ts",
+    "test": "node --test --test-isolation=none --test-reporter=spec \"tests/unit/**/*.test.ts\" \"tests/integration/**/*.test.ts\"",
+    "test:unit": "node --test --test-isolation=none --test-reporter=spec \"tests/unit/**/*.test.ts\"",
+    "test:integration": "node --test --test-isolation=none --test-reporter=spec \"tests/integration/**/*.test.ts\"",
+    "test:live": "node --test --test-isolation=none --test-reporter=spec \"tests/live/**/*.test.ts\"",
+    "type-check": "tsc --noEmit",
+    "verify": "npm run type-check && npm run audit && npm test",
+    "probe": "node tools/probe-real-data.mjs",
+    "probe:json": "node tools/probe-real-data.mjs --json",
+    "scan": "node tools/github-scan.mjs",
+    "scan:verify": "node tools/verify-curated.mjs",
+    "ledger:verify": "node tools/verify-ledger.mjs",
+    "mortality:check": "node tools/refresh-mortality.mjs --input ssa.html --year 2023 --check",
+    "audit": "node tools/audit.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  }
+}
