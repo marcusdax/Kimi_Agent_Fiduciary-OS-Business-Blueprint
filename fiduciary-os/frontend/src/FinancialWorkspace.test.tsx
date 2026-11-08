@@ -1,6 +1,8 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import FinancialWorkspace from "./FinancialWorkspace";
+// Child suite tests its own network; isolate the financial-plan contract here.
+vi.mock("./BlueprintTools", () => ({ default: () => null }));
 const inputs = {
   name: "My test plan",
   asOf: "2026-11-08",

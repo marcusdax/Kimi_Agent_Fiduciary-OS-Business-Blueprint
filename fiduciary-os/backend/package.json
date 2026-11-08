@@ -22,7 +22,8 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
     "lint:planning": "eslint src/routes/planning.ts tests/unit/planning.test.ts --report-unused-disable-directives --max-warnings 0",
-    "lint:financial": "eslint src/services/financial-plan.ts src/routes/financial-plan.ts tests/unit/financial-plan.test.ts --report-unused-disable-directives --max-warnings 0"
+    "lint:financial": "eslint src/services/financial-plan.ts src/routes/financial-plan.ts tests/unit/financial-plan.test.ts --report-unused-disable-directives --max-warnings 0",
+    "lint:tools": "eslint src/services/toolkit.ts src/services/observations.ts src/routes/tools.ts tests/unit/toolkit.test.ts tests/unit/observations.test.ts --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
     "@prisma/client": "^5.10.2",

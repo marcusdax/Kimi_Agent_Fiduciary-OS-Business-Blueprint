@@ -1,3 +1,4 @@
+import BlueprintTools from "./BlueprintTools";
 import { useRef, useState, type FormEvent } from "react";
 import { api, ApiError } from "./planning-api";
 
@@ -307,6 +308,7 @@ export default function FinancialWorkspace() {
         </section>
       ) : (
         <>
+          <BlueprintTools key={token} token={token} />
           <div className="financial-toolbar">
             <button disabled={busy} onClick={() => void work(() => load())}>
               Reload saved plan (discard edits)

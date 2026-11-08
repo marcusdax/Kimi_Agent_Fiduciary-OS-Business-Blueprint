@@ -1,0 +1,3693 @@
+{
+  "reference": "complete HTML uploaded Nov 8 2026",
+  "lines": 2796,
+  "sha256": "b9b527253e8b4ab862c2b1336ff4fe143790f23e02048d8ea4915fa8b2ae3ef7",
+  "modules": [
+    "home-me",
+    "home-adv",
+    "profile",
+    "annuity",
+    "life",
+    "investment",
+    "retirement",
+    "symphony",
+    "tax",
+    "crypto",
+    "risk",
+    "estate",
+    "willtrust",
+    "vault"
+  ],
+  "elements": [
+    {
+      "line": 1177,
+      "module": "shell",
+      "tag": "button",
+      "attributes": {
+        "class": "lens-btn on",
+        "id": "lens-me",
+        "onclick": "setLens('me')",
+        "aria-pressed": "true"
+      }
+    },
+    {
+      "line": 1177,
+      "module": "shell",
+      "tag": "button",
+      "attributes": {
+        "class": "lens-btn",
+        "id": "lens-adv",
+        "onclick": "setLens('adv')",
+        "aria-pressed": "false"
+      }
+    },
+    {
+      "line": 1179,
+      "module": "shell",
+      "tag": "button",
+      "attributes": {
+        "class": "btn btn-cyan",
+        "style": "padding:5px 12px",
+        "onclick": "showModal('profileModal')"
+      }
+    },
+    {
+      "line": 1187,
+      "module": "shell",
+      "tag": "div",
+      "attributes": {
+        "class": "avatar",
+        "id": "sideAvatar"
+      }
+    },
+    {
+      "line": 1189,
+      "module": "shell",
+      "tag": "div",
+      "attributes": {
+        "style": "font-weight:700;font-size:13px",
+        "id": "sideUser"
+      }
+    },
+    {
+      "line": 1196,
+      "module": "shell",
+      "tag": "div",
+      "attributes": {
+        "style": "font-size:12px;font-family:monospace;color:var(--sage)",
+        "id": "sideNW"
+      }
+    },
+    {
+      "line": 1200,
+      "module": "shell",
+      "tag": "div",
+      "attributes": {
+        "style": "font-size:12px;font-family:monospace;color:var(--gold)",
+        "id": "sideRisk"
+      }
+    },
+    {
+      "line": 1206,
+      "module": "shell",
+      "tag": "button",
+      "attributes": {
+        "class": "nav-btn active",
+        "id": "nav-home",
+        "onclick": "goHome()"
+      }
+    },
+    {
+      "line": 1208,
+      "module": "shell",
+      "tag": "button",
+      "attributes": {
+        "class": "nav-btn",
+        "onclick": "showPage('profile')"
+      }
+    },
+    {
+      "line": 1210,
+      "module": "shell",
+      "tag": "button",
+      "attributes": {
+        "class": "nav-btn",
+        "onclick": "showPage('annuity')"
+      }
+    },
+    {
+      "line": 1211,
+      "module": "shell",
+      "tag": "button",
+      "attributes": {
+        "class": "nav-btn",
+        "onclick": "showPage('life')"
+      }
+    },
+    {
+      "line": 1212,
+      "module": "shell",
+      "tag": "button",
+      "attributes": {
+        "class": "nav-btn",
+        "onclick": "showPage('investment')"
+      }
+    },
+    {
+      "line": 1213,
+      "module": "shell",
+      "tag": "button",
+      "attributes": {
+        "class": "nav-btn",
+        "onclick": "showPage('retirement')"
+      }
+    },
+    {
+      "line": 1215,
+      "module": "shell",
+      "tag": "button",
+      "attributes": {
+        "class": "nav-btn",
+        "onclick": "showPage('symphony')"
+      }
+    },
+    {
+      "line": 1216,
+      "module": "shell",
+      "tag": "button",
+      "attributes": {
+        "class": "nav-btn",
+        "onclick": "showPage('tax')"
+      }
+    },
+    {
+      "line": 1217,
+      "module": "shell",
+      "tag": "button",
+      "attributes": {
+        "class": "nav-btn",
+        "onclick": "showPage('crypto')"
+      }
+    },
+    {
+      "line": 1219,
+      "module": "shell",
+      "tag": "button",
+      "attributes": {
+        "class": "nav-btn",
+        "onclick": "showPage('risk')"
+      }
+    },
+    {
+      "line": 1220,
+      "module": "shell",
+      "tag": "button",
+      "attributes": {
+        "class": "nav-btn",
+        "onclick": "showPage('estate')"
+      }
+    },
+    {
+      "line": 1221,
+      "module": "shell",
+      "tag": "button",
+      "attributes": {
+        "class": "nav-btn",
+        "onclick": "showPage('willtrust')"
+      }
+    },
+    {
+      "line": 1222,
+      "module": "shell",
+      "tag": "button",
+      "attributes": {
+        "class": "nav-btn",
+        "onclick": "showPage('vault')"
+      }
+    },
+    {
+      "line": 1232,
+      "module": "shell",
+      "tag": "div",
+      "attributes": {
+        "class": "deck-value",
+        "id": "deck-integrity"
+      }
+    },
+    {
+      "line": 1233,
+      "module": "shell",
+      "tag": "div",
+      "attributes": {
+        "class": "deck-value",
+        "id": "deck-dna"
+      }
+    },
+    {
+      "line": 1234,
+      "module": "shell",
+      "tag": "div",
+      "attributes": {
+        "class": "deck-value",
+        "id": "deck-risk"
+      }
+    },
+    {
+      "line": 1235,
+      "module": "shell",
+      "tag": "div",
+      "attributes": {
+        "class": "deck-value",
+        "id": "deck-runway"
+      }
+    },
+    {
+      "line": 1236,
+      "module": "shell",
+      "tag": "div",
+      "attributes": {
+        "class": "deck-value",
+        "id": "deck-signal"
+      }
+    },
+    {
+      "line": 1240,
+      "module": "shell",
+      "tag": "button",
+      "attributes": {
+        "class": "icon-btn",
+        "title": "Command palette (Ctrl+K)",
+        "onclick": "BlueprintDeck.openPalette()"
+      }
+    },
+    {
+      "line": 1241,
+      "module": "shell",
+      "tag": "button",
+      "attributes": {
+        "class": "icon-btn",
+        "title": "Export snapshot",
+        "onclick": "BlueprintDeck.exportSnapshot()"
+      }
+    },
+    {
+      "line": 1242,
+      "module": "shell",
+      "tag": "button",
+      "attributes": {
+        "class": "icon-btn",
+        "title": "Toggle compact",
+        "onclick": "BlueprintDeck.toggleCompact()"
+      }
+    },
+    {
+      "line": 1243,
+      "module": "shell",
+      "tag": "button",
+      "attributes": {
+        "class": "icon-btn",
+        "title": "Pause animations",
+        "onclick": "BlueprintDeck.toggleStasis()"
+      }
+    },
+    {
+      "line": 1244,
+      "module": "shell",
+      "tag": "button",
+      "attributes": {
+        "class": "icon-btn",
+        "title": "Run diagnostics",
+        "onclick": "BlueprintDeck.runDiagnostics()"
+      }
+    },
+    {
+      "line": 1250,
+      "module": "shell",
+      "tag": "div",
+      "attributes": {
+        "class": "topology-grid",
+        "id": "topologyGrid"
+      }
+    },
+    {
+      "line": 1254,
+      "module": "shell",
+      "tag": "div",
+      "attributes": {
+        "id": "pg-home-me",
+        "class": "pg active"
+      }
+    },
+    {
+      "line": 1257,
+      "module": "home-me",
+      "tag": "div",
+      "attributes": {
+        "class": "glass card",
+        "id": "hm-move-card",
+        "aria-live": "polite"
+      }
+    },
+    {
+      "line": 1258,
+      "module": "home-me",
+      "tag": "div",
+      "attributes": {
+        "class": "hm-big hm-score",
+        "id": "hm-score"
+      }
+    },
+    {
+      "line": 1258,
+      "module": "home-me",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-sub",
+        "id": "hm-score-sub"
+      }
+    },
+    {
+      "line": 1261,
+      "module": "home-me",
+      "tag": "div",
+      "attributes": {
+        "class": "hm-tiles",
+        "style": "margin-top:16px",
+        "id": "hm-tiles"
+      }
+    },
+    {
+      "line": 1262,
+      "module": "home-me",
+      "tag": "div",
+      "attributes": {
+        "id": "hm-goals"
+      }
+    },
+    {
+      "line": 1263,
+      "module": "home-me",
+      "tag": "button",
+      "attributes": {
+        "class": "btn btn-sage",
+        "onclick": "showPage('profile')"
+      }
+    },
+    {
+      "line": 1263,
+      "module": "home-me",
+      "tag": "button",
+      "attributes": {
+        "class": "btn btn-cyan",
+        "onclick": "handoffAdvisor()"
+      }
+    },
+    {
+      "line": 1264,
+      "module": "home-me",
+      "tag": "div",
+      "attributes": {
+        "class": "hm-work-body",
+        "id": "hm-work"
+      }
+    },
+    {
+      "line": 1268,
+      "module": "home-me",
+      "tag": "div",
+      "attributes": {
+        "id": "pg-home-adv",
+        "class": "pg"
+      }
+    },
+    {
+      "line": 1270,
+      "module": "home-adv",
+      "tag": "div",
+      "attributes": {
+        "class": "grid4",
+        "id": "hm-kpis"
+      }
+    },
+    {
+      "line": 1273,
+      "module": "home-adv",
+      "tag": "div",
+      "attributes": {
+        "class": "hm-chips",
+        "id": "hm-chips",
+        "role": "group",
+        "aria-label": "Filter queue"
+      }
+    },
+    {
+      "line": 1274,
+      "module": "home-adv",
+      "tag": "div",
+      "attributes": {
+        "id": "hm-queue"
+      }
+    },
+    {
+      "line": 1276,
+      "module": "home-adv",
+      "tag": "div",
+      "attributes": {
+        "id": "hm-gaps"
+      }
+    },
+    {
+      "line": 1277,
+      "module": "home-adv",
+      "tag": "div",
+      "attributes": {
+        "id": "hm-meet"
+      }
+    },
+    {
+      "line": 1278,
+      "module": "home-adv",
+      "tag": "div",
+      "attributes": {
+        "id": "hm-comp"
+      }
+    },
+    {
+      "line": 1285,
+      "module": "home-adv",
+      "tag": "div",
+      "attributes": {
+        "id": "pg-profile",
+        "class": "pg"
+      }
+    },
+    {
+      "line": 1293,
+      "module": "profile",
+      "tag": "input",
+      "attributes": {
+        "type": "text",
+        "id": "pf-name",
+        "placeholder": "Your name",
+        "oninput": "updateProfile()"
+      }
+    },
+    {
+      "line": 1295,
+      "module": "profile",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-pf-age",
+        "style": "color:var(--cyan)"
+      }
+    },
+    {
+      "line": 1295,
+      "module": "profile",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "pf-age",
+        "min": "20",
+        "max": "85",
+        "value": "45",
+        "oninput": "document.getElementById('lbl-pf-age').textContent=this.value;updateProfile()"
+      }
+    },
+    {
+      "line": 1296,
+      "module": "profile",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-pf-ret",
+        "style": "color:var(--gold)"
+      }
+    },
+    {
+      "line": 1296,
+      "module": "profile",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "pf-ret-age",
+        "min": "50",
+        "max": "80",
+        "value": "65",
+        "oninput": "document.getElementById('lbl-pf-ret').textContent=this.value;updateProfile()"
+      }
+    },
+    {
+      "line": 1298,
+      "module": "profile",
+      "tag": "select",
+      "attributes": {
+        "id": "pf-filing",
+        "onchange": "updateProfile()"
+      }
+    },
+    {
+      "line": 1299,
+      "module": "profile",
+      "tag": "select",
+      "attributes": {
+        "id": "pf-state",
+        "onchange": "updateProfile()"
+      }
+    },
+    {
+      "line": 1300,
+      "module": "profile",
+      "tag": "select",
+      "attributes": {
+        "id": "pf-employ",
+        "onchange": "updateProfile()"
+      }
+    },
+    {
+      "line": 1304,
+      "module": "profile",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-pf-inc",
+        "style": "color:var(--sage);font-family:monospace"
+      }
+    },
+    {
+      "line": 1304,
+      "module": "profile",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "pf-income",
+        "min": "30000",
+        "max": "1000000",
+        "step": "5000",
+        "value": "150000",
+        "oninput": "document.getElementById('lbl-pf-inc').textContent=fmtD(+this.value);updateProfile()"
+      }
+    },
+    {
+      "line": 1305,
+      "module": "profile",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-pf-assets",
+        "style": "color:var(--cyan);font-family:monospace"
+      }
+    },
+    {
+      "line": 1305,
+      "module": "profile",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "pf-assets",
+        "min": "0",
+        "max": "5000000",
+        "step": "10000",
+        "value": "500000",
+        "oninput": "document.getElementById('lbl-pf-assets').textContent=fmtD(+this.value);updateProfile()"
+      }
+    },
+    {
+      "line": 1306,
+      "module": "profile",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-pf-exp",
+        "style": "color:var(--gold);font-family:monospace"
+      }
+    },
+    {
+      "line": 1306,
+      "module": "profile",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "pf-expenses",
+        "min": "1000",
+        "max": "30000",
+        "step": "500",
+        "value": "6000",
+        "oninput": "document.getElementById('lbl-pf-exp').textContent=fmtD(+this.value);updateProfile()"
+      }
+    },
+    {
+      "line": 1307,
+      "module": "profile",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-pf-ret-sav",
+        "style": "color:var(--purple);font-family:monospace"
+      }
+    },
+    {
+      "line": 1307,
+      "module": "profile",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "pf-ret-savings",
+        "min": "0",
+        "max": "3000000",
+        "step": "10000",
+        "value": "300000",
+        "oninput": "document.getElementById('lbl-pf-ret-sav').textContent=fmtD(+this.value);updateProfile()"
+      }
+    },
+    {
+      "line": 1308,
+      "module": "profile",
+      "tag": "select",
+      "attributes": {
+        "id": "pf-goal",
+        "onchange": "updateProfile()"
+      }
+    },
+    {
+      "line": 1312,
+      "module": "profile",
+      "tag": "select",
+      "attributes": {
+        "id": "pf-risk",
+        "onchange": "updateProfile()"
+      }
+    },
+    {
+      "line": 1312,
+      "module": "profile",
+      "tag": "div",
+      "attributes": {
+        "class": "risk-ind",
+        "id": "riskInd",
+        "style": "left:50%"
+      }
+    },
+    {
+      "line": 1313,
+      "module": "profile",
+      "tag": "select",
+      "attributes": {
+        "id": "pf-style",
+        "onchange": "updateProfile()"
+      }
+    },
+    {
+      "line": 1314,
+      "module": "profile",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-pf-crypto",
+        "style": "color:var(--purple)"
+      }
+    },
+    {
+      "line": 1314,
+      "module": "profile",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "pf-crypto",
+        "min": "0",
+        "max": "30",
+        "value": "5",
+        "oninput": "document.getElementById('lbl-pf-crypto').textContent=this.value+'%';updateProfile()"
+      }
+    },
+    {
+      "line": 1315,
+      "module": "profile",
+      "tag": "textarea",
+      "attributes": {
+        "id": "pf-notes",
+        "rows": "3",
+        "placeholder": "e.g., Fund children's college in 8 years...",
+        "oninput": "updateProfile()"
+      }
+    },
+    {
+      "line": 1319,
+      "module": "profile",
+      "tag": "div",
+      "attributes": {
+        "style": "font-size:56px;font-family:'Courier New',monospace;font-weight:900;color:var(--cyan)",
+        "id": "dnaScore"
+      }
+    },
+    {
+      "line": 1320,
+      "module": "profile",
+      "tag": "div",
+      "attributes": {
+        "id": "dna-bars",
+        "style": "margin-top:12px"
+      }
+    },
+    {
+      "line": 1321,
+      "module": "profile",
+      "tag": "button",
+      "attributes": {
+        "class": "btn btn-cyan",
+        "style": "width:100%;padding:10px",
+        "onclick": "generateAIProfileInsight()"
+      }
+    },
+    {
+      "line": 1322,
+      "module": "profile",
+      "tag": "div",
+      "attributes": {
+        "id": "profile-ai-box",
+        "style": "margin-top:12px"
+      }
+    },
+    {
+      "line": 1328,
+      "module": "profile",
+      "tag": "div",
+      "attributes": {
+        "id": "pg-annuity",
+        "class": "pg"
+      }
+    },
+    {
+      "line": 1333,
+      "module": "annuity",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-a-inv",
+        "style": "color:var(--cyan);font-family:monospace"
+      }
+    },
+    {
+      "line": 1333,
+      "module": "annuity",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "a-inv",
+        "min": "50000",
+        "max": "2000000",
+        "step": "10000",
+        "value": "200000",
+        "oninput": "document.getElementById('lbl-a-inv').textContent=fmtD(+this.value);calcAnnuity()"
+      }
+    },
+    {
+      "line": 1334,
+      "module": "annuity",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-a-def",
+        "style": "color:var(--cyan);font-family:monospace"
+      }
+    },
+    {
+      "line": 1334,
+      "module": "annuity",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "a-def",
+        "min": "0",
+        "max": "20",
+        "value": "5",
+        "oninput": "document.getElementById('lbl-a-def').textContent=this.value;calcAnnuity()"
+      }
+    },
+    {
+      "line": 1335,
+      "module": "annuity",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-a-age",
+        "style": "color:var(--cyan);font-family:monospace"
+      }
+    },
+    {
+      "line": 1335,
+      "module": "annuity",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "a-age",
+        "min": "45",
+        "max": "80",
+        "value": "60",
+        "oninput": "document.getElementById('lbl-a-age').textContent=this.value;calcAnnuity()"
+      }
+    },
+    {
+      "line": 1336,
+      "module": "annuity",
+      "tag": "select",
+      "attributes": {
+        "id": "a-type",
+        "onchange": "calcAnnuity()"
+      }
+    },
+    {
+      "line": 1337,
+      "module": "annuity",
+      "tag": "select",
+      "attributes": {
+        "id": "a-joint",
+        "onchange": "calcAnnuity()"
+      }
+    },
+    {
+      "line": 1338,
+      "module": "annuity",
+      "tag": "select",
+      "attributes": {
+        "id": "a-cola",
+        "onchange": "calcAnnuity()"
+      }
+    },
+    {
+      "line": 1342,
+      "module": "annuity",
+      "tag": "div",
+      "attributes": {
+        "id": "annuity-dial",
+        "style": "width:160px;height:160px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:8px auto;transition:background .5s;background:conic-gradient(var(--cyan) 180deg,var(--border) 180deg 360deg)"
+      }
+    },
+    {
+      "line": 1345,
+      "module": "annuity",
+      "tag": "div",
+      "attributes": {
+        "id": "a-monthly",
+        "style": "font-size:24px;font-weight:900;font-family:monospace;color:var(--cyan)"
+      }
+    },
+    {
+      "line": 1350,
+      "module": "annuity",
+      "tag": "span",
+      "attributes": {
+        "id": "a-annual",
+        "style": "color:var(--cyan)"
+      }
+    },
+    {
+      "line": 1351,
+      "module": "annuity",
+      "tag": "span",
+      "attributes": {
+        "id": "a-yield",
+        "style": "color:var(--sage)"
+      }
+    },
+    {
+      "line": 1352,
+      "module": "annuity",
+      "tag": "span",
+      "attributes": {
+        "id": "a-10yr",
+        "style": "color:var(--gold)"
+      }
+    },
+    {
+      "line": 1356,
+      "module": "annuity",
+      "tag": "div",
+      "attributes": {
+        "id": "a-products"
+      }
+    },
+    {
+      "line": 1357,
+      "module": "annuity",
+      "tag": "canvas",
+      "attributes": {
+        "id": "chart-annuity"
+      }
+    },
+    {
+      "line": 1361,
+      "module": "annuity",
+      "tag": "div",
+      "attributes": {
+        "id": "pg-life",
+        "class": "pg"
+      }
+    },
+    {
+      "line": 1366,
+      "module": "life",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-l-age",
+        "style": "color:var(--gold);font-family:monospace"
+      }
+    },
+    {
+      "line": 1366,
+      "module": "life",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "l-age",
+        "min": "25",
+        "max": "70",
+        "value": "40",
+        "oninput": "document.getElementById('lbl-l-age').textContent=this.value;calcLife()"
+      }
+    },
+    {
+      "line": 1367,
+      "module": "life",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-l-inc",
+        "style": "color:var(--gold);font-family:monospace"
+      }
+    },
+    {
+      "line": 1367,
+      "module": "life",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "l-income",
+        "min": "30",
+        "max": "500",
+        "step": "10",
+        "value": "150",
+        "oninput": "document.getElementById('lbl-l-inc').textContent='$'+this.value+'k';calcLife()"
+      }
+    },
+    {
+      "line": 1368,
+      "module": "life",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-l-cov",
+        "style": "color:var(--gold);font-family:monospace"
+      }
+    },
+    {
+      "line": 1368,
+      "module": "life",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "l-coverage",
+        "min": "0",
+        "max": "2000",
+        "step": "50",
+        "value": "200",
+        "oninput": "document.getElementById('lbl-l-cov').textContent='$'+this.value+'k';calcLife()"
+      }
+    },
+    {
+      "line": 1369,
+      "module": "life",
+      "tag": "select",
+      "attributes": {
+        "id": "l-term",
+        "onchange": "calcLife()"
+      }
+    },
+    {
+      "line": 1372,
+      "module": "life",
+      "tag": "select",
+      "attributes": {
+        "id": "l-health",
+        "onchange": "calcLife()"
+      }
+    },
+    {
+      "line": 1373,
+      "module": "life",
+      "tag": "select",
+      "attributes": {
+        "id": "l-gender",
+        "onchange": "calcLife()"
+      }
+    },
+    {
+      "line": 1374,
+      "module": "life",
+      "tag": "select",
+      "attributes": {
+        "id": "l-tobacco",
+        "onchange": "calcLife()"
+      }
+    },
+    {
+      "line": 1378,
+      "module": "life",
+      "tag": "div",
+      "attributes": {
+        "id": "l-gap",
+        "style": "font-size:40px;font-weight:900;font-family:monospace;color:var(--red)"
+      }
+    },
+    {
+      "line": 1379,
+      "module": "life",
+      "tag": "div",
+      "attributes": {
+        "id": "l-premium",
+        "style": "font-size:40px;font-weight:900;font-family:monospace;color:var(--sage)"
+      }
+    },
+    {
+      "line": 1380,
+      "module": "life",
+      "tag": "div",
+      "attributes": {
+        "id": "l-lifetime",
+        "style": "font-size:40px;font-weight:900;font-family:monospace;color:var(--gold)"
+      }
+    },
+    {
+      "line": 1382,
+      "module": "life",
+      "tag": "tbody",
+      "attributes": {
+        "id": "l-table"
+      }
+    },
+    {
+      "line": 1386,
+      "module": "life",
+      "tag": "div",
+      "attributes": {
+        "id": "pg-investment",
+        "class": "pg"
+      }
+    },
+    {
+      "line": 1391,
+      "module": "investment",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-i-val",
+        "style": "color:var(--purple);font-family:monospace"
+      }
+    },
+    {
+      "line": 1391,
+      "module": "investment",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "i-val",
+        "min": "0",
+        "max": "3000000",
+        "step": "5000",
+        "value": "250000",
+        "oninput": "document.getElementById('lbl-i-val').textContent=fmtD(+this.value);calcInvest()"
+      }
+    },
+    {
+      "line": 1392,
+      "module": "investment",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-i-contrib",
+        "style": "color:var(--purple);font-family:monospace"
+      }
+    },
+    {
+      "line": 1392,
+      "module": "investment",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "i-contrib",
+        "min": "0",
+        "max": "100000",
+        "step": "1000",
+        "value": "18000",
+        "oninput": "document.getElementById('lbl-i-contrib').textContent=fmtD(+this.value);calcInvest()"
+      }
+    },
+    {
+      "line": 1393,
+      "module": "investment",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-i-eq",
+        "style": "color:var(--purple);font-family:monospace"
+      }
+    },
+    {
+      "line": 1393,
+      "module": "investment",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "i-eq",
+        "min": "0",
+        "max": "100",
+        "value": "65",
+        "oninput": "document.getElementById('lbl-i-eq').textContent=this.value+'%';calcInvest()"
+      }
+    },
+    {
+      "line": 1394,
+      "module": "investment",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-i-intl",
+        "style": "color:var(--purple);font-family:monospace"
+      }
+    },
+    {
+      "line": 1394,
+      "module": "investment",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "i-intl",
+        "min": "0",
+        "max": "50",
+        "value": "20",
+        "oninput": "document.getElementById('lbl-i-intl').textContent=this.value+'%';calcInvest()"
+      }
+    },
+    {
+      "line": 1395,
+      "module": "investment",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-i-fee",
+        "style": "color:var(--red);font-family:monospace"
+      }
+    },
+    {
+      "line": 1395,
+      "module": "investment",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "i-fee",
+        "min": "0.03",
+        "max": "2.5",
+        "step": "0.01",
+        "value": "0.75",
+        "oninput": "document.getElementById('lbl-i-fee').textContent=this.value+'%';calcInvest()"
+      }
+    },
+    {
+      "line": 1396,
+      "module": "investment",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-i-yrs",
+        "style": "color:var(--purple);font-family:monospace"
+      }
+    },
+    {
+      "line": 1396,
+      "module": "investment",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "i-yrs",
+        "min": "5",
+        "max": "40",
+        "value": "25",
+        "oninput": "document.getElementById('lbl-i-yrs').textContent=this.value;calcInvest()"
+      }
+    },
+    {
+      "line": 1397,
+      "module": "investment",
+      "tag": "select",
+      "attributes": {
+        "id": "i-risk",
+        "onchange": "calcInvest()"
+      }
+    },
+    {
+      "line": 1398,
+      "module": "investment",
+      "tag": "select",
+      "attributes": {
+        "id": "i-acct",
+        "onchange": "calcInvest()"
+      }
+    },
+    {
+      "line": 1402,
+      "module": "investment",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-val",
+        "id": "i-proj",
+        "style": "color:var(--cyan)"
+      }
+    },
+    {
+      "line": 1402,
+      "module": "investment",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-sub",
+        "id": "i-proj-sub"
+      }
+    },
+    {
+      "line": 1403,
+      "module": "investment",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-val",
+        "id": "i-tcontrib",
+        "style": "color:var(--sage)"
+      }
+    },
+    {
+      "line": 1404,
+      "module": "investment",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-val",
+        "id": "i-growth",
+        "style": "color:var(--gold)"
+      }
+    },
+    {
+      "line": 1405,
+      "module": "investment",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-val",
+        "id": "i-var",
+        "style": "color:var(--red)"
+      }
+    },
+    {
+      "line": 1407,
+      "module": "investment",
+      "tag": "canvas",
+      "attributes": {
+        "id": "chart-invest-growth"
+      }
+    },
+    {
+      "line": 1409,
+      "module": "investment",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-val",
+        "id": "i-sharpe",
+        "style": "color:var(--sage)"
+      }
+    },
+    {
+      "line": 1410,
+      "module": "investment",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-val",
+        "id": "i-beta",
+        "style": "color:var(--orange)"
+      }
+    },
+    {
+      "line": 1411,
+      "module": "investment",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-val",
+        "id": "i-sortino",
+        "style": "color:var(--cyan)"
+      }
+    },
+    {
+      "line": 1412,
+      "module": "investment",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-val",
+        "id": "i-maxdd",
+        "style": "color:var(--red)"
+      }
+    },
+    {
+      "line": 1417,
+      "module": "investment",
+      "tag": "canvas",
+      "attributes": {
+        "id": "chart-i-alloc"
+      }
+    },
+    {
+      "line": 1417,
+      "module": "investment",
+      "tag": "div",
+      "attributes": {
+        "id": "i-alloc-legend",
+        "style": "margin-top:10px"
+      }
+    },
+    {
+      "line": 1418,
+      "module": "investment",
+      "tag": "canvas",
+      "attributes": {
+        "id": "chart-i-fees"
+      }
+    },
+    {
+      "line": 1418,
+      "module": "investment",
+      "tag": "div",
+      "attributes": {
+        "id": "i-fee-stats",
+        "style": "margin-top:10px"
+      }
+    },
+    {
+      "line": 1419,
+      "module": "investment",
+      "tag": "button",
+      "attributes": {
+        "class": "btn btn-purple",
+        "style": "width:100%;margin-bottom:10px",
+        "onclick": "generatePortfolioRec()"
+      }
+    },
+    {
+      "line": 1419,
+      "module": "investment",
+      "tag": "div",
+      "attributes": {
+        "id": "portfolio-ai-box"
+      }
+    },
+    {
+      "line": 1422,
+      "module": "investment",
+      "tag": "div",
+      "attributes": {
+        "id": "i-rebal"
+      }
+    },
+    {
+      "line": 1423,
+      "module": "investment",
+      "tag": "canvas",
+      "attributes": {
+        "id": "chart-i-frontier"
+      }
+    },
+    {
+      "line": 1423,
+      "module": "investment",
+      "tag": "div",
+      "attributes": {
+        "id": "frontier-lbl",
+        "style": "font-size:10px;color:var(--muted);margin-top:6px;text-align:center"
+      }
+    },
+    {
+      "line": 1428,
+      "module": "investment",
+      "tag": "div",
+      "attributes": {
+        "id": "pg-retirement",
+        "class": "pg"
+      }
+    },
+    {
+      "line": 1433,
+      "module": "retirement",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-r-port",
+        "style": "color:var(--gold);font-family:monospace"
+      }
+    },
+    {
+      "line": 1433,
+      "module": "retirement",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "r-port",
+        "min": "100000",
+        "max": "5000000",
+        "step": "50000",
+        "value": "1200000",
+        "oninput": "document.getElementById('lbl-r-port').textContent=fmtD(+this.value);calcRetire()"
+      }
+    },
+    {
+      "line": 1434,
+      "module": "retirement",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-r-age",
+        "style": "color:var(--gold);font-family:monospace"
+      }
+    },
+    {
+      "line": 1434,
+      "module": "retirement",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "r-age",
+        "min": "55",
+        "max": "75",
+        "value": "65",
+        "oninput": "document.getElementById('lbl-r-age').textContent=this.value;calcRetire()"
+      }
+    },
+    {
+      "line": 1435,
+      "module": "retirement",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-r-spend",
+        "style": "color:var(--gold);font-family:monospace"
+      }
+    },
+    {
+      "line": 1435,
+      "module": "retirement",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "r-spend",
+        "min": "2000",
+        "max": "20000",
+        "step": "500",
+        "value": "7500",
+        "oninput": "document.getElementById('lbl-r-spend').textContent=fmtD(+this.value);calcRetire()"
+      }
+    },
+    {
+      "line": 1438,
+      "module": "retirement",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-r-ss",
+        "style": "color:var(--cyan);font-family:monospace"
+      }
+    },
+    {
+      "line": 1438,
+      "module": "retirement",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "r-ss",
+        "min": "0",
+        "max": "4000",
+        "step": "100",
+        "value": "2400",
+        "oninput": "document.getElementById('lbl-r-ss').textContent=fmtD(+this.value);calcRetire()"
+      }
+    },
+    {
+      "line": 1439,
+      "module": "retirement",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-r-pension",
+        "style": "color:var(--cyan);font-family:monospace"
+      }
+    },
+    {
+      "line": 1439,
+      "module": "retirement",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "r-pension",
+        "min": "0",
+        "max": "5000",
+        "step": "100",
+        "value": "0",
+        "oninput": "document.getElementById('lbl-r-pension').textContent=fmtD(+this.value);calcRetire()"
+      }
+    },
+    {
+      "line": 1440,
+      "module": "retirement",
+      "tag": "select",
+      "attributes": {
+        "id": "r-strat",
+        "onchange": "calcRetire()"
+      }
+    },
+    {
+      "line": 1443,
+      "module": "retirement",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-r-claim",
+        "style": "color:var(--cyan);font-family:monospace"
+      }
+    },
+    {
+      "line": 1443,
+      "module": "retirement",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "r-claim",
+        "min": "62",
+        "max": "70",
+        "value": "67",
+        "oninput": "document.getElementById('lbl-r-claim').textContent=this.value;calcRetire()"
+      }
+    },
+    {
+      "line": 1444,
+      "module": "retirement",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-r-tax",
+        "style": "color:var(--cyan);font-family:monospace"
+      }
+    },
+    {
+      "line": 1444,
+      "module": "retirement",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "r-tax",
+        "min": "0",
+        "max": "30",
+        "value": "10",
+        "oninput": "document.getElementById('lbl-r-tax').textContent=this.value+'%';calcRetire()"
+      }
+    },
+    {
+      "line": 1450,
+      "module": "retirement",
+      "tag": "select",
+      "attributes": {
+        "id": "r-src",
+        "onchange": "calcRetire()"
+      }
+    },
+    {
+      "line": 1451,
+      "module": "retirement",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-r-hair",
+        "style": "color:var(--cyan);font-family:monospace"
+      }
+    },
+    {
+      "line": 1451,
+      "module": "retirement",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "r-hair",
+        "min": "0",
+        "max": "3",
+        "step": "0.25",
+        "value": "1",
+        "oninput": "document.getElementById('lbl-r-hair').textContent=(+this.value).toFixed(2).replace(/0$/,'')+' pt';calcRetire()"
+      }
+    },
+    {
+      "line": 1452,
+      "module": "retirement",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-r-fee",
+        "style": "color:var(--cyan);font-family:monospace"
+      }
+    },
+    {
+      "line": 1452,
+      "module": "retirement",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "r-fee",
+        "min": "0",
+        "max": "2",
+        "step": "0.05",
+        "value": "0.5",
+        "oninput": "document.getElementById('lbl-r-fee').textContent=(+this.value).toFixed(2)+'%';calcRetire()"
+      }
+    },
+    {
+      "line": 1455,
+      "module": "retirement",
+      "tag": "select",
+      "attributes": {
+        "id": "r-taxmode",
+        "onchange": "calcRetire()"
+      }
+    },
+    {
+      "line": 1456,
+      "module": "retirement",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-r-pretax",
+        "style": "color:var(--cyan);font-family:monospace"
+      }
+    },
+    {
+      "line": 1456,
+      "module": "retirement",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "r-pretax",
+        "min": "0",
+        "max": "100",
+        "step": "5",
+        "value": "75",
+        "oninput": "document.getElementById('lbl-r-pretax').textContent=this.value+'%';calcRetire()"
+      }
+    },
+    {
+      "line": 1457,
+      "module": "retirement",
+      "tag": "select",
+      "attributes": {
+        "id": "r-rmd",
+        "onchange": "calcRetire()"
+      }
+    },
+    {
+      "line": 1461,
+      "module": "retirement",
+      "tag": "select",
+      "attributes": {
+        "id": "r-sp-on",
+        "onchange": "calcRetire()"
+      }
+    },
+    {
+      "line": 1462,
+      "module": "retirement",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-r-sp-diff",
+        "style": "color:var(--cyan);font-family:monospace"
+      }
+    },
+    {
+      "line": 1462,
+      "module": "retirement",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "r-sp-diff",
+        "min": "-10",
+        "max": "10",
+        "value": "0",
+        "oninput": "document.getElementById('lbl-r-sp-diff').textContent=(this.value>0?'+':'')+this.value;calcRetire()"
+      }
+    },
+    {
+      "line": 1463,
+      "module": "retirement",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-r-sp-ss",
+        "style": "color:var(--cyan);font-family:monospace"
+      }
+    },
+    {
+      "line": 1463,
+      "module": "retirement",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "r-sp-ss",
+        "min": "0",
+        "max": "4000",
+        "step": "100",
+        "value": "1500",
+        "oninput": "document.getElementById('lbl-r-sp-ss').textContent=fmtD(+this.value);calcRetire()"
+      }
+    },
+    {
+      "line": 1464,
+      "module": "retirement",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-r-sp-claim",
+        "style": "color:var(--cyan);font-family:monospace"
+      }
+    },
+    {
+      "line": 1464,
+      "module": "retirement",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "r-sp-claim",
+        "min": "62",
+        "max": "70",
+        "value": "67",
+        "oninput": "document.getElementById('lbl-r-sp-claim').textContent=this.value;calcRetire()"
+      }
+    },
+    {
+      "line": 1467,
+      "module": "retirement",
+      "tag": "select",
+      "attributes": {
+        "id": "r-death",
+        "onchange": "calcRetire()"
+      }
+    },
+    {
+      "line": 1468,
+      "module": "retirement",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-r-death-age",
+        "style": "color:var(--cyan);font-family:monospace"
+      }
+    },
+    {
+      "line": 1468,
+      "module": "retirement",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "r-death-age",
+        "min": "65",
+        "max": "95",
+        "value": "85",
+        "oninput": "document.getElementById('lbl-r-death-age').textContent=this.value;calcRetire()"
+      }
+    },
+    {
+      "line": 1469,
+      "module": "retirement",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-r-after",
+        "style": "color:var(--cyan);font-family:monospace"
+      }
+    },
+    {
+      "line": 1469,
+      "module": "retirement",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "r-after",
+        "min": "50",
+        "max": "100",
+        "step": "5",
+        "value": "75",
+        "oninput": "document.getElementById('lbl-r-after').textContent=this.value+'%';calcRetire()"
+      }
+    },
+    {
+      "line": 1475,
+      "module": "retirement",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-val",
+        "id": "r-success",
+        "style": "color:var(--sage)"
+      }
+    },
+    {
+      "line": 1475,
+      "module": "retirement",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-sub",
+        "id": "r-success-sub"
+      }
+    },
+    {
+      "line": 1476,
+      "module": "retirement",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-val",
+        "id": "r-wrate",
+        "style": "color:var(--cyan)"
+      }
+    },
+    {
+      "line": 1476,
+      "module": "retirement",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-sub",
+        "id": "r-wrate-sub"
+      }
+    },
+    {
+      "line": 1477,
+      "module": "retirement",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-val",
+        "id": "r-sustain",
+        "style": "color:var(--gold)"
+      }
+    },
+    {
+      "line": 1478,
+      "module": "retirement",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-val",
+        "id": "r-shortfall",
+        "style": "color:var(--red)"
+      }
+    },
+    {
+      "line": 1481,
+      "module": "retirement",
+      "tag": "div",
+      "attributes": {
+        "class": "sec-lbl",
+        "id": "r-chart-title"
+      }
+    },
+    {
+      "line": 1481,
+      "module": "retirement",
+      "tag": "canvas",
+      "attributes": {
+        "id": "chart-retire",
+        "role": "img",
+        "aria-label": "Fan chart of simulated portfolio balances by age, showing 10th, 25th, median, 75th and 90th percentiles"
+      }
+    },
+    {
+      "line": 1482,
+      "module": "retirement",
+      "tag": "tbody",
+      "attributes": {
+        "id": "r-data"
+      }
+    },
+    {
+      "line": 1482,
+      "module": "retirement",
+      "tag": "ul",
+      "attributes": {
+        "id": "r-assume",
+        "style": "margin-top:10px"
+      }
+    },
+    {
+      "line": 1485,
+      "module": "retirement",
+      "tag": "tbody",
+      "attributes": {
+        "id": "r-strat-table"
+      }
+    },
+    {
+      "line": 1486,
+      "module": "retirement",
+      "tag": "button",
+      "attributes": {
+        "class": "btn btn-gold",
+        "style": "width:100%",
+        "onclick": "generateRetireInsight()"
+      }
+    },
+    {
+      "line": 1486,
+      "module": "retirement",
+      "tag": "div",
+      "attributes": {
+        "id": "retire-ai-box",
+        "style": "margin-top:10px"
+      }
+    },
+    {
+      "line": 1492,
+      "module": "retirement",
+      "tag": "div",
+      "attributes": {
+        "id": "pg-symphony",
+        "class": "pg"
+      }
+    },
+    {
+      "line": 1496,
+      "module": "symphony",
+      "tag": "div",
+      "attributes": {
+        "id": "sym-score",
+        "style": "font-size:72px;font-family:'Courier New',monospace;font-weight:900;color:var(--sage)"
+      }
+    },
+    {
+      "line": 1497,
+      "module": "symphony",
+      "tag": "div",
+      "attributes": {
+        "class": "risk-ind",
+        "id": "sym-ind",
+        "style": "left:50%"
+      }
+    },
+    {
+      "line": 1501,
+      "module": "symphony",
+      "tag": "div",
+      "attributes": {
+        "id": "sym-snapshot",
+        "style": "font-family:monospace;font-size:11px"
+      }
+    },
+    {
+      "line": 1502,
+      "module": "symphony",
+      "tag": "button",
+      "attributes": {
+        "class": "btn btn-cyan",
+        "style": "width:100%;margin-bottom:12px",
+        "onclick": "generateSymphonyInsight()"
+      }
+    },
+    {
+      "line": 1502,
+      "module": "symphony",
+      "tag": "div",
+      "attributes": {
+        "id": "symphony-ai-box"
+      }
+    },
+    {
+      "line": 1505,
+      "module": "symphony",
+      "tag": "div",
+      "attributes": {
+        "id": "sym-port-recs"
+      }
+    },
+    {
+      "line": 1506,
+      "module": "symphony",
+      "tag": "div",
+      "attributes": {
+        "id": "sym-actions"
+      }
+    },
+    {
+      "line": 1507,
+      "module": "symphony",
+      "tag": "canvas",
+      "attributes": {
+        "id": "chart-timeline"
+      }
+    },
+    {
+      "line": 1512,
+      "module": "symphony",
+      "tag": "div",
+      "attributes": {
+        "id": "pg-tax",
+        "class": "pg"
+      }
+    },
+    {
+      "line": 1517,
+      "module": "tax",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-val",
+        "id": "t-income",
+        "style": "color:var(--text)"
+      }
+    },
+    {
+      "line": 1518,
+      "module": "tax",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-val",
+        "id": "t-marginal",
+        "style": "color:var(--cyan)"
+      }
+    },
+    {
+      "line": 1519,
+      "module": "tax",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-val",
+        "id": "t-effective",
+        "style": "color:var(--sage)"
+      }
+    },
+    {
+      "line": 1520,
+      "module": "tax",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-val",
+        "id": "t-liability",
+        "style": "color:var(--red)"
+      }
+    },
+    {
+      "line": 1523,
+      "module": "tax",
+      "tag": "select",
+      "attributes": {
+        "id": "t-filing",
+        "onchange": "calcTax()"
+      }
+    },
+    {
+      "line": 1524,
+      "module": "tax",
+      "tag": "input",
+      "attributes": {
+        "type": "number",
+        "id": "t-inc-input",
+        "value": "150000",
+        "oninput": "calcTax()"
+      }
+    },
+    {
+      "line": 1525,
+      "module": "tax",
+      "tag": "div",
+      "attributes": {
+        "style": "font-size:22px;font-weight:900;font-family:monospace;margin-top:6px",
+        "id": "t-niit"
+      }
+    },
+    {
+      "line": 1532,
+      "module": "tax",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-t-roth",
+        "style": "color:var(--cyan);font-family:monospace"
+      }
+    },
+    {
+      "line": 1532,
+      "module": "tax",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "t-roth",
+        "min": "0",
+        "max": "100000",
+        "step": "1000",
+        "value": "0",
+        "oninput": "document.getElementById('lbl-t-roth').textContent=fmtD(+this.value);calcTax()"
+      }
+    },
+    {
+      "line": 1533,
+      "module": "tax",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-t-401k",
+        "style": "color:var(--sage);font-family:monospace"
+      }
+    },
+    {
+      "line": 1533,
+      "module": "tax",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "t-401k",
+        "min": "0",
+        "max": "23000",
+        "step": "500",
+        "value": "23000",
+        "oninput": "document.getElementById('lbl-t-401k').textContent=fmtD(+this.value);calcTax()"
+      }
+    },
+    {
+      "line": 1534,
+      "module": "tax",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-t-loss",
+        "style": "color:var(--sage);font-family:monospace"
+      }
+    },
+    {
+      "line": 1534,
+      "module": "tax",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "t-loss",
+        "min": "0",
+        "max": "50000",
+        "step": "500",
+        "value": "0",
+        "oninput": "document.getElementById('lbl-t-loss').textContent=fmtD(+this.value);calcTax()"
+      }
+    },
+    {
+      "line": 1537,
+      "module": "tax",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-t-hsa",
+        "style": "color:var(--gold);font-family:monospace"
+      }
+    },
+    {
+      "line": 1537,
+      "module": "tax",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "t-hsa",
+        "min": "0",
+        "max": "8300",
+        "step": "100",
+        "value": "4150",
+        "oninput": "document.getElementById('lbl-t-hsa').textContent=fmtD(+this.value);calcTax()"
+      }
+    },
+    {
+      "line": 1538,
+      "module": "tax",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-t-qcd",
+        "style": "color:var(--gold);font-family:monospace"
+      }
+    },
+    {
+      "line": 1538,
+      "module": "tax",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "t-qcd",
+        "min": "0",
+        "max": "100000",
+        "step": "1000",
+        "value": "0",
+        "oninput": "document.getElementById('lbl-t-qcd').textContent=fmtD(+this.value);calcTax()"
+      }
+    },
+    {
+      "line": 1540,
+      "module": "tax",
+      "tag": "div",
+      "attributes": {
+        "id": "t-after",
+        "style": "font-size:18px;font-weight:900;font-family:monospace;color:var(--cyan)"
+      }
+    },
+    {
+      "line": 1541,
+      "module": "tax",
+      "tag": "div",
+      "attributes": {
+        "id": "t-savings",
+        "style": "font-size:18px;font-weight:900;font-family:monospace;color:var(--sage)"
+      }
+    },
+    {
+      "line": 1546,
+      "module": "tax",
+      "tag": "div",
+      "attributes": {
+        "id": "tax-recs"
+      }
+    },
+    {
+      "line": 1550,
+      "module": "tax",
+      "tag": "div",
+      "attributes": {
+        "id": "pg-crypto",
+        "class": "pg"
+      }
+    },
+    {
+      "line": 1553,
+      "module": "crypto",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-val",
+        "id": "c-total",
+        "style": "color:var(--purple)"
+      }
+    },
+    {
+      "line": 1554,
+      "module": "crypto",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-val",
+        "id": "c-pct",
+        "style": "color:var(--gold)"
+      }
+    },
+    {
+      "line": 1555,
+      "module": "crypto",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-val",
+        "id": "c-pnl",
+        "style": "color:var(--sage)"
+      }
+    },
+    {
+      "line": 1556,
+      "module": "crypto",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-val",
+        "id": "c-rascore",
+        "style": "color:var(--cyan)"
+      }
+    },
+    {
+      "line": 1560,
+      "module": "crypto",
+      "tag": "div",
+      "attributes": {
+        "class": "grid4",
+        "style": "gap:12px",
+        "id": "crypto-builder"
+      }
+    },
+    {
+      "line": 1561,
+      "module": "crypto",
+      "tag": "button",
+      "attributes": {
+        "class": "btn btn-purple",
+        "style": "width:100%;padding:10px",
+        "onclick": "generateCryptoInsight()"
+      }
+    },
+    {
+      "line": 1562,
+      "module": "crypto",
+      "tag": "div",
+      "attributes": {
+        "id": "crypto-ai-box",
+        "style": "margin-top:12px"
+      }
+    },
+    {
+      "line": 1573,
+      "module": "crypto",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-val",
+        "id": "xrp-price",
+        "style": "color:#6aabff"
+      }
+    },
+    {
+      "line": 1573,
+      "module": "crypto",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-sub",
+        "id": "xrp-change"
+      }
+    },
+    {
+      "line": 1574,
+      "module": "crypto",
+      "tag": "div",
+      "attributes": {
+        "class": "kpi-val",
+        "id": "xrp-mcap",
+        "style": "color:#6aabff"
+      }
+    },
+    {
+      "line": 1581,
+      "module": "crypto",
+      "tag": "div",
+      "attributes": {
+        "class": "sentiment-bar",
+        "id": "xrp-sentiment"
+      }
+    },
+    {
+      "line": 1592,
+      "module": "crypto",
+      "tag": "div",
+      "attributes": {
+        "id": "xrp-usecases"
+      }
+    },
+    {
+      "line": 1594,
+      "module": "crypto",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-xrp-hold",
+        "style": "color:#6aabff;font-family:monospace"
+      }
+    },
+    {
+      "line": 1594,
+      "module": "crypto",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "xrp-hold",
+        "min": "0",
+        "max": "50000",
+        "step": "100",
+        "value": "1000",
+        "oninput": "document.getElementById('lbl-xrp-hold').textContent=this.value+' XRP';calcXRPImpact()"
+      }
+    },
+    {
+      "line": 1595,
+      "module": "crypto",
+      "tag": "div",
+      "attributes": {
+        "id": "xrp-impact",
+        "style": "display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px"
+      }
+    },
+    {
+      "line": 1601,
+      "module": "crypto",
+      "tag": "div",
+      "attributes": {
+        "class": "sentiment-bar",
+        "id": "btc-sentiment"
+      }
+    },
+    {
+      "line": 1602,
+      "module": "crypto",
+      "tag": "div",
+      "attributes": {
+        "class": "sentiment-bar",
+        "id": "eth-sentiment"
+      }
+    },
+    {
+      "line": 1603,
+      "module": "crypto",
+      "tag": "div",
+      "attributes": {
+        "class": "sentiment-bar",
+        "id": "sol-sentiment"
+      }
+    },
+    {
+      "line": 1604,
+      "module": "crypto",
+      "tag": "div",
+      "attributes": {
+        "class": "sentiment-bar",
+        "id": "ada-sentiment"
+      }
+    },
+    {
+      "line": 1609,
+      "module": "crypto",
+      "tag": "canvas",
+      "attributes": {
+        "id": "chart-crypto-alloc"
+      }
+    },
+    {
+      "line": 1611,
+      "module": "crypto",
+      "tag": "div",
+      "attributes": {
+        "style": "font-size:28px;font-weight:900;font-family:monospace;color:var(--sage)",
+        "id": "c-realized"
+      }
+    },
+    {
+      "line": 1612,
+      "module": "crypto",
+      "tag": "div",
+      "attributes": {
+        "style": "font-size:28px;font-weight:900;font-family:monospace;color:var(--gold)",
+        "id": "c-unrealized"
+      }
+    },
+    {
+      "line": 1613,
+      "module": "crypto",
+      "tag": "div",
+      "attributes": {
+        "style": "font-size:28px;font-weight:900;font-family:monospace;color:var(--red)",
+        "id": "c-tax-est"
+      }
+    },
+    {
+      "line": 1615,
+      "module": "crypto",
+      "tag": "div",
+      "attributes": {
+        "id": "crypto-recs"
+      }
+    },
+    {
+      "line": 1621,
+      "module": "crypto",
+      "tag": "div",
+      "attributes": {
+        "id": "pg-risk",
+        "class": "pg"
+      }
+    },
+    {
+      "line": 1626,
+      "module": "risk",
+      "tag": "span",
+      "attributes": {
+        "id": "ri-beta",
+        "style": "color:var(--red);font-family:monospace"
+      }
+    },
+    {
+      "line": 1627,
+      "module": "risk",
+      "tag": "span",
+      "attributes": {
+        "id": "ri-std",
+        "style": "color:var(--orange);font-family:monospace"
+      }
+    },
+    {
+      "line": 1628,
+      "module": "risk",
+      "tag": "span",
+      "attributes": {
+        "id": "ri-sharpe",
+        "style": "color:var(--sage);font-family:monospace"
+      }
+    },
+    {
+      "line": 1629,
+      "module": "risk",
+      "tag": "span",
+      "attributes": {
+        "id": "ri-dd",
+        "style": "color:var(--red);font-family:monospace"
+      }
+    },
+    {
+      "line": 1634,
+      "module": "risk",
+      "tag": "button",
+      "attributes": {
+        "class": "btn btn-red",
+        "style": "text-align:left;padding:12px",
+        "onclick": "runScenario('2008')"
+      }
+    },
+    {
+      "line": 1635,
+      "module": "risk",
+      "tag": "button",
+      "attributes": {
+        "class": "btn btn-red",
+        "style": "text-align:left;padding:12px;border-color:var(--orange);color:var(--orange)",
+        "onclick": "runScenario('2020')"
+      }
+    },
+    {
+      "line": 1636,
+      "module": "risk",
+      "tag": "button",
+      "attributes": {
+        "class": "btn btn-gold",
+        "style": "text-align:left;padding:12px",
+        "onclick": "runScenario('inflation')"
+      }
+    },
+    {
+      "line": 1637,
+      "module": "risk",
+      "tag": "button",
+      "attributes": {
+        "class": "btn btn-cyan",
+        "style": "text-align:left;padding:12px",
+        "onclick": "runScenario('rates')"
+      }
+    },
+    {
+      "line": 1638,
+      "module": "risk",
+      "tag": "button",
+      "attributes": {
+        "class": "btn btn-purple",
+        "style": "text-align:left;padding:12px",
+        "onclick": "runScenario('crypto')"
+      }
+    },
+    {
+      "line": 1645,
+      "module": "risk",
+      "tag": "div",
+      "attributes": {
+        "id": "sc-impact",
+        "style": "font-size:28px;font-weight:900;font-family:monospace;color:var(--red)"
+      }
+    },
+    {
+      "line": 1646,
+      "module": "risk",
+      "tag": "div",
+      "attributes": {
+        "id": "sc-recovery",
+        "style": "font-size:28px;font-weight:900;font-family:monospace;color:var(--gold)"
+      }
+    },
+    {
+      "line": 1647,
+      "module": "risk",
+      "tag": "div",
+      "attributes": {
+        "id": "sc-buffer",
+        "style": "font-size:28px;font-weight:900;font-family:monospace;color:var(--sage)"
+      }
+    },
+    {
+      "line": 1649,
+      "module": "risk",
+      "tag": "canvas",
+      "attributes": {
+        "id": "chart-scenario"
+      }
+    },
+    {
+      "line": 1654,
+      "module": "risk",
+      "tag": "div",
+      "attributes": {
+        "id": "pg-estate",
+        "class": "pg"
+      }
+    },
+    {
+      "line": 1659,
+      "module": "estate",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-e-val",
+        "style": "color:var(--orange);font-family:monospace"
+      }
+    },
+    {
+      "line": 1659,
+      "module": "estate",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "e-val",
+        "min": "500000",
+        "max": "20000000",
+        "step": "100000",
+        "value": "2000000",
+        "oninput": "document.getElementById('lbl-e-val').textContent=fmtD(+this.value);calcEstate()"
+      }
+    },
+    {
+      "line": 1660,
+      "module": "estate",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-e-gift",
+        "style": "color:var(--orange);font-family:monospace"
+      }
+    },
+    {
+      "line": 1660,
+      "module": "estate",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "e-gift",
+        "min": "0",
+        "max": "360",
+        "step": "18",
+        "value": "0",
+        "oninput": "document.getElementById('lbl-e-gift').textContent='$'+this.value+'k';calcEstate()"
+      }
+    },
+    {
+      "line": 1661,
+      "module": "estate",
+      "tag": "span",
+      "attributes": {
+        "id": "lbl-e-yrs",
+        "style": "color:var(--orange);font-family:monospace"
+      }
+    },
+    {
+      "line": 1661,
+      "module": "estate",
+      "tag": "input",
+      "attributes": {
+        "type": "range",
+        "id": "e-yrs",
+        "min": "5",
+        "max": "40",
+        "value": "20",
+        "oninput": "document.getElementById('lbl-e-yrs').textContent=this.value;calcEstate()"
+      }
+    },
+    {
+      "line": 1665,
+      "module": "estate",
+      "tag": "div",
+      "attributes": {
+        "id": "e-tax",
+        "style": "font-size:36px;font-weight:900;font-family:monospace;color:var(--red)"
+      }
+    },
+    {
+      "line": 1666,
+      "module": "estate",
+      "tag": "div",
+      "attributes": {
+        "id": "e-taxable",
+        "style": "font-size:36px;font-weight:900;font-family:monospace;color:var(--gold)"
+      }
+    },
+    {
+      "line": 1667,
+      "module": "estate",
+      "tag": "div",
+      "attributes": {
+        "id": "e-savings",
+        "style": "font-size:36px;font-weight:900;font-family:monospace;color:var(--sage)"
+      }
+    },
+    {
+      "line": 1669,
+      "module": "estate",
+      "tag": "div",
+      "attributes": {
+        "id": "estate-strats"
+      }
+    },
+    {
+      "line": 1672,
+      "module": "estate",
+      "tag": "div",
+      "attributes": {
+        "id": "pg-willtrust",
+        "class": "pg"
+      }
+    },
+    {
+      "line": 1675,
+      "module": "willtrust",
+      "tag": "div",
+      "attributes": {
+        "class": "wt-seg",
+        "id": "wt-track"
+      }
+    },
+    {
+      "line": 1675,
+      "module": "willtrust",
+      "tag": "button",
+      "attributes": {
+        "data-v": "family",
+        "class": "on"
+      }
+    },
+    {
+      "line": 1675,
+      "module": "willtrust",
+      "tag": "button",
+      "attributes": {
+        "data-v": "business"
+      }
+    },
+    {
+      "line": 1676,
+      "module": "willtrust",
+      "tag": "div",
+      "attributes": {
+        "class": "wt-seg",
+        "id": "wt-path"
+      }
+    },
+    {
+      "line": 1676,
+      "module": "willtrust",
+      "tag": "button",
+      "attributes": {
+        "data-v": "trust"
+      }
+    },
+    {
+      "line": 1676,
+      "module": "willtrust",
+      "tag": "button",
+      "attributes": {
+        "data-v": "will"
+      }
+    },
+    {
+      "line": 1676,
+      "module": "willtrust",
+      "tag": "button",
+      "attributes": {
+        "data-v": "both",
+        "class": "on"
+      }
+    },
+    {
+      "line": 1677,
+      "module": "willtrust",
+      "tag": "button",
+      "attributes": {
+        "class": "btn btn-cyan",
+        "onclick": "wtLoad('family')"
+      }
+    },
+    {
+      "line": 1678,
+      "module": "willtrust",
+      "tag": "button",
+      "attributes": {
+        "class": "btn btn-gold",
+        "onclick": "wtLoad('founder')"
+      }
+    },
+    {
+      "line": 1679,
+      "module": "willtrust",
+      "tag": "button",
+      "attributes": {
+        "class": "btn btn-red",
+        "onclick": "wtLoad('blank')"
+      }
+    },
+    {
+      "line": 1682,
+      "module": "willtrust",
+      "tag": "div",
+      "attributes": {
+        "class": "wt-in",
+        "id": "wt-in"
+      }
+    },
+    {
+      "line": 1683,
+      "module": "willtrust",
+      "tag": "div",
+      "attributes": {
+        "id": "wt-out"
+      }
+    },
+    {
+      "line": 1688,
+      "module": "willtrust",
+      "tag": "div",
+      "attributes": {
+        "id": "pg-vault",
+        "class": "pg"
+      }
+    },
+    {
+      "line": 1694,
+      "module": "vault",
+      "tag": "div",
+      "attributes": {
+        "id": "vault-files"
+      }
+    },
+    {
+      "line": 1701,
+      "module": "vault",
+      "tag": "div",
+      "attributes": {
+        "id": "profileModal",
+        "class": "modal-overlay"
+      }
+    },
+    {
+      "line": 1703,
+      "module": "vault",
+      "tag": "button",
+      "attributes": {
+        "class": "modal-close",
+        "onclick": "closeModal('profileModal')"
+      }
+    },
+    {
+      "line": 1705,
+      "module": "vault",
+      "tag": "input",
+      "attributes": {
+        "type": "text",
+        "id": "mod-name",
+        "placeholder": "Your name"
+      }
+    },
+    {
+      "line": 1706,
+      "module": "vault",
+      "tag": "input",
+      "attributes": {
+        "type": "email",
+        "id": "mod-email",
+        "placeholder": "user@nexus.net"
+      }
+    },
+    {
+      "line": 1708,
+      "module": "vault",
+      "tag": "input",
+      "attributes": {
+        "type": "text",
+        "id": "mod-advisor",
+        "placeholder": "ADV-XXXX"
+      }
+    },
+    {
+      "line": 1709,
+      "module": "vault",
+      "tag": "select",
+      "attributes": {
+        "id": "mod-theme"
+      }
+    },
+    {
+      "line": 1711,
+      "module": "vault",
+      "tag": "button",
+      "attributes": {
+        "class": "btn btn-cyan",
+        "style": "width:100%;padding:12px;margin-top:8px",
+        "onclick": "loginProfile()"
+      }
+    }
+  ],
+  "externalDependencies": [
+    {
+      "rel": "icon",
+      "href": "data:,"
+    },
+    {
+      "src": "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"
+    },
+    {
+      "src": "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"
+    },
+    {
+      "src": "https://cdn.jsdelivr.net/npm/d3@7.9.2/dist/d3.min.js"
+    },
+    {
+      "src": "https://cdn.jsdelivr.net/npm/family-chart@0.9.0/dist/family-chart.min.js"
+    },
+    {
+      "src": "https://cdn.jsdelivr.net/npm/pizzip@3.3.0/dist/pizzip.min.js"
+    },
+    {
+      "src": "https://cdn.jsdelivr.net/npm/docxtemplater@3.71.1/build/docxtemplater.js"
+    }
+  ],
+  "declaredFunctions": [
+    "be",
+    "B",
+    "ze",
+    "we",
+    "ve",
+    "ot",
+    "rt",
+    "d",
+    "D",
+    "k",
+    "nt",
+    "lt",
+    "m",
+    "xe",
+    "M",
+    "He",
+    "Ye",
+    "dt",
+    "ut",
+    "ht",
+    "Ae",
+    "W",
+    "Y",
+    "X",
+    "mt",
+    "se",
+    "O",
+    "yt",
+    "te",
+    "Xe",
+    "gt",
+    "bt",
+    "wt",
+    "ke",
+    "Ie",
+    "xt",
+    "At",
+    "St",
+    "It",
+    "C",
+    "R",
+    "ie",
+    "ae",
+    "oe",
+    "Ce",
+    "Pe",
+    "Ct",
+    "re",
+    "ne",
+    "le",
+    "de",
+    "f",
+    "ue",
+    "Nt",
+    "Pt",
+    "Ke",
+    "he",
+    "Dt",
+    "Ft",
+    "Et",
+    "Rt",
+    "Re",
+    "qt",
+    "Wt",
+    "Lt",
+    "Mt",
+    "Ot",
+    "qe",
+    "Gt",
+    "_t",
+    "Bt",
+    "Ut",
+    "zt",
+    "Ht",
+    "y",
+    "g",
+    "b",
+    "w",
+    "fv",
+    "destroyC",
+    "wtGet",
+    "wtSetPath",
+    "wtLoad",
+    "wtSync",
+    "wtF",
+    "wtBuildIn",
+    "wtRender",
+    "wtStatus",
+    "wtInit",
+    "wtTreeData",
+    "wtTree",
+    "wtDocxTemplate",
+    "wtDocxBlob",
+    "showPage",
+    "showModal",
+    "closeModal",
+    "loginProfile",
+    "updateProfile",
+    "calcDNA",
+    "calcAnnuity",
+    "calcLife",
+    "calcInvest",
+    "mulberry32",
+    "mcParams",
+    "mcZ",
+    "taxSS",
+    "fedTotal",
+    "rmdStartAge",
+    "makePlan",
+    "flatPlan",
+    "runSim",
+    "sustainSpend",
+    "retCfg",
+    "planArgs",
+    "calcRetire",
+    "calcTax",
+    "computeTax",
+    "initCrypto",
+    "updateCryptoSummary",
+    "calcXRPImpact",
+    "initRisk",
+    "runScenario",
+    "calcEstate",
+    "calcSymphony",
+    "showThinking",
+    "callAI",
+    "renderAI",
+    "generateAIProfileInsight",
+    "generatePortfolioRec",
+    "generateRetireInsight",
+    "generateCryptoInsight",
+    "generateSymphonyInsight",
+    "initVault",
+    "toast",
+    "syncTelemetry",
+    "buildTopology",
+    "ensurePalette",
+    "commands",
+    "renderCommands",
+    "openPalette",
+    "closePalette",
+    "exportSnapshot",
+    "toggleCompact",
+    "toggleStasis",
+    "runDiagnostics",
+    "boot",
+    "goHome",
+    "setLens",
+    "dnaParts",
+    "retProjection",
+    "countUp",
+    "f",
+    "homeBase",
+    "homeMC",
+    "homeExtraSave",
+    "renderHomeMe",
+    "handoffAdvisor",
+    "clientFacts",
+    "openClient",
+    "setQ",
+    "renderHomeAdv"
+  ],
+  "storageKeys": [],
+  "dynamicControlTemplates": [
+    "<input type=\"checkbox\" data-p=\"${path}\" data-t=\"check\" ${v?'checked':''}>",
+    "<select data-p=\"${path}\" data-t=\"select\">",
+    "<input type=\"number\" min=\"0\" step=\"1000\" data-p=\"${path}\" data-t=\"num\" value=\"${v||0}\">",
+    "<input type=\"number\" min=\"0\" data-p=\"${path}\" data-t=\"num\" value=\"${v||0}\">",
+    "<input type=\"text\" data-p=\"${path}\" data-t=\"text\" value=\"${wtEsc(v)}\" ${o.ph?`placeholder=\"${wtEsc(o.ph)}\"`:''}>",
+    "<button type=\"button\" class=\"wt-chip ${p.purposes.includes(x.id)?'on':''}\" data-purpose=\"${x.id}\" title=\"${wtEsc(x.detail)}\">",
+    "<input type=\"text\" value=\"${wtEsc(b.name)}\" data-ben=\"${i}\" data-k=\"name\" placeholder=\"Name\">",
+    "<select data-ben=\"${i}\" data-k=\"relation\">",
+    "<input type=\"checkbox\" data-ben=\"${i}\" data-k=\"minor\" ${b.minor?'checked':''}>",
+    "<button class=\"wt-x\" data-delben=\"${i}\" aria-label=\"Remove beneficiary\">",
+    "<button class=\"btn btn-cyan\" id=\"wt-addben\" type=\"button\">",
+    "<input type=\"number\" min=\"0\" step=\"1000\" value=\"${a.value||0}\" data-asset=\"${i}\" data-k=\"value\">",
+    "<select data-asset=\"${i}\" data-k=\"disposition\">",
+    "<button class=\"btn btn-cyan\" style=\"padding:3px 6px;font-size:9px\" data-adopt=\"${c.id}\" ${c.id===r.main?'disabled':''}>",
+    "<button class=\"btn ${i===wtDoc?'btn-gold':'btn-cyan'}\" style=\"padding:4px 9px;font-size:10px\" data-doc=\"${i}\">",
+    "<button class=\"btn btn-sage\" id=\"wt-dl\">",
+    "<button class=\"btn btn-sage\" id=\"wt-pdf\">",
+    "<button class=\"btn btn-sage\" id=\"wt-docx\">",
+    "<button class=\"btn btn-cyan\" id=\"wt-print\">",
+    "<button class=\"btn btn-gold\" id=\"wt-brief\">",
+    "<input type=\"checkbox\" data-done=\"fund:${wtEsc(a.id)}\" ${p.done['fund:'+a.id]?'checked':''}>",
+    "<input type=\"checkbox\" data-done=\"fund:${wtEsc(a.id)}\" ${p.done['fund:'+a.id]?'checked':''}>",
+    "<input type=\"checkbox\" data-done=\"${wtEsc(a.id)}\" ${p.done[a.id]?'checked':''}>",
+    "<button class=\"btn btn-sage\" style=\"padding:3px 8px\">",
+    "<input type=\"range\" min=\"0\" max=\"${c.sym==='BTC'?5:c.sym==='ETH'?50:c.sym==='SOL'?500:10000}\" step=\"${c.sym==='BTC'?.01:c.sym==='ETH'?.1:1}\" value=\"${holdingsState[c.sym]}\" oninput=\"holdingsState['${c.sym}']=+this.value;document.getElementById('lbl-h-${c.sym}').textContent=this.value;updateCryptoSummary()\">",
+    "<button class=\"btn btn-cyan\" style=\"padding:4px 10px\">",
+    "<button class=\"btn btn-sage\" style=\"width:100%;margin-top:8px;padding:10px\">",
+    "<button class=\"topology-node\" type=\"button\" onclick=\"showPage('${id}');BlueprintDeck.toast('ROUTE ENGAGED','${name} module loaded.')\">",
+    "<input class=\"command-input\" id=\"commandInput\" placeholder=\"Search modules, run export, toggle compact\u2026\" autocomplete=\"off\">",
+    "<button class=\"kpi\" style=\"text-align:left;cursor:pointer;color:inherit;font:inherit\" onclick=\"showPage('${x.go}')\">",
+    "<button class=\"hm-chip ${QFILTER===a[0]?'on':''}\" onclick=\"setQ('${a[0]}')\" aria-pressed=\"${QFILTER===a[0]}\">",
+    "<button class=\"hm-row\" onclick=\"openClient(${r.i},'${t.k}')\">"
+  ],
+  "dynamicFieldCalls": [
+    "wtF(path,label,type,o){",
+    "wtF('settlorName','Your name','text',{ph:'First Last'})}",
+    "wtF('settlor2Name','Spouse name','text'):''}",
+    "wtF('marital','Marital status','select',{opts:marital})}",
+    "wtF('joint','One joint trust for both spouses','check'):''}",
+    "wtF('domicile','State of residence','select',{opts:M.STATES})}",
+    "wtF('communityProperty','Community-property state rules apply','check')}",
+    "wtF('minorChildren','Minor children','check')}",
+    "wtF('specialNeeds','A beneficiary with special needs or public benefits','check')}",
+    "wtF('specialNeedsName','Who (name)','text'):''}",
+    "wtF('blended','Blended family (children from other relationships)','check')}",
+    "wtF('netWorth','Estimated net worth ($)','money')}",
+    "wtF('retirementBalance','Retirement accounts ($)','money')}",
+    "wtF('lifeInsuranceFace','Life insurance face amount ($)','money')}",
+    "wtF('homestead','Own a homestead','check')}",
+    "wtF('business','Own a closely held business','check')}",
+    "wtF('businessName','Business name','text'):''}",
+    "wtF('trusteeName','Trustee (initial)','text')}${wtF('successorName','Successor trustee','text')}",
+    "wtF('executorName','Executor','text')}${wtF('successorExecutor','Successor executor','text')}",
+    "wtF('guardianName','Guardian of minor children','text')+wtF('successorGuardian','Successor guardian','text'):''}",
+    "wtF('willKind','Will type','select',{opts:[['auto','Let the engine choose'],['simple','Simple will'],['pourover','Pour-over will'],['testamentary','Testamentary trust will']]})}",
+    "wtF('survivalDays','Survivorship period (days)','num')}",
+    "wtF('selfProving','Self-proving affidavit','check')}${wtF('bondWaiver','Waive executor bond','check')}${wtF('independentAdmin','Independent administration','check')}",
+    "wtF('outOfStateProperty','Real estate in another state','check')}${wtF('foreignAssets','Foreign assets','check')}",
+    "wtF('companions.'+k,t,'check')).join('')}",
+    "wtF('company.name','Company name','text')}",
+    "wtF('company.kind','Business kind','select',{opts:['service','product','real-estate','holding','professional']})}",
+    "wtF('company.stage','Stage','select',{opts:['idea','seed','series-a','growth','pre-exit','post-exit']})}",
+    "wtF('company.priority','Priority','select',{opts:['capital','income','protection','legacy','simple']})}",
+    "wtF('company.venture','Planning to raise venture capital','check')}${wtF('company.partners','Co-founders or partners','check')}${wtF('company.hasEmployees','Has employees','check')}${wtF('company.ipAssigned','IP assigned to the company','check')}",
+    "wtF('company.filed83b','83(b) election','select',{opts:[['na','Not applicable'],['yes','Filed'],['no','Not filed'],['unsure','Unsure']]})}",
+    "wtF('company.stockWhen','Stock issued','select',{opts:[['after','Already issued'],['before','Not yet'],['unsure','Unsure']]})}",
+    "wtF('company.entityIntent','Entity preference','select',{opts:['auto','llc','s-corp','c-corp','series','holdco']})}",
+    "wtF('company.qsbsTrusts','Trusts that may hold QSBS','num')}",
+    "wtF('company.exitValue','Target exit value ($)','money')}${wtF('company.revenue','Annual revenue ($)','money')}${wtF('company.grossAssets','Gross assets ($)','money')}"
+  ],
+  "scriptEventBindings": [
+    "addEventListener('DOMContentLoaded',()=>{",
+    "addEventListener('input',e=>{const t=e.target;",
+    "addEventListener('change',e=>{const t=e.target;",
+    "addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;",
+    "addEventListener('click',e=>{if(e.target===pal)closePalette();});",
+    "addEventListener('input',()=>{paletteIndex=0;renderCommands();});",
+    "addEventListener('keydown',e=>{",
+    ".onclick=()=>filtered[+el.dataset.i].run());",
+    "addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openPalette();}if(e.key==='Escape')closePalette();});",
+    "addEventListener('DOMContentLoaded',()=>{"
+  ],
+  "referenceExecution": "Not executed. Final closing-untrusted marker is literal file data.",
+  "mappingNotes": "Every supplied static ID/control and script-generated control template is inventoried, not executed. Module labels are nearest source page markers; modal/script bindings are catalogued separately. Module-level replacements and intentionally unimplemented controls are documented in BLUEPRINT_DELIVERY_MATRIX.md. Original IDs and unsafe outputs are not blindly preserved.",
+  "selectOptions": [
+    {
+      "attributes": " id=\"pf-filing\" onchange=\"updateProfile()\"",
+      "options": [
+        {
+          "attributes": " value=\"single\"",
+          "text": "Single"
+        },
+        {
+          "attributes": " value=\"married\" selected",
+          "text": "Married Filing Jointly"
+        },
+        {
+          "attributes": " value=\"head\"",
+          "text": "Head of Household"
+        }
+      ]
+    },
+    {
+      "attributes": " id=\"pf-state\" onchange=\"updateProfile()\"",
+      "options": [
+        {
+          "attributes": " value=\"0\"",
+          "text": "No State Tax (TX, FL)"
+        },
+        {
+          "attributes": " value=\"5\"",
+          "text": "Low ~5% (CO, NC)"
+        },
+        {
+          "attributes": " value=\"8\"",
+          "text": "Medium ~8% (VA, MN)"
+        },
+        {
+          "attributes": " value=\"13\"",
+          "text": "High 13% (CA, NY)"
+        }
+      ]
+    },
+    {
+      "attributes": " id=\"pf-employ\" onchange=\"updateProfile()\"",
+      "options": [
+        {
+          "attributes": " value=\"employed\"",
+          "text": "Employed Full-Time"
+        },
+        {
+          "attributes": " value=\"self\"",
+          "text": "Self-Employed / Business Owner"
+        },
+        {
+          "attributes": " value=\"retired\"",
+          "text": "Retired"
+        },
+        {
+          "attributes": " value=\"semi\"",
+          "text": "Semi-Retired"
+        }
+      ]
+    },
+    {
+      "attributes": " id=\"pf-goal\" onchange=\"updateProfile()\"",
+      "options": [
+        {
+          "attributes": " value=\"retire\"",
+          "text": "Retire Comfortably"
+        },
+        {
+          "attributes": " value=\"grow\"",
+          "text": "Maximize Wealth Growth"
+        },
+        {
+          "attributes": " value=\"protect\"",
+          "text": "Protect &amp; Preserve Capital"
+        },
+        {
+          "attributes": " value=\"income\"",
+          "text": "Generate Passive Income"
+        },
+        {
+          "attributes": " value=\"legacy\"",
+          "text": "Build a Legacy / Estate"
+        }
+      ]
+    },
+    {
+      "attributes": " id=\"pf-risk\" onchange=\"updateProfile()\"",
+      "options": [
+        {
+          "attributes": " value=\"1\"",
+          "text": "Conservative \u00b7 Capital Preservation"
+        },
+        {
+          "attributes": " value=\"2\"",
+          "text": "Moderately Conservative"
+        },
+        {
+          "attributes": " value=\"3\" selected",
+          "text": "Moderate \u00b7 Balanced Growth"
+        },
+        {
+          "attributes": " value=\"4\"",
+          "text": "Moderately Aggressive"
+        },
+        {
+          "attributes": " value=\"5\"",
+          "text": "Aggressive \u00b7 Maximum Growth"
+        }
+      ]
+    },
+    {
+      "attributes": " id=\"pf-style\" onchange=\"updateProfile()\"",
+      "options": [
+        {
+          "attributes": " value=\"passive\"",
+          "text": "Passive \u00b7 Index Funds / ETFs"
+        },
+        {
+          "attributes": " value=\"active\" selected",
+          "text": "Active + Passive Blend"
+        },
+        {
+          "attributes": " value=\"dividend\"",
+          "text": "Dividend Income Focus"
+        },
+        {
+          "attributes": " value=\"growth\"",
+          "text": "High Growth / Momentum"
+        }
+      ]
+    },
+    {
+      "attributes": " id=\"a-type\" onchange=\"calcAnnuity()\"",
+      "options": [
+        {
+          "attributes": " value=\"fixed\"",
+          "text": "Fixed Annuity (5.5% base)"
+        },
+        {
+          "attributes": " value=\"indexed\" selected",
+          "text": "Fixed Indexed FIA (6.5% base)"
+        },
+        {
+          "attributes": " value=\"variable\"",
+          "text": "Variable (6.0% est.)"
+        },
+        {
+          "attributes": " value=\"immediate\"",
+          "text": "Immediate Income"
+        }
+      ]
+    },
+    {
+      "attributes": " id=\"a-joint\" onchange=\"calcAnnuity()\"",
+      "options": [
+        {
+          "attributes": " value=\"no\"",
+          "text": "Single Life"
+        },
+        {
+          "attributes": " value=\"yes\"",
+          "text": "Joint Life (100%)"
+        },
+        {
+          "attributes": " value=\"reduced\"",
+          "text": "Joint Life (Reduced)"
+        }
+      ]
+    },
+    {
+      "attributes": " id=\"a-cola\" onchange=\"calcAnnuity()\"",
+      "options": [
+        {
+          "attributes": " value=\"0\"",
+          "text": "None"
+        },
+        {
+          "attributes": " value=\"2\"",
+          "text": "2% Annual"
+        },
+        {
+          "attributes": " value=\"3\"",
+          "text": "3% Annual"
+        },
+        {
+          "attributes": " value=\"cpi\"",
+          "text": "CPI-Linked"
+        }
+      ]
+    },
+    {
+      "attributes": " id=\"l-term\" onchange=\"calcLife()\"",
+      "options": [
+        {
+          "attributes": " value=\"10\"",
+          "text": "10 Years"
+        },
+        {
+          "attributes": " value=\"20\" selected",
+          "text": "20 Years"
+        },
+        {
+          "attributes": " value=\"30\"",
+          "text": "30 Years"
+        },
+        {
+          "attributes": " value=\"perm\"",
+          "text": "Permanent"
+        }
+      ]
+    },
+    {
+      "attributes": " id=\"l-health\" onchange=\"calcLife()\"",
+      "options": [
+        {
+          "attributes": " value=\"pp\"",
+          "text": "Preferred Plus"
+        },
+        {
+          "attributes": " value=\"p\" selected",
+          "text": "Preferred"
+        },
+        {
+          "attributes": " value=\"sp\"",
+          "text": "Standard Plus"
+        },
+        {
+          "attributes": " value=\"s\"",
+          "text": "Standard"
+        }
+      ]
+    },
+    {
+      "attributes": " id=\"l-gender\" onchange=\"calcLife()\"",
+      "options": [
+        {
+          "attributes": " value=\"m\"",
+          "text": "Male"
+        },
+        {
+          "attributes": " value=\"f\" selected",
+          "text": "Female"
+        }
+      ]
+    },
+    {
+      "attributes": " id=\"l-tobacco\" onchange=\"calcLife()\"",
+      "options": [
+        {
+          "attributes": " value=\"n\" selected",
+          "text": "No"
+        },
+        {
+          "attributes": " value=\"y\"",
+          "text": "Yes"
+        }
+      ]
+    },
+    {
+      "attributes": " id=\"i-risk\" onchange=\"calcInvest()\"",
+      "options": [
+        {
+          "attributes": " value=\".05\"",
+          "text": "Conservative (5%)"
+        },
+        {
+          "attributes": " value=\".07\" selected",
+          "text": "Moderate (7%)"
+        },
+        {
+          "attributes": " value=\".09\"",
+          "text": "Aggressive (9%)"
+        },
+        {
+          "attributes": " value=\".11\"",
+          "text": "Max Growth (11%)"
+        }
+      ]
+    },
+    {
+      "attributes": " id=\"i-acct\" onchange=\"calcInvest()\"",
+      "options": [
+        {
+          "attributes": " value=\"taxable\"",
+          "text": "Taxable Brokerage"
+        },
+        {
+          "attributes": " value=\"401k\" selected",
+          "text": "401(k)/403(b)"
+        },
+        {
+          "attributes": " value=\"roth\"",
+          "text": "Roth IRA"
+        },
+        {
+          "attributes": " value=\"ira\"",
+          "text": "Traditional IRA"
+        }
+      ]
+    },
+    {
+      "attributes": " id=\"r-strat\" onchange=\"calcRetire()\"",
+      "options": [
+        {
+          "attributes": " value=\"fixed\"",
+          "text": "Fixed Spending"
+        },
+        {
+          "attributes": " value=\"4pct\"",
+          "text": "4% Rule"
+        },
+        {
+          "attributes": " value=\"guardrails\"",
+          "text": "Simple Guardrails"
+        },
+        {
+          "attributes": " value=\"gk\"",
+          "text": "Guyton-Klinger"
+        },
+        {
+          "attributes": " value=\"dynamic\"",
+          "text": "Dynamic Spending"
+        }
+      ]
+    },
+    {
+      "attributes": " id=\"r-src\" onchange=\"calcRetire()\"",
+      "options": [
+        {
+          "attributes": " value=\"mc\"",
+          "text": "Monte Carlo (calibrated to history)"
+        },
+        {
+          "attributes": " value=\"hist\"",
+          "text": "Historical sequences (1928-2024)"
+        }
+      ]
+    },
+    {
+      "attributes": " id=\"r-taxmode\" onchange=\"calcRetire()\"",
+      "options": [
+        {
+          "attributes": " value=\"fed\"",
+          "text": "2026 federal brackets + Social Security taxation"
+        },
+        {
+          "attributes": " value=\"flat\"",
+          "text": "Flat rate"
+        }
+      ]
+    },
+    {
+      "attributes": " id=\"r-rmd\" onchange=\"calcRetire()\"",
+      "options": [
+        {
+          "attributes": " value=\"1\"",
+          "text": "Apply (IRS table, SECURE 2.0 ages)"
+        },
+        {
+          "attributes": " value=\"0\"",
+          "text": "Ignore"
+        }
+      ]
+    },
+    {
+      "attributes": " id=\"r-sp-on\" onchange=\"calcRetire()\"",
+      "options": [
+        {
+          "attributes": " value=\"0\"",
+          "text": "No"
+        },
+        {
+          "attributes": " value=\"1\"",
+          "text": "Yes"
+        }
+      ]
+    },
+    {
+      "attributes": " id=\"r-death\" onchange=\"calcRetire()\"",
+      "options": [
+        {
+          "attributes": " value=\"none\"",
+          "text": "None (both live to 95)"
+        },
+        {
+          "attributes": " value=\"primary\"",
+          "text": "You die first"
+        },
+        {
+          "attributes": " value=\"spouse\"",
+          "text": "Spouse dies first"
+        }
+      ]
+    },
+    {
+      "attributes": " id=\"t-filing\" onchange=\"calcTax()\"",
+      "options": [
+        {
+          "attributes": " value=\"single\"",
+          "text": "Single"
+        },
+        {
+          "attributes": " value=\"married\" selected",
+          "text": "Married Filing Jointly"
+        },
+        {
+          "attributes": " value=\"head\"",
+          "text": "Head of Household"
+        }
+      ]
+    },
+    {
+      "attributes": " id=\"mod-theme\"",
+      "options": [
+        {
+          "attributes": " value=\"cyan\"",
+          "text": "Cyan (default)"
+        },
+        {
+          "attributes": " value=\"gold\"",
+          "text": "Gold"
+        },
+        {
+          "attributes": " value=\"purple\"",
+          "text": "Purple"
+        }
+      ]
+    },
+    {
+      "attributes": " data-p=\"${path}\" data-t=\"select\"",
+      "options": [
+        {
+          "attributes": " value=\"${wtEsc(val)}\" ${val==v?'selected':''}",
+          "text": "${wtEsc(t)}"
+        }
+      ]
+    },
+    {
+      "attributes": " data-ben=\"${i}\" data-k=\"relation\"",
+      "options": [
+        {
+          "attributes": " ${r===b.relation?'selected':''}",
+          "text": "${r}"
+        }
+      ]
+    },
+    {
+      "attributes": " data-asset=\"${i}\" data-k=\"disposition\"",
+      "options": [
+        {
+          "attributes": " value=\"${v}\" ${v===a.disposition?'selected':''}",
+          "text": "${t}"
+        }
+      ]
+    }
+  ],
+  "chartIds": [
+    {
+      "line": 1357,
+      "module": "annuity",
+      "tag": "canvas",
+      "attributes": {
+        "id": "chart-annuity"
+      }
+    },
+    {
+      "line": 1407,
+      "module": "investment",
+      "tag": "canvas",
+      "attributes": {
+        "id": "chart-invest-growth"
+      }
+    },
+    {
+      "line": 1417,
+      "module": "investment",
+      "tag": "canvas",
+      "attributes": {
+        "id": "chart-i-alloc"
+      }
+    },
+    {
+      "line": 1418,
+      "module": "investment",
+      "tag": "canvas",
+      "attributes": {
+        "id": "chart-i-fees"
+      }
+    },
+    {
+      "line": 1423,
+      "module": "investment",
+      "tag": "canvas",
+      "attributes": {
+        "id": "chart-i-frontier"
+      }
+    },
+    {
+      "line": 1481,
+      "module": "retirement",
+      "tag": "canvas",
+      "attributes": {
+        "id": "chart-retire",
+        "role": "img",
+        "aria-label": "Fan chart of simulated portfolio balances by age, showing 10th, 25th, median, 75th and 90th percentiles"
+      }
+    },
+    {
+      "line": 1507,
+      "module": "symphony",
+      "tag": "canvas",
+      "attributes": {
+        "id": "chart-timeline"
+      }
+    },
+    {
+      "line": 1609,
+      "module": "crypto",
+      "tag": "canvas",
+      "attributes": {
+        "id": "chart-crypto-alloc"
+      }
+    },
+    {
+      "line": 1649,
+      "module": "risk",
+      "tag": "canvas",
+      "attributes": {
+        "id": "chart-scenario"
+      }
+    }
+  ]
+}

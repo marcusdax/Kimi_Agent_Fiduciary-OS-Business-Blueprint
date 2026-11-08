@@ -1450,3 +1450,16 @@ textarea {
     scroll-behavior: auto !important;
   }
 }
+
+.blueprint-tools { min-width: 0; margin-block: 32px; }
+.tool-tabs { display: flex; flex-wrap: wrap; overflow: visible; gap: 8px; margin-block: 16px; }
+.tool-tabs button { width: auto; max-width: 100%; white-space: normal; min-height: 44px; padding: 8px 12px; border: 1px solid var(--steel-line); border-radius: 6px; background: var(--surface); }
+.tool-tabs button[aria-pressed="true"] { border-color: var(--cyan); box-shadow: inset 0 -3px var(--cyan); }
+.tool-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); gap: 16px; }
+.tool-metrics dt { color: var(--muted); font-size: 12px; }
+.tool-metrics dd { overflow-wrap: anywhere; margin: 6px 0; font-size: 20px; font-variant-numeric: tabular-nums; }
+.blueprint-tools select { padding: 11px; width: 100%; min-width: 0; border-radius: 6px; }
+.observation { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--steel-line); }
+.observation a { overflow-wrap: anywhere; }
+.blueprint-tools .table-wrap { overflow: auto; max-width: 100%; }
+.blueprint-tools table { width: 100%; }

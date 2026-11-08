@@ -38,6 +38,8 @@ jobs:
         run: npm run lint:planning
       - name: Financial API lint (blocking)
         run: npm run lint:financial
+      - name: Blueprint tool and provider lint (blocking)
+        run: npm run lint:tools
       # Full-repository lint still reports inherited style/type findings.
       # The resolver and source/test project setup are now fixed.
       # See fiduciary-os/backend/LINT_STATUS.md; this step is not a pass gate.
