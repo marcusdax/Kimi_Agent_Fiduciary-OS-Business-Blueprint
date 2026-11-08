@@ -11,201 +11,202 @@
  *   - each rule cites a source and a severity,
  *   - each rule can return `pass`, `fail`, or `insufficient-evidence`,
  *   - `insufficient-evidence` is treated as blocking, because "we could not check"
- *     and "we checked and it was fine" are dangerously different states that look
- *     identical if the UI only shows passes and fails.
+ *     and "we checked and it was fine" must never collapse into the same state.
  *
- * This is not legal advice and it does not try to be: the rules here are a
- * *mechanism* for a firm's own compliance function to express its standards. The
- * firm owns the content; we own the audit trail.
+ * This is a rules engine, not a legal opinion. The rule set below is deliberately
+ * small and every rule is contestable; the point is the *mechanism*, so the firm's
+ * compliance team can own the content without touching code.
  */
 import { point, type DataPoint } from '../provenance.ts';
 
-export type RuleOutcome = 'pass' | 'fail' | 'insufficient-evidence';
-export type Severity = 'blocker' | 'warning';
+export type Severity = 'blocking' | 'advisory';
+export type Outcome = 'pass' | 'fail' | 'insufficient-evidence';
 
 export interface PlanFacts {
   clientAge: number;
-  /** Informed-risk capacity stated by the client: conservative | moderate | aggressive. */
   riskTolerance: 'conservative' | 'moderate' | 'aggressive';
-  /** Years until the money is substantially needed. */
+  /** Years until the client needs the money. */
   horizonYears: number;
-  /** Portfolio equity weight as a 0-1 fraction. */
+  /** Share of the plan in equities. */
   equityWeight: number;
-  /** Share of assets that cannot be sold within 30 days. */
+  /** Share of liquid net worth the plan places in illiquid or restricted products. */
   illiquidShare: number;
-  /** All-in cost of the proposed products, as a 0-1 annual fraction. */
+  /** Annual advisory + product cost as a decimal. */
   totalCostRatio: number;
-  /** Modelled one-year loss at the 5th percentile, as a negative decimal. */
+  /** Expected loss the plan tolerates in a stress year, as a decimal (e.g. -0.25). */
   stressYearLoss: number;
-  /** Cash reserve outside the plan, verified or null if unknown. */
+  /** Does the client have an emergency reserve of >= 3 months of expenses? */
   hasEmergencyReserve: boolean | null;
-  /** Ratio of guaranteed income to essential spending, or null if unmeasured. */
+  /** Is the client's stated objective funded to at least 90% under the plan's own projection? */
   fundedRatio: number | null;
-  /** Whether the client holds >25% of investable assets in one issuer (employer stock, typically). */
+  /** Was concentration (single position > 10%) disclosed and accepted in writing? */
   concentrationAcknowledged: boolean | null;
-  /** Whether a documented vulnerability flag is on file. */
+  /** Does the client have any documented vulnerability flag? */
   vulnerability: boolean;
-  /** Product categories involved, e.g. ["equity-etf", "fixed-annuity", "reit"]. */
+  /** Product types included, so rules can key off them without parsing prose. */
   products: string[];
 }
 
-export interface RuleEvaluation {
-  ruleId: string;
-  outcome: RuleOutcome;
-  severity: Severity;
-  basis: string;
-  citation: string;
-  detail: string;
-}
-
-export interface SuitabilityRule {
+export interface Rule {
   id: string;
+  title: string;
   severity: Severity;
-  /** Why this rule exists, in one sentence a reviewer can argue with. */
+  /** Legal or professional basis, stated plainly. Not legal advice. */
   basis: string;
-  /** Public reference. FINRA 2111 is the anchor for suitability reasoning. */
   citation: string;
-  evaluate: (f: PlanFacts) => { outcome: RuleOutcome; detail: string };
+  evaluate: (facts: PlanFacts) => { outcome: Outcome; detail: string };
 }
 
-export const DEFAULT_RULES: SuitabilityRule[] = [
+export interface Finding {
+  ruleId: string;
+  title: string;
+  severity: Severity;
+  outcome: Outcome;
+  detail: string;
+  citation: string;
+}
+
+export interface SuitabilityReport {
+  verdict: 'suitable' | 'not-suitable' | 'blocked-by-missing-evidence';
+  findings: Finding[];
+  blockingCount: number;
+  advisoryCount: number;
+  /** True only when every blocking rule passed with real evidence. */
+  mayShowToClient: boolean;
+}
+
+/**
+ * Equity ceiling by risk tolerance and horizon. A rule of thumb, and labelled as
+ * one: the point is that an aggressive 90/10 plan for a two-year horizon is caught
+ * mechanically rather than by a reviewer's memory.
+ */
+function equityCeiling(tolerance: PlanFacts['riskTolerance'], horizonYears: number): number {
+  const base = tolerance === 'aggressive' ? 0.95 : tolerance === 'moderate' ? 0.75 : 0.5;
+  if (horizonYears < 3) return Math.min(base, 0.3);
+  if (horizonYears < 5) return Math.min(base, 0.6);
+  return base;
+}
+
+export const DEFAULT_RULES: Rule[] = [
   {
     id: 'horizon-equity-fit',
-    severity: 'blocker',
-    basis: 'Short horizons cannot absorb equity drawdowns; a sub-3-year horizon with a high equity weight fails any reasonable suitability standard.',
-    citation: 'FINRA Rule 2111 (suitability: investment profile, time horizon)',
-    evaluate: (f) =>
-      f.horizonYears < 3 && f.equityWeight > 0.5
-        ? { outcome: 'fail', detail: `Horizon of ${f.horizonYears}y is incompatible with a ${(f.equityWeight * 100).toFixed(0)}% equity allocation.` }
-        : { outcome: 'pass', detail: 'Horizon and equity weight are compatible.' },
-  },
-  {
-    id: 'stress-loss-tolerance',
-    severity: 'blocker',
-    basis: 'A conservative client who cannot state a loss they could bear has not given informed risk capacity, and a plan whose stress loss exceeds a stated tolerance is unsuitable by the client\u2019s own words.',
-    citation: 'FINRA Rule 2111; Reg BI (Form CRS risk discussion)',
+    title: 'Equity allocation is consistent with the client horizon',
+    severity: 'blocking',
+    basis: 'A plan needing the money within five years cannot rely on equity recovery after a drawdown.',
+    citation: 'CFP Board Practice Standards — risk tolerance and time horizon must both inform allocation',
     evaluate: (f) => {
-      if (f.riskTolerance === 'conservative' && f.stressYearLoss < -0.15) {
-        return { outcome: 'fail', detail: `A modelled stress loss of ${(f.stressYearLoss * 100).toFixed(1)}% exceeds what a conservative mandate can support.` };
-      }
-      if (f.riskTolerance === 'moderate' && f.stressYearLoss < -0.3) {
-        return { outcome: 'fail', detail: `A modelled stress loss of ${(f.stressYearLoss * 100).toFixed(1)}% exceeds a moderate mandate's defensible bound.` };
-      }
-      return { outcome: 'pass', detail: 'Stress loss is within the stated risk tolerance.' };
+      const ceiling = equityCeiling(f.riskTolerance, f.horizonYears);
+      return f.equityWeight <= ceiling + 1e-9
+        ? { outcome: 'pass', detail: `Equity weight ${(f.equityWeight * 100).toFixed(0)}% is within the ${(ceiling * 100).toFixed(0)}% ceiling for a ${f.riskTolerance} profile with a ${f.horizonYears}-year horizon.` }
+        : { outcome: 'fail', detail: `Equity weight ${(f.equityWeight * 100).toFixed(0)}% exceeds the ${(ceiling * 100).toFixed(0)}% ceiling for a ${f.riskTolerance} profile with a ${f.horizonYears}-year horizon.` };
     },
   },
   {
-    id: 'liquidity-before-illiquidity',
-    severity: 'blocker',
-    basis: 'An illiquid commitment made while the client has no verified reserve converts a market risk into a solvency risk.',
-    citation: 'FINRA Rule 2111 (liquidity needs); state annuity suitability rules (NAIC model)',
+    id: 'stress-loss-tolerance',
+    title: 'Modelled stress-year loss is within client tolerance',
+    severity: 'blocking',
+    basis: 'A plan whose bad year would breach the client\'s stated loss tolerance is unsuitable regardless of expected return.',
+    citation: 'FINRA Rule 2111 — suitability requires consideration of the customer\'s risk tolerance',
     evaluate: (f) => {
-      if (f.illiquidShare <= 0.1) return { outcome: 'pass', detail: 'Illiquid share is below the review threshold.' };
-      if (f.hasEmergencyReserve === null) {
-        return { outcome: 'insufficient-evidence', detail: `Illiquid share is ${(f.illiquidShare * 100).toFixed(0)}% but the reserve position was not evidenced.` };
-      }
-      return f.hasEmergencyReserve
-        ? { outcome: 'pass', detail: 'Illiquid share is offset by a verified emergency reserve.' }
-        : { outcome: 'fail', detail: 'A material illiquid commitment with no emergency reserve is unsuitable.' };
+      const limit = f.riskTolerance === 'aggressive' ? 0.35 : f.riskTolerance === 'moderate' ? 0.2 : 0.1;
+      const loss = Math.abs(f.stressYearLoss);
+      return loss <= limit + 1e-9
+        ? { outcome: 'pass', detail: `Modelled stress-year loss ${(loss * 100).toFixed(0)}% is within the ${(limit * 100).toFixed(0)}% tolerance for a ${f.riskTolerance} profile.` }
+        : { outcome: 'fail', detail: `Modelled stress-year loss ${(loss * 100).toFixed(0)}% exceeds the ${(limit * 100).toFixed(0)}% tolerance for a ${f.riskTolerance} profile.` };
+    },
+  },
+  {
+    id: 'liquidity-reserve',
+    title: 'Emergency reserve exists before illiquid commitments',
+    severity: 'blocking',
+    basis: 'Recommending illiquid or restricted products without a reserve converts market risk into forced-sale risk.',
+    citation: 'CFP Board — liquidity needs must be met before long-horizon or illiquid recommendations',
+    evaluate: (f) => {
+      if (f.hasEmergencyReserve === null) return { outcome: 'insufficient-evidence', detail: 'No emergency-reserve evidence on file.' };
+      if (!f.hasEmergencyReserve && f.illiquidShare > 0.1) return { outcome: 'fail', detail: `No emergency reserve and ${(f.illiquidShare * 100).toFixed(1)}% of liquid net worth in illiquid products.` };
+      return { outcome: 'pass', detail: f.hasEmergencyReserve ? 'Emergency reserve confirmed.' : 'Illiquid share is within tolerance despite no reserve.' };
     },
   },
   {
     id: 'concentration-disclosure',
-    severity: 'warning',
-    basis: 'Concentration is sometimes rational (employer stock with restrictions); it is never something to leave undocumented.',
-    citation: 'FINRA Rule 2111; SEC investor bulletin on concentration risk',
+    title: 'Single-position concentration is disclosed and acknowledged',
+    severity: 'blocking',
+    basis: 'A position above 10% carries idiosyncratic risk that must be a conscious, documented choice.',
+    citation: 'CFP Board / FINRA — concentration risk must be disclosed and knowingly accepted',
     evaluate: (f) => {
-      if (f.concentrationAcknowledged === null) {
-        return { outcome: 'insufficient-evidence', detail: 'Concentration position was not captured.' };
-      }
-      return f.concentrationAcknowledged
-        ? { outcome: 'pass', detail: 'Concentration acknowledged in writing.' }
-        : { outcome: 'fail', detail: 'A concentrated position exists without a written acknowledgement.' };
+      if (f.concentrationAcknowledged === null) return { outcome: 'insufficient-evidence', detail: 'Concentration acknowledgement not recorded.' };
+      if (!f.concentrationAcknowledged) return { outcome: 'fail', detail: 'Concentration flagged but not acknowledged in writing.' };
+      return { outcome: 'pass', detail: 'Concentration disclosed and acknowledged.' };
     },
   },
   {
-    id: 'funded-floor',
-    severity: 'warning',
-    basis: 'A plan that does not cover essential spending from guaranteed sources is a hope, not a floor. It can still be right, but the gap must be explicit.',
-    citation: 'CFP Board practice standards (retirement income adequacy)',
+    id: 'funded-ratio',
+    title: 'The plan is funded against the client\'s stated objective',
+    severity: 'advisory',
+    basis: 'A plan that does not fund the objective may still be appropriate, but the shortfall must be visible to the client.',
+    citation: 'CFP Board — the recommendation must be evaluated against the client\'s goals',
     evaluate: (f) => {
-      if (f.fundedRatio === null) return { outcome: 'insufficient-evidence', detail: 'The funded ratio was not computed.' };
-      return f.fundedRatio >= 0.7
-        ? { outcome: 'pass', detail: `Funded ratio ${(f.fundedRatio * 100).toFixed(0)}% meets the 70% floor.` }
-        : { outcome: 'fail', detail: `Funded ratio ${(f.fundedRatio * 100).toFixed(0)}% is below the 70% floor; the gap must be a documented client choice.` };
+      if (f.fundedRatio === null) return { outcome: 'insufficient-evidence', detail: 'No projection attached to the plan.' };
+      return f.fundedRatio >= 0.9
+        ? { outcome: 'pass', detail: `Funded ratio ${(f.fundedRatio * 100).toFixed(0)}% meets the 90% threshold.` }
+        : { outcome: 'fail', detail: `Funded ratio ${(f.fundedRatio * 100).toFixed(0)}% is below 90%; shortfall must be disclosed.` };
     },
   },
   {
     id: 'cost-reasonableness',
-    severity: 'warning',
-    basis: 'Costs compound; a plan charging far above the implementable alternative needs a documented reason.',
-    citation: 'Reg BI (cost as a factor); DOL PTE 84-24 for annuities',
+    title: 'Total cost is disclosed and not an outlier',
+    severity: 'advisory',
+    basis: 'Cost is a certain drag on a probabilistic return; a plan above 2% all-in must justify it explicitly.',
+    citation: 'DOL fiduciary standard / Reg BI — cost is material to the care obligation',
     evaluate: (f) =>
-      f.totalCostRatio > 0.02
-        ? { outcome: 'fail', detail: `All-in cost of ${(f.totalCostRatio * 100).toFixed(2)}%/yr exceeds the 2.00% review threshold without a documented justification.` }
-        : { outcome: 'pass', detail: 'Cost is within the review threshold.' },
+      f.totalCostRatio <= 0.02
+        ? { outcome: 'pass', detail: `All-in cost ${(f.totalCostRatio * 100).toFixed(2)}% is within the 2.00% review threshold.` }
+        : { outcome: 'fail', detail: `All-in cost ${(f.totalCostRatio * 100).toFixed(2)}% exceeds 2.00% and requires explicit justification.` },
   },
   {
-    id: 'vulnerable-client-escalation',
-    severity: 'blocker',
-    basis: 'A documented vulnerability flag changes the standard of care: the plan must receive human review regardless of any automated outcome.',
-    citation: 'FINRA Rule 2165 (financial exploitation of specified adults)',
+    id: 'vulnerability-escalation',
+    title: 'Vulnerable-client plans carry an independent review requirement',
+    severity: 'blocking',
+    basis: 'A documented vulnerability raises the duty of care and requires an independent second review before client delivery.',
+    citation: 'FINRA Regulatory Notice 22-08 / CFP Board elder-financial-exploitation guidance',
     evaluate: (f) =>
       f.vulnerability
-        ? { outcome: 'insufficient-evidence', detail: 'A vulnerability flag is on file; human review is required before this plan proceeds.' }
+        ? { outcome: 'fail', detail: 'Client has a vulnerability flag: an independent reviewer must sign off before this plan is shown to the client.' }
         : { outcome: 'pass', detail: 'No vulnerability flag on file.' },
   },
 ];
 
-export interface SuitabilityVerdict {
-  verdict: 'suitable' | 'suitable-with-conditions' | 'not-suitable' | 'cannot-assess';
-  evaluations: RuleEvaluation[];
-  blockingCount: number;
-  warningCount: number;
-  evidenceGaps: string[];
-  /** Whether the result may be shown to a client at all. */
-  mayShowToClient: boolean;
-}
-
-export function assessSuitability(facts: PlanFacts, rules: SuitabilityRule[] = DEFAULT_RULES): DataPoint<SuitabilityVerdict> {
-  const evaluations: RuleEvaluation[] = rules.map((rule) => {
+export function assessSuitability(facts: PlanFacts, rules: Rule[] = DEFAULT_RULES): DataPoint<SuitabilityReport> {
+  const findings: Finding[] = rules.map((rule) => {
     const { outcome, detail } = rule.evaluate(facts);
-    return { ruleId: rule.id, outcome, severity: rule.severity, basis: rule.basis, citation: rule.citation, detail };
+    return { ruleId: rule.id, title: rule.title, severity: rule.severity, outcome, detail, citation: rule.citation };
   });
 
-  const blockers = evaluations.filter((e) => e.severity === 'blocker' && e.outcome === 'fail');
-  const gaps = evaluations.filter((e) => e.outcome === 'insufficient-evidence');
-  const warnings = evaluations.filter((e) => e.severity === 'warning' && e.outcome === 'fail');
+  const blocking = findings.filter((f) => f.severity === 'blocking');
+  const advisory = findings.filter((f) => f.severity === 'advisory');
+  const blockingFailures = blocking.filter((f) => f.outcome === 'fail');
+  const blockingMissing = blocking.filter((f) => f.outcome === 'insufficient-evidence');
 
-  const verdict: SuitabilityVerdict['verdict'] =
-    blockers.length > 0
-      ? 'not-suitable'
-      : gaps.length > 0
-        ? 'cannot-assess'
-        : warnings.length > 0
-          ? 'suitable-with-conditions'
-          : 'suitable';
+  const verdict: SuitabilityReport['verdict'] =
+    blockingMissing.length > 0 ? 'blocked-by-missing-evidence' : blockingFailures.length > 0 ? 'not-suitable' : 'suitable';
 
-  const result: SuitabilityVerdict = {
-    verdict,
-    evaluations,
-    blockingCount: blockers.length,
-    warningCount: warnings.length,
-    evidenceGaps: gaps.map((g) => g.ruleId),
-    // A plan with unmet evidence requirements must not be dressed up for delivery.
-    mayShowToClient: verdict === 'suitable' || verdict === 'suitable-with-conditions',
-  };
-
-  return point(result, {
-    source: 'fiduciary-os:suitability-rules:v1',
-    sourceKind: 'derived',
-    sourceUrl: '',
-    retrievedAt: new Date().toISOString(),
-    asOf: null,
-    license: 'Proprietary',
-    method:
-      `${rules.length} deterministic rules over the plan facts; blockers and evidence gaps are listed by id. ` +
-      'This is a compliance *mechanism*: the firm\u2019s compliance function owns the rule content.',
-    staleAfterSeconds: 3600,
-  });
+  return point(
+    {
+      verdict,
+      findings,
+      blockingCount: blockingFailures.length + blockingMissing.length,
+      advisoryCount: advisory.filter((f) => f.outcome !== 'pass').length,
+      mayShowToClient: verdict === 'suitable',
+    },
+    {
+      source: 'fiduciary-os:suitability-engine:v1',
+      sourceKind: 'derived',
+      sourceUrl: '',
+      retrievedAt: new Date().toISOString(),
+      asOf: null,
+      license: 'Proprietary — rule set owned by the firm\'s compliance function',
+      method: `Deterministic evaluation of ${rules.length} rules (${blocking.length} blocking, ${advisory.length} advisory). Missing evidence blocks rather than passes.`,
+      staleAfterSeconds: 24 * 3600,
+    },
+  );
 }
