@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import {
   render,
   screen,
@@ -9,6 +9,7 @@ import {
 import userEvent from "@testing-library/user-event";
 import axe from "axe-core";
 import App from "./App";
+afterEach(() => vi.restoreAllMocks());
 describe("Fiduciary OS workspace", () => {
   it("opens with a clear sample-data boundary and navigates every section", async () => {
     const u = userEvent.setup();
@@ -250,3 +251,66 @@ it("exposes a named comparison scroll region in the tab order and reaches the la
     screen.getByText("Assumptions, method, and limitations"),
   ).toHaveFocus();
 });
+
+it.each([286, 356])(
+  "reveals each whole board card and outline in both tab directions (modeled %ipx board)",
+  async (width) => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "Next steps" }));
+    const cards = [
+      screen.getByRole("button", {
+        name: /Confirm your protection needs.*Review action/,
+      }),
+      screen.getByRole("button", {
+        name: /Compare planning horizons.*Review action/,
+      }),
+      screen.getByRole("button", {
+        name: /Review beneficiary information.*Review action/,
+      }),
+    ];
+    const board = cards[0].closest<HTMLElement>(".board")!;
+    // Modeled rectangles exercise geometry only; Chrome validates rendered fit.
+    Object.defineProperties(board, {
+      clientWidth: { value: width },
+      scrollWidth: { value: 1300 },
+    });
+    vi.spyOn(board, "getBoundingClientRect").mockImplementation(
+      () => new DOMRect(17, 0, width, 600),
+    );
+    cards.forEach((card, index) => {
+      vi.spyOn(card, "getBoundingClientRect").mockImplementation(
+        () =>
+          new DOMRect(17 + 12 + 217 * index - board.scrollLeft, 50, 180, 250),
+      );
+    });
+    const pageScroll = vi
+      .spyOn(window, "scrollTo")
+      .mockImplementation(() => {});
+    const assertWholeCard = async (card: HTMLElement) => {
+      await waitFor(() => {
+        expect(card).toHaveFocus();
+        const bounds = board.getBoundingClientRect();
+        const item = card.getBoundingClientRect();
+        expect(item.left).toBeGreaterThanOrEqual(bounds.left + 8);
+        expect(item.right).toBeLessThanOrEqual(bounds.right - 8);
+      });
+    };
+    cards[0].focus();
+    await assertWholeCard(cards[0]);
+    expect(board.scrollLeft).toBe(0); // Already visible cards do not jump.
+    await user.tab();
+    await assertWholeCard(cards[1]);
+    const forward = board.scrollLeft;
+    expect(forward).toBeGreaterThan(0);
+    await user.tab();
+    await assertWholeCard(cards[2]);
+    expect(board.scrollLeft).toBeGreaterThan(forward);
+    await user.tab({ shift: true });
+    await assertWholeCard(cards[1]);
+    expect(board.scrollLeft).toBeLessThan(forward + 217);
+    await user.tab({ shift: true });
+    await assertWholeCard(cards[0]);
+    expect(pageScroll).not.toHaveBeenCalled();
+  },
+);

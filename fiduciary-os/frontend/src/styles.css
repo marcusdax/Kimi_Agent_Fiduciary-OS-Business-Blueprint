@@ -667,6 +667,7 @@ details p {
 .board {
   display: flex;
   overflow-x: auto;
+  scroll-padding-inline: 8px;
   gap: 13px;
   padding-bottom: 18px;
   margin: 18px 0 20px;
@@ -693,6 +694,7 @@ details p {
 }
 .board-card {
   display: block;
+  scroll-margin-inline: 8px;
   text-align: left;
   width: 100%;
   background: white;

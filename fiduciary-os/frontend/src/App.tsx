@@ -51,6 +51,28 @@ function scrollComparison(event: KeyboardEvent<HTMLDivElement>) {
   event.preventDefault();
   region.scrollLeft = position;
 }
+function revealBoardCard(card: HTMLButtonElement) {
+  const board = card.closest<HTMLElement>(".board");
+  if (!board) return;
+  // Run after the browser's own focus scroll, then move this container only.
+  // Three outline pixels plus a four-pixel offset need eight pixels of room.
+  requestAnimationFrame(() => {
+    if (document.activeElement !== card) return;
+    const bounds = board.getBoundingClientRect();
+    const item = card.getBoundingClientRect();
+    const left = bounds.left + board.clientLeft + 8;
+    const right = bounds.left + board.clientLeft + board.clientWidth - 8;
+    const delta =
+      item.left < left
+        ? item.left - left
+        : item.right > right
+          ? item.right - right
+          : 0;
+    if (!delta) return;
+    const end = Math.max(0, board.scrollWidth - board.clientWidth);
+    board.scrollLeft = Math.min(end, Math.max(0, board.scrollLeft + delta));
+  });
+}
 const navigation = [
   { label: "Overview", icon: LayoutDashboard },
   { label: "My plan", icon: Compass },
@@ -657,6 +679,9 @@ export default function App() {
                           key={a.id}
                           aria-pressed={a.id === selected}
                           onClick={() => select(a.id)}
+                          onFocus={(event) =>
+                            revealBoardCard(event.currentTarget)
+                          }
                         >
                           <span className="card-tag">
                             {a.id === "income" || a.comparisonSnapshot
