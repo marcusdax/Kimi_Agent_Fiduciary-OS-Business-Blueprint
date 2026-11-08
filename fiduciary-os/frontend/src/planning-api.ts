@@ -36,6 +36,7 @@ export class ApiError extends Error {
   constructor(
     public status: number,
     message: string,
+    public uncertain = false,
   ) {
     super(message);
   }
@@ -65,6 +66,7 @@ export async function api<T>(
       method === "GET"
         ? "The API could not be reached. Reload saved actions when the connection is restored."
         : "The response was lost; the change may have been saved. Reload saved actions before retrying.",
+      method !== "GET",
     );
   }
   let payload;
@@ -73,7 +75,10 @@ export async function api<T>(
   } catch {
     throw new ApiError(
       response.status,
-      "The planning API did not return JSON. Confirm the backend and proxy configuration.",
+      method === "GET"
+        ? "The planning API did not return JSON. Confirm the backend and proxy configuration."
+        : "The API response could not be read; the change may have been saved. Reload saved actions before retrying.",
+      method !== "GET",
     );
   }
   if (!response.ok)
@@ -82,6 +87,7 @@ export async function api<T>(
       payload && typeof payload.error === "string"
         ? payload.error
         : "The planning request failed. No change has been confirmed.",
+      method !== "GET" && response.status >= 500,
     );
   return payload as T;
 }

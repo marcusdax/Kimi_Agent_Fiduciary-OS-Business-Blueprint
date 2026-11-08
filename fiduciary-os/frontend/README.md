@@ -37,7 +37,8 @@ After building, `npm run export-preview` writes `dist/fiduciary-os-preview.html`
 - Review-date changes append sample history without reopening completed actions, changing authorization, or scheduling reminders.
 - Keyboard-operable sequential stages. Recording action-specific planning authorization and starting follow-through are separate operations. Completion requires evidence; review dates never erase completed history or schedule reminders.
 - Saved workspace supports sign-in, empty states, action creation, loading/errors, reload, review notes, separate authorization/revocation, evidence, optional review dates, server-owned actor/time, and versioned history.
-- Conflicting versions are rejected without silently retrying a mutation. Reload before making another decision. API sessions stay in memory, not localStorage/cookies; reload, leaving this workspace, expiry, or clearing the local session requires another sign-in.
+- Conflicting versions are rejected without silently retrying a mutation. Lost, unreadable, malformed-success and server-error write responses pause every save control and block form-handler resubmission until a successful reload. Failed reloads keep the guard and create draft; successful reconciliation clears that draft so it cannot be blindly submitted again. This client guard is not server-side request idempotency; inspect the fetched records before deliberately creating a new action.
+- API sessions stay in memory, not localStorage/cookies; reload, leaving this workspace, expiry, or clearing the local session requires another sign-in.
 - Status changes are announced in a live region. The saved action heading retains focus after operations. No drag operation is required.
 - Documents and Planning team have honest empty states; account linking, uploads, storage, and invitations are not simulated as completed capabilities.
 

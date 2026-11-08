@@ -34,6 +34,8 @@ export default function ConnectedWorkspace() {
   const [selected, setSelected] = useState("");
   const [fields, setFields] = useState<ActionFields>(empty);
   const [busy, setBusy] = useState(false);
+  const [requiresReload, setRequiresReload] = useState(false);
+  const reconciliationRequired = useRef(false);
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
   const [review, setReview] = useState("");
@@ -44,15 +46,30 @@ export default function ConnectedWorkspace() {
   const inFlight = useRef(false);
   const active = actions.find((a) => a.id === selected);
   const next = active ? stages[stages.indexOf(active.stage) + 1] : null;
-  async function work(fn: () => Promise<void>) {
+  async function work(fn: () => Promise<void>, mutation = false) {
     if (inFlight.current) return;
+    if (mutation && reconciliationRequired.current) {
+      setError(
+        "Reload saved actions and inspect the records before trying another change.",
+      );
+      return;
+    }
     inFlight.current = true;
     setBusy(true);
     setError("");
     try {
       await fn();
     } catch (err) {
+      if (
+        mutation &&
+        (!(err instanceof ApiError) || err.uncertain || err.status === 409)
+      ) {
+        reconciliationRequired.current = true;
+        setRequiresReload(true);
+      }
       if (err instanceof ApiError && err.status === 401) {
+        reconciliationRequired.current = false;
+        setRequiresReload(false);
         setToken(null);
         setActions([]);
         setSelected("");
@@ -80,7 +97,20 @@ export default function ConnectedWorkspace() {
     setActions(records);
     setConfirmed(false);
     setReviewDate(records.find((a) => a.id === selected)?.reviewDate || "");
-    setStatus("Saved planning actions loaded.");
+    if (reconciliationRequired.current) {
+      // An ambiguous create may already exist. Never leave the same filled draft
+      // ready to resubmit after reconciliation; require a deliberate new entry.
+      setFields(empty);
+      setReview("");
+      setEvidence("");
+      setStatus(
+        "Saved planning actions reloaded. Inspect the records before creating another action. The previous create draft was cleared; no request was repeated.",
+      );
+    } else {
+      setStatus("Saved planning actions loaded.");
+    }
+    reconciliationRequired.current = false;
+    setRequiresReload(false);
   }
   async function signIn(event: FormEvent) {
     event.preventDefault();
@@ -131,7 +161,7 @@ export default function ConnectedWorkspace() {
         `${updated.title}: ${updated.stage}. Saved at version ${updated.version}. No financial transaction was executed.`,
       );
       setTimeout(() => heading.current?.focus(), 0);
-    });
+    }, true);
   }
   async function create(event: FormEvent) {
     event.preventDefault();
@@ -147,7 +177,7 @@ export default function ConnectedWorkspace() {
       select(saved);
       setFields(empty);
       setStatus("Planning action saved.");
-    });
+    }, true);
   }
   return (
     <section className="connected-workspace">
@@ -163,6 +193,15 @@ export default function ConnectedWorkspace() {
           approval of a financial scenario.
         </p>
       </div>
+      {requiresReload && (
+        <p className="callout" id="write-reconciliation">
+          A previous change may already have been saved, or this record changed
+          elsewhere. All save controls are paused. Reload saved actions and
+          inspect the results before making another change. A successful reload
+          will clear the previous create draft; a failed reload will not unlock
+          saving.
+        </p>
+      )}
       {error && (
         <p role="alert" className="error">
           {error}
@@ -221,6 +260,8 @@ export default function ConnectedWorkspace() {
                 disabled={busy}
                 onClick={() => {
                   setToken(null);
+                  reconciliationRequired.current = false;
+                  setRequiresReload(false);
                   setActions([]);
                   setSelected("");
                   setFields(empty);
@@ -271,7 +312,7 @@ export default function ConnectedWorkspace() {
                 Record unknowns explicitly. Do not invent supporting evidence or
                 imply professional review.
               </p>
-              <button className="button" disabled={busy}>
+              <button className="button" disabled={busy || requiresReload}>
                 Save planning action
               </button>
             </form>
@@ -365,7 +406,7 @@ export default function ConnectedWorkspace() {
                           </label>
                           <button
                             className="button"
-                            disabled={busy || !confirmed}
+                            disabled={busy || requiresReload || !confirmed}
                             onClick={() =>
                               mutate("authorization", {
                                 confirmation:
@@ -396,6 +437,7 @@ export default function ConnectedWorkspace() {
                       className="button"
                       disabled={
                         busy ||
+                        requiresReload ||
                         (next === "Waiting for approval" && !review.trim()) ||
                         (next === "In progress" &&
                           active.authorizedVersion !== active.version) ||
@@ -420,7 +462,7 @@ export default function ConnectedWorkspace() {
                     active.stage === "In progress") && (
                     <button
                       className="text-button"
-                      disabled={busy}
+                      disabled={busy || requiresReload}
                       onClick={() => mutate("revoke-authorization", {})}
                     >
                       Revoke planning authorization and pause follow-through
@@ -444,7 +486,7 @@ export default function ConnectedWorkspace() {
                 </label>
                 <button
                   className="button align-end"
-                  disabled={busy}
+                  disabled={busy || requiresReload}
                   onClick={() =>
                     mutate(
                       "review-date",

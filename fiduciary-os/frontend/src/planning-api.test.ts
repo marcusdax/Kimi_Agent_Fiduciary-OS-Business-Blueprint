@@ -29,3 +29,26 @@ describe("planning API failure handling", () => {
     expect(eventDetails("Not JSON")).toBe("Not JSON");
   });
 });
+
+it("marks unreadable successful writes and server failures as uncertain, but not validation failures", async () => {
+  const fetch = vi
+    .fn()
+    .mockResolvedValueOnce(new Response("Not JSON", { status: 201 }))
+    .mockResolvedValueOnce(
+      new Response(JSON.stringify({ error: "Server failed" }), { status: 500 }),
+    )
+    .mockResolvedValueOnce(
+      new Response(JSON.stringify({ error: "Invalid input" }), { status: 400 }),
+    );
+  vi.stubGlobal("fetch", fetch);
+  await expect(
+    api("/planning/actions", null, "POST", {}),
+  ).rejects.toMatchObject({ uncertain: true, status: 201 });
+  await expect(
+    api("/planning/actions", null, "POST", {}),
+  ).rejects.toMatchObject({ uncertain: true, status: 500 });
+  await expect(
+    api("/planning/actions", null, "POST", {}),
+  ).rejects.toMatchObject({ uncertain: false, status: 400 });
+  expect(fetch).toHaveBeenCalledTimes(3);
+});

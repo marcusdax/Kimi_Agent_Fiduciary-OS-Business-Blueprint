@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import axe from "axe-core";
 import ConnectedWorkspace from "./ConnectedWorkspace";
@@ -270,4 +270,97 @@ describe("saved planning workspace", () => {
       ).violations,
     ).toEqual([]);
   }, 20000);
+});
+
+describe("reload-before-retry guard", () => {
+  it.each(["lost response", "invalid JSON", "invalid record", "server error"])(
+    "prevents duplicate creation after %s, including direct form submission and a failed reload",
+    async (failure) => {
+      const fetch = backend();
+      const normal = fetch.getMockImplementation()!;
+      render(<ConnectedWorkspace />);
+      const user = await signIn();
+      await user.click(screen.getByText("Create a planning action"));
+      for (const label of [
+        "Action title",
+        "Intended outcome",
+        "Responsible for next step",
+        "Source and verification date",
+        "Assumptions and known gaps",
+        "Alternatives considered",
+        "Costs and conflicts to review",
+      ])
+        await user.type(screen.getByLabelText(label), "Synthetic context");
+      fetch.mockImplementationOnce(async (url, init) => {
+        await normal(url, init); // Simulate persistence even though confirmation fails.
+        if (failure === "lost response") throw new TypeError("Network lost");
+        if (failure === "invalid JSON")
+          return new Response("<html>Proxy failure</html>", { status: 201 });
+        if (failure === "invalid record") return reply({}, 201);
+        return reply({ error: "Response failed after persistence" }, 500);
+      });
+      const save = screen.getByRole("button", { name: "Save planning action" });
+      await user.click(save);
+      await screen.findByRole("alert");
+      expect(save).toBeDisabled();
+      await user.click(save);
+      fireEvent.submit(save.closest("form")!);
+      const creates = () =>
+        fetch.mock.calls.filter(
+          ([url, init]) => url.endsWith("/actions") && init.method === "POST",
+        );
+      expect(creates()).toHaveLength(1);
+      fetch.mockImplementationOnce(async () => {
+        throw new TypeError("Reload offline");
+      });
+      await user.click(
+        screen.getByRole("button", { name: "Reload saved actions" }),
+      );
+      expect(save).toBeDisabled();
+      expect(screen.getByLabelText("Action title")).toHaveValue(
+        "Synthetic context",
+      );
+      await user.click(
+        screen.getByRole("button", { name: "Reload saved actions" }),
+      );
+      await waitFor(() => expect(save).toBeEnabled());
+      expect(screen.getByLabelText("Action title")).toHaveValue("");
+      expect(screen.getByRole("status")).toHaveTextContent(
+        "previous create draft was cleared",
+      );
+      expect(
+        screen.getByRole("button", {
+          name: /Synthetic context.*Synthetic context/,
+        }),
+      ).toBeVisible();
+      expect(creates()).toHaveLength(1);
+    },
+  );
+  it("also pauses stale-record transitions and authorization/review writes until successful reconciliation", async () => {
+    const fetch = backend([{ ...fixture, stage: "Analyze choices" }]);
+    render(<ConnectedWorkspace />);
+    const user = await signIn();
+    await user.click(
+      screen.getByRole("button", { name: new RegExp(fixture.title) }),
+    );
+    fetch.mockImplementationOnce(async () =>
+      reply({ error: "This action changed. Reload it before deciding." }, 409),
+    );
+    const advance = screen.getByRole("button", {
+      name: "Move to Ready for review",
+    });
+    await user.click(advance);
+    await screen.findByRole("alert");
+    expect(advance).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "Save review date" }),
+    ).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "Save planning action" }),
+    ).toBeDisabled();
+    await user.click(
+      screen.getByRole("button", { name: "Reload saved actions" }),
+    );
+    await waitFor(() => expect(advance).toBeEnabled());
+  });
 });
