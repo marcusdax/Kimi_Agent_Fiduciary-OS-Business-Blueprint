@@ -22,6 +22,7 @@ model User {
   documents     Document[]
   sessions      Session[]
   aiInteractions AiInteraction[]
+  planningActions PlanningAction[]
 
   @@map("users")
 }
@@ -126,4 +127,44 @@ model AiInteraction {
 
   @@index([userId, createdAt])
   @@map("ai_interactions")
+}
+
+// Owner-scoped planning coordination only. No financial transaction execution.
+model PlanningAction {
+  id                 String          @id @default(uuid())
+  userId             String
+  title              String
+  outcome            String
+  owner              String
+  source             String
+  assumptions        String
+  alternatives       String
+  costs              String
+  stage              String          @default("Gather information")
+  version            Int             @default(1)
+  authorizedVersion  Int?
+  reviewDate         String?
+  completionEvidence String?
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  user               User            @relation(fields: [userId], references: [id], onDelete: Restrict)
+  events             PlanningEvent[]
+
+  @@index([userId, createdAt])
+  @@map("planning_actions")
+}
+
+// Append-only through the API; not an attested tamper-proof records system.
+model PlanningEvent {
+  id        String         @id @default(uuid())
+  actionId  String
+  actorId   String
+  type      String
+  version   Int
+  details   String
+  createdAt DateTime       @default(now())
+  action    PlanningAction @relation(fields: [actionId], references: [id], onDelete: Cascade)
+
+  @@unique([actionId, version])
+  @@map("planning_events")
 }

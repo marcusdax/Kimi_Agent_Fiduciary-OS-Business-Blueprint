@@ -16,6 +16,7 @@ import { userRouter } from './routes/users';
 import { profileRouter } from './routes/profile';
 import { portfolioRouter } from './routes/portfolio';
 import { calculationsRouter } from './routes/calculations';
+import { planningRouter } from './routes/planning';
 import { documentsRouter } from './routes/documents';
 import { aiRouter } from './routes/ai';
 import { aiEnhancedRouter } from './routes/ai-enhanced';
@@ -86,6 +87,7 @@ app.use(`${API_PREFIX}/profile`, profileRouter);
 app.use(`${API_PREFIX}/portfolio`, portfolioRouter);
 app.use(`${API_PREFIX}/calculations`, calculationsRouter);
 app.use(`${API_PREFIX}/documents`, documentsRouter);
+app.use(`${API_PREFIX}/planning`, planningRouter);
 app.use(`${API_PREFIX}/ai`, aiRouter);
 app.use(`${API_PREFIX}/ai-v2`, aiEnhancedRouter); // Enhanced AI with Kimi
 app.use(`${API_PREFIX}/market`, marketRouter);   // Real-time market data & insurance
