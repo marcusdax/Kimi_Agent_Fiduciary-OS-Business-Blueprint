@@ -3,7 +3,7 @@
 **A two-sided financial-planning platform: free planning tools for households, a white-label command center for the advisors who serve them.**
 
 > [!IMPORTANT]
-> **Status: pre-launch blueprint (October 2026).** This repository holds the business plan, a reproducible financial model, the target architecture, and a working **backend API prototype** with AI and data-provenance safeguards. There is no frontend yet and no compliance certification. See [Open items before launch](#open-items-before-launch).
+> **Status: pre-launch blueprint (October 2026).** This repository holds the business plan, a reproducible financial model, the target architecture, and a working **backend API prototype** with AI and data-provenance safeguards. A React/TypeScript **illustrative frontend preview** is now included; it is not connected to the API and there is no compliance certification. See [Open items before launch](#open-items-before-launch).
 
 ---
 
@@ -61,15 +61,25 @@ The [roadmap](VALUE_FLOW_AND_REPO_ROADMAP.md) maps open-source projects onto eac
 | **Market data** | Alpha Vantage and CoinGecko clients. Every response carries `source` (`live` / `mock`). Mock prices are fixed placeholders with zero change, and are refused (HTTP 503) in production. Portfolio risk metrics that are not computed are listed as unavailable rather than invented. |
 | **Insurance figures** | **Illustrative only.** Anonymised carriers ("Illustrative Carrier A–F"), no ratings or logos, `source: illustrative`, and a disclaimer on every response. No carrier or quoting-partner integration exists. |
 | **Document vault** | Metadata records only; no file storage or encryption is implemented. |
-| **Frontend** | **Not in the repo.** Older docs describe a React app under `frontend/`; it does not exist yet. |
-| **Infra** | `docker-compose.yml` references Dockerfiles and `infra/` that do not exist. CI runs the backend only. |
+| **Frontend** (`fiduciary-os/frontend`) | React + TypeScript + Vite. Responsive household journey, sample scenario comparison and guarded action-board rehearsal. In-memory sample data only; no API integration, identity, durable approvals or live execution. See its [README](fiduciary-os/frontend/README.md). |
+| **Infra** | `docker-compose.yml` references Dockerfiles and `infra/` that do not exist. CI checks the backend and frontend separately; no deployment is configured. |
 | **Business docs** | Strategy, market, competitive, valuation, funding, and a 7-sheet CSV financial model. |
 
 ---
 
 ## Quick start
 
-Requires Node.js 20+.
+Requires Node.js 20+ for the backend; Node.js 24+ for the new frontend preview.
+
+Try the interface without API keys or a backend process:
+
+```bash
+cd fiduciary-os/frontend
+npm ci
+npm run dev
+```
+
+The preview uses labeled sample data and is not a live financial service. For the backend:
 
 ```bash
 cd fiduciary-os/backend
@@ -142,9 +152,10 @@ Full target spec: [API_Specification.md](API_Specification.md).
 │   ├── System_Architecture.md · API_Specification.md · Database_Design.md
 │   ├── Security_Architecture.md · Integration_Guide.md · Deployment_Architecture.md
 │
-├── .github/workflows/backend-ci.yml
+├── .github/workflows/{backend-ci,frontend-ci}.yml
 └── fiduciary-os/
-    ├── backend/                      ← the running code
+    ├── frontend/                     ← illustrative React workspace (not API-connected)
+    ├── backend/                      ← the API prototype
     │   ├── src/{routes,services,middleware,config}
     │   ├── prisma/                   ← schema, migrations, seed
     │   ├── evals/                    ← live AI evaluation suite (promptfoo)
@@ -208,7 +219,7 @@ What protects users and the company today. Each item is enforced in code or in t
 - [ ] **Rebuild valuation comparables** from a sourced data provider; see [Valuation_Analysis.md](Valuation_Analysis.md).
 - [ ] **Get securities and insurance counsel's opinion** on the advisor workspace and any future insurance features, and name a licensed quoting partner before showing real quotes. *(Not legal advice.)*
 - [ ] **Run `npm run eval:ai`** against the production model before AI features go live, and set up human review of the `ai_interactions` log.
-- [ ] **Build the frontend** (see the [roadmap](VALUE_FLOW_AND_REPO_ROADMAP.md#1-experience--aesthetics)) and fix or remove the `docker-compose.yml` and `Makefile` targets that reference missing `frontend/` and `infra/` folders.
+- [ ] **Productionize the frontend preview**: integrate authentication, server-enforced roles, durable decisions/approvals and reviewed calculations (see [frontend boundaries](fiduciary-os/frontend/README.md)); fix or remove the `docker-compose.yml` and `Makefile` targets that reference missing `frontend/` and `infra/` folders.
 - [ ] **Replace model assumptions with measured data** (churn, CAC, conversion) as soon as there are customers.
 
 ---

@@ -3,7 +3,7 @@
 The code for Fiduciary OS: a planning platform with free tools for households and a white-label workspace for financial advisors. For the business plan, value flow, and go-to-market gates, start at the [repository README](../README.md).
 
 > [!NOTE]
-> Only the **backend API** is implemented. The frontend, Docker images, Kubernetes manifests, and Terraform described in the architecture docs are not in this repository yet.
+> The **backend API prototype** and a **standalone illustrative frontend preview** are implemented. The frontend is not connected to the API and stores no real records. Docker images, Kubernetes manifests, and Terraform described in the architecture docs are not implemented.
 
 ---
 
@@ -32,12 +32,22 @@ The code for Fiduciary OS: a planning platform with free tools for households an
 | Auth | bcrypt + JWT access/refresh tokens | Firm/advisor/household tenancy, MFA, SSO |
 | Realtime | Socket.io | same |
 | AI | Anthropic and Moonshot Kimi behind `services/aiGateway.ts`: guardrails, disclosures, PII stripping, `ai_interactions` log, CI tests + promptfoo evals | Human review workflow on top of the log |
-| Frontend | — | React, TypeScript, Tailwind ([recommended stack](../VALUE_FLOW_AND_REPO_ROADMAP.md#1-experience--aesthetics)) |
-| CI | GitHub Actions: type-check, test, build ([workflow](../.github/workflows/backend-ci.yml)) | + frontend, images, deploy |
+| Frontend | React + TypeScript + Vite; in-memory sample workflow | Production API integration; Tailwind ([recommended stack](../VALUE_FLOW_AND_REPO_ROADMAP.md#1-experience--aesthetics)) |
+| CI | Separate backend and frontend type-check, test and build workflows | Images and deploy |
 
 ---
 
-## Quick start
+## Frontend preview
+
+```bash
+cd frontend
+npm ci                   # Node.js 24+
+npm run dev
+```
+
+See [preview scope and acceptance checks](frontend/README.md). Sample data only; no API connection, real authorization, or live execution.
+
+## Backend quick start
 
 ```bash
 cd backend
@@ -53,7 +63,7 @@ Tests:
 DATABASE_URL=file:./test.db JWT_SECRET=test npx jest --runInBand
 ```
 
-The `Makefile` and `docker-compose.yml` still reference `frontend/` and `infra/`; only the `*-backend` and `db-*` targets work today.
+The `Makefile` and `docker-compose.yml` still reference missing frontend Dockerfiles and `infra/`; they are not a supported way to run the frontend preview. Use the commands above.
 
 ---
 

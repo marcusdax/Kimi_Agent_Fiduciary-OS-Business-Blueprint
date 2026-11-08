@@ -1,0 +1,30 @@
+name: Frontend CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: fiduciary-os/frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: fiduciary-os/frontend/package-lock.json
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run type-check
+      - run: npm test
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fiduciary-os-frontend-preview
+          path: fiduciary-os/frontend/dist
+          if-no-files-found: error
