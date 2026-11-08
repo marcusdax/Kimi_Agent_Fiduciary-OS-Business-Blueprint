@@ -1,4 +1,5 @@
 import { useRef, useState, type KeyboardEvent } from "react";
+import FinancialWorkspace from "./FinancialWorkspace";
 import ConnectedWorkspace from "./ConnectedWorkspace";
 import {
   ArrowRight,
@@ -76,6 +77,7 @@ function revealBoardCard(card: HTMLButtonElement) {
 const navigation = [
   { label: "Overview", icon: LayoutDashboard },
   { label: "My plan", icon: Compass },
+  { label: "Financial workspace", icon: Waypoints },
   { label: "Compare choices", icon: Waypoints },
   { label: "Next steps", icon: ListChecks },
   { label: "Documents", icon: FileText },
@@ -245,9 +247,11 @@ export default function App() {
             </div>
             <span className="sample-pill">
               <span className="dot" />{" "}
-              {page === "Next steps" && savedMode
-                ? "Saved planning workspace"
-                : "Sample plan"}
+              {page === "Financial workspace"
+                ? "Saved financial workspace"
+                : page === "Next steps" && savedMode
+                  ? "Saved planning workspace"
+                  : "Sample plan"}
             </span>
           </div>
           {page === "Overview" && (
@@ -401,6 +405,15 @@ export default function App() {
               </section>
             </>
           )}
+          {page === "Financial workspace" &&
+            (offline ? (
+              <p>
+                Saved financial plans require the hosted application and API;
+                offline exports cannot save financial data.
+              </p>
+            ) : (
+              <FinancialWorkspace />
+            ))}
           {page === "My plan" && (
             <section className="panel">
               <h2>Start with a life goal</h2>

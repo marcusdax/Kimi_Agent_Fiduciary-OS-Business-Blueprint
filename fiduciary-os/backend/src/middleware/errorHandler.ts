@@ -31,7 +31,7 @@ export function errorHandler(
   if (err instanceof AppError) {
     res.status(err.statusCode).json({
       error: err.message,
-      ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+
     });
     return;
   }
@@ -40,7 +40,6 @@ export function errorHandler(
   if (err.name === 'PrismaClientKnownRequestError') {
     res.status(400).json({
       error: 'Database error',
-      message: err.message,
     });
     return;
   }
@@ -64,7 +63,6 @@ export function errorHandler(
   if (err.name === 'ValidationError') {
     res.status(400).json({
       error: 'Validation error',
-      message: err.message,
     });
     return;
   }
@@ -72,6 +70,6 @@ export function errorHandler(
   // Default error response
   res.status(500).json({
     error: 'Internal server error',
-    ...(process.env.NODE_ENV === 'development' && { message: err.message, stack: err.stack }),
+
   });
 }

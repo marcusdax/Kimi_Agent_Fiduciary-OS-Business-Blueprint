@@ -39,14 +39,18 @@ router.put(
   authenticateToken,
   [
     body('totalValue').optional().isFloat({ min: 0 }),
-    body('holdings').optional().isArray(),
+    body('holdings').optional().isArray({ max: 200 }),
+    body('holdings.*.symbol').isString().trim().notEmpty().isLength({ max: 30 }),
+    body('holdings.*.quantity').isFloat({ min: 0, max: 1e12 }),
+    body('holdings.*.avgCost').optional().isFloat({ min: 0, max: 1e12 }),
     validateRequest,
   ],
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { totalValue, holdings } = req.body;
 
-      const portfolio = await prisma.portfolio.upsert({
+      const updatedPortfolio = await prisma.$transaction(async (tx) => {
+      const portfolio = await tx.portfolio.upsert({
         where: { userId: req.user!.userId },
         update: { totalValue },
         create: {
@@ -58,12 +62,12 @@ router.put(
       // Update holdings if provided
       if (holdings && Array.isArray(holdings)) {
         // Delete existing holdings
-        await prisma.holding.deleteMany({
+        await tx.holding.deleteMany({
           where: { portfolioId: portfolio.id },
         });
 
         // Create new holdings
-        await prisma.holding.createMany({
+        await tx.holding.createMany({
           data: holdings.map((h: { symbol: string; quantity: number; avgCost?: number }) => ({
             portfolioId: portfolio.id,
             symbol: h.symbol,
@@ -73,11 +77,12 @@ router.put(
         });
       }
 
-      const updatedPortfolio = await prisma.portfolio.findUnique({
+      return tx.portfolio.findUnique({
         where: { id: portfolio.id },
         include: { holdings: true },
       });
 
+      });
       res.json(updatedPortfolio);
     } catch (error) {
       next(error);
@@ -127,7 +132,7 @@ router.post(
 router.delete('/holdings/:id', authenticateToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
     await prisma.holding.delete({
-      where: { id: req.params.id },
+      where: { id: req.params.id, portfolio: { userId: req.user!.userId } },
     });
 
     res.json({ message: 'Holding deleted successfully' });

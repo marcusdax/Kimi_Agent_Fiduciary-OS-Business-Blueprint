@@ -15,8 +15,8 @@ router.post(
   '/register',
   [
     body('email').isEmail().normalizeEmail(),
-    body('password').isLength({ min: 8 }),
-    body('name').trim().notEmpty(),
+    body('password').isLength({ min: 8 }).custom((value: string) => Buffer.byteLength(value, 'utf8') <= 72),
+    body('name').trim().notEmpty().isLength({ max: 100 }),
     validateRequest,
   ],
   async (req: Request, res: Response, next: NextFunction) => {
@@ -56,7 +56,7 @@ router.post(
       // Generate tokens
       const tokens = generateTokens(user.id, user.email, user.role);
 
-      logger.info(`User registered: ${email}`);
+      logger.info('User registered');
 
       res.status(201).json({
         user,
@@ -99,7 +99,7 @@ router.post(
       // Generate tokens
       const tokens = generateTokens(user.id, user.email, user.role);
 
-      logger.info(`User logged in: ${email}`);
+      logger.info('User logged in');
 
       res.json({
         user: {
@@ -142,7 +142,9 @@ router.post('/refresh', async (req: Request, res: Response, next: NextFunction) 
       throw new AppError(401, 'Invalid refresh token');
     }
 
-    const tokens = generateTokens(decoded.userId, decoded.email, decoded.role);
+    const user = await prisma.user.findUnique({ where: { id: decoded.userId }, select: { id: true, email: true, role: true } });
+    if (!user) throw new AppError(401, 'Invalid refresh token');
+    const tokens = generateTokens(user.id, user.email, user.role);
 
     res.json(tokens);
   } catch (error) {
@@ -165,7 +167,7 @@ function generateTokens(userId: string, email: string, role: string) {
   const accessToken = jwt.sign(
     { userId, email, role, tokenType: 'access' },
     jwtSecret,
-    { expiresIn: (process.env.JWT_EXPIRES_IN || '7d') as jwt.SignOptions['expiresIn'] }
+    { expiresIn: (process.env.JWT_EXPIRES_IN || '15m') as jwt.SignOptions['expiresIn'] }
   );
 
   const refreshToken = jwt.sign(

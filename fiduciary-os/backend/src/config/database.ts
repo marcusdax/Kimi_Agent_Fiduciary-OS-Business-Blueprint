@@ -24,7 +24,7 @@ prisma.$on('error', (e: { message: string }) => {
 export async function connectDatabase(): Promise<void> {
   try {
     await prisma.$connect();
-    logger.info('Connected to PostgreSQL database');
+    logger.info('Connected to application database');
   } catch (error) {
     logger.error('Failed to connect to database:', error);
     throw error;
