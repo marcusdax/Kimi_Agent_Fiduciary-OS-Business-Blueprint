@@ -11,10 +11,10 @@ The code for Fiduciary OS: a planning platform with free tools for households an
 
 | Module | Backend support today | Frontend |
 |---|---|---|
-| Annuity Navigator | `POST /calculations/annuity` — simplified payout estimate | Planned |
-| Life Insurance Navigator | `POST /calculations/life-insurance` — protection gap; `POST /market/insurance/quotes` — **illustrative figures only**, anonymised carriers | Planned |
-| Retirement Income Navigator | `POST /calculations/retirement` — withdrawal-rate heuristic | Planned |
-| Tax Planning | `POST /calculations/tax` — 2024 federal brackets and standard deductions (all filing statuses) | Planned |
+| Annuity Navigator | `POST /calculations/annuity` — actuarial fair-value illustration (SSA 2023 mortality, discount rate is an input; not a carrier quote) | Planned |
+| Life Insurance Navigator | `POST /calculations/life-insurance` — income-replacement present-value gap with the 10x rule shown for comparison; premium is `null` (no licensed quote source); `POST /market/insurance/quotes` — **illustrative figures only**, anonymised carriers | Planned |
+| Retirement Income Navigator | `POST /calculations/retirement` — historical-cycle replay (1928+); reports a historical success rate, not a probability | Planned |
+| Tax Planning | `POST /calculations/tax` — federal brackets and standard deductions, `taxYear` 2026 (default, Rev. Proc. 2025-32) or 2024 | Planned |
 | Investment X-Ray | `GET/POST /market/portfolio-analytics` | Planned |
 | Digital Assets | `/crypto/*` via CoinGecko | Planned |
 | Symphony Composer | `POST /ai/symphony-playbook`, `POST /ai-v2/symphony-playbook` | Planned |
@@ -85,3 +85,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Linting currently reports pre-existing f
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+
+## Calculator MCP server
+
+`cd backend && npm run mcp` starts a read-only stdio MCP server (`annuity_income`, `retirement_historical_replay`, `federal_income_tax`). Pure functions, no database or client data; every result carries the educational disclosure.

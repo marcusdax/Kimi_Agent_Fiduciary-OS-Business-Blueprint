@@ -15,6 +15,7 @@
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\"",
+    "mcp": "tsx src/mcp/server.ts",
     "type-check": "tsc --noEmit",
     "eval:ai": "npx --yes promptfoo@latest eval -c evals/promptfooconfig.yaml",
     "db:migrate": "prisma migrate dev",
@@ -28,6 +29,7 @@
   },
   "dependencies": {
     "@formulajs/formulajs": "^4.6.1",
+    "@modelcontextprotocol/sdk": "^1.32.2",
     "@prisma/client": "^5.10.2",
     "bcryptjs": "^2.4.3",
     "compression": "^1.8.2",

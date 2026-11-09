@@ -1,4 +1,5 @@
 import { prisma } from '../config/database';
+import { emitTrace } from './traceSink';
 import { logger } from '../utils/logger';
 import { assertPlaceholdersAllowed, type DataSource } from '../utils/dataSource';
 import {
@@ -63,6 +64,17 @@ export async function deliverAiOutput<T>(call: AiCall<T>): Promise<{ output: T; 
     response: JSON.stringify(call.output),
     blocked: review.blocked,
     flags: review.flags,
+  });
+
+  void emitTrace({
+    endpoint: call.endpoint,
+    provider: call.provider,
+    model: call.model,
+    blocked: review.blocked,
+    flags: review.flags,
+    policyVersion: AI_POLICY_VERSION,
+    prompt: call.prompt,
+    response: JSON.stringify(call.output),
   });
 
   return {
