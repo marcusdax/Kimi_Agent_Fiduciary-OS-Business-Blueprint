@@ -135,6 +135,7 @@ describe('Calculators', () => {
       capitalLossHarvest: 0,
       hsaContribution: 0,
       qcdAmount: 0,
+      taxYear: '2024',
     };
 
     const { calculationsRouter } = await import('../../src/routes/calculations');

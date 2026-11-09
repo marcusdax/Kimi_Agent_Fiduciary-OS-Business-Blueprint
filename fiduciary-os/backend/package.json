@@ -1,7 +1,7 @@
 {
   "name": "@fiduciary-os/backend",
   "version": "1.0.0",
-  "description": "Fiduciary OS\u2122 Backend API - Node.js/Express + TypeScript",
+  "description": "Fiduciary OS™ Backend API - Node.js/Express + TypeScript",
   "main": "dist/index.js",
   "type": "commonjs",
   "scripts": {
@@ -27,6 +27,7 @@
     "lint:security": "eslint src/services/sessions.ts src/middleware/requestLogger.ts src/middleware/errorHandler.ts src/middleware/auth.ts src/routes/auth.ts src/routes/documents.ts tests/unit/sessions.test.ts tests/unit/request-privacy.test.ts --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
+    "@formulajs/formulajs": "^4.6.1",
     "@prisma/client": "^5.10.2",
     "bcryptjs": "^2.4.3",
     "compression": "^1.8.2",
@@ -40,10 +41,10 @@
     "jsonwebtoken": "^9.0.2",
     "jwks-rsa": "^3.1.0",
     "morgan": "^1.12.1",
+    "prisma": "^5.10.2",
     "socket.io": "^4.7.4",
     "winston": "^3.12.0",
-    "zod": "^4.6.7",
-    "prisma": "^5.10.2"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
