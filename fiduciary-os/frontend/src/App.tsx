@@ -2,6 +2,7 @@ import ToolDiscovery from "./ToolDiscovery";
 import { useRef, useState, type KeyboardEvent } from "react";
 import FinancialWorkspace from "./FinancialWorkspace";
 import ConnectedWorkspace from "./ConnectedWorkspace";
+import FirmWorkspace from "./FirmWorkspace";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -93,6 +94,7 @@ const money = (n: number) =>
 export default function App() {
   const offline = location.protocol === "file:";
   const [savedMode, setSavedMode] = useState(false);
+  const [firmMode, setFirmMode] = useState(false);
   const [page, setPage] = useState("Overview");
   const [requestedTool, setRequestedTool] = useState<string | undefined>();
   const [toolRequestId, setToolRequestId] = useState(0);
@@ -277,9 +279,11 @@ export default function App() {
               <span className="dot" />{" "}
               {page === "Financial workspace"
                 ? "Saved financial workspace"
-                : page === "Next steps" && savedMode
-                  ? "Saved planning workspace"
-                  : "Sample plan"}
+                : page === "Next steps" && firmMode
+                  ? "Firm workspace"
+                  : page === "Next steps" && savedMode
+                    ? "Saved planning workspace"
+                    : "Sample plan"}
             </span>
           </div>
           {page === "Overview" && (
@@ -653,27 +657,48 @@ export default function App() {
               aria-label="Choose planning workspace"
             >
               <button
-                aria-pressed={!savedMode}
-                onClick={() => setSavedMode(false)}
+                aria-pressed={!savedMode && !firmMode}
+                onClick={() => {
+                  setSavedMode(false);
+                  setFirmMode(false);
+                }}
               >
                 Explore sample board
               </button>
               <button
-                aria-pressed={savedMode}
+                aria-pressed={savedMode && !firmMode}
                 disabled={offline}
                 title={
                   offline
                     ? "Run the local app and API to use saved records"
                     : undefined
                 }
-                onClick={() => setSavedMode(true)}
+                onClick={() => {
+                  setSavedMode(true);
+                  setFirmMode(false);
+                }}
               >
                 Saved planning workspace
               </button>
+              <button
+                aria-pressed={firmMode}
+                disabled={offline}
+                title={
+                  offline
+                    ? "Run the local app and API to use firm workspaces"
+                    : undefined
+                }
+                onClick={() => setFirmMode(true)}
+              >
+                Firm and households
+              </button>
             </div>
           )}
-          {page === "Next steps" && savedMode && <ConnectedWorkspace />}
-          {page === "Next steps" && !savedMode && (
+          {page === "Next steps" && firmMode && <FirmWorkspace />}
+          {page === "Next steps" && savedMode && !firmMode && (
+            <ConnectedWorkspace />
+          )}
+          {page === "Next steps" && !savedMode && !firmMode && (
             <>
               <div className="board-toolbar">
                 <div>

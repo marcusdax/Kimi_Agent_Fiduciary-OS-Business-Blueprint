@@ -35,7 +35,11 @@ Backend 107 passing (was 86); frontend 68 passing (was 64); `tsc --noEmit` clean
 ## Deviations from the roadmap (honest)
 - **Not OpenFGA/Better Auth:** the permission model is an in-house relationship check shaped so an OpenFGA server could replace `checkHousehold`. Better Auth was not adopted; the existing JWT/session auth is unchanged.
 - **pdf-lib instead of react-pdf:** `@react-pdf/renderer` 4.x is ESM-only and does not load in this CommonJS backend.
-- **PDF content is plain:** raw field names and cents values, not formatted for clients yet.
+
+## Follow-up (same branch)
+- **Plan PDF formatted:** readable labels, dollars and percents (`planRows`), verified by rendering.
+- **Frontend:** `FirmWorkspace` (sign-in, create firm, add advisor, create household, link client, assign advisor, download PDF) behind a new "Firm and households" tab under Next steps. Frontend 71 tests passing, including an axe accessibility check; backend 117.
+- The firm screen has its own sign-in (same pattern as the saved planning workspace) and a pasted/auto-set firm ID, because there is no "list my firms" endpoint yet.
 
 ## Deferred
-- Plaid account aggregation (needs developer keys and a Link UI), react-email templates, e-signature (AGPL Documenso, separate service), frontend screens for firms/households, firm-owner invitation flow for users who have not registered. Phase 4 untouched.
+- Plaid account aggregation (needs developer keys and a Link UI), react-email templates, e-signature (AGPL Documenso, separate service), invitation flow for users who have not registered (advisors and clients must register first), a "list my firms" endpoint, removing/revoking from the UI. Phase 4 untouched.

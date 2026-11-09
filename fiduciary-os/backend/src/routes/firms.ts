@@ -6,7 +6,7 @@ import { authenticateToken } from '../middleware/auth';
 import { AppError } from '../middleware/errorHandler';
 import { checkHousehold, visibleHouseholdIds } from '../services/access';
 import { financialInputs, projectPlan } from '../services/financial-plan';
-import { flatten, renderPlanPdf } from '../services/planPdf';
+import { planRows, renderPlanPdf } from '../services/planPdf';
 
 const router = Router();
 router.use(authenticateToken);
@@ -94,7 +94,7 @@ router.get('/households/:id/plan.pdf', wrap(async (req, res) => {
     let rows: Array<[string, string]> = [];
     if (plan) {
       const inputs = financialInputs.parse(JSON.parse(plan.inputs));
-      rows = [...flatten(inputs), ...flatten(projectPlan(inputs), 'projection')];
+      rows = planRows(inputs, projectPlan(inputs));
     }
     sections.push({ client: c.user.name, rows });
   }

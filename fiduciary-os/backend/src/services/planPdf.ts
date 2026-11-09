@@ -1,6 +1,7 @@
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 
 import { AI_DISCLOSURE } from './aiGuardrails';
+import type { FinancialInputs, projectPlan } from './financial-plan';
 
 /**
  * Firm-branded household plan PDF. Built with pdf-lib (CommonJS; @react-pdf/renderer 4.x is ESM-only and does not load in this backend). Shows only values already stored/projected; it adds no new advice, and always
@@ -9,6 +10,7 @@ import { AI_DISCLOSURE } from './aiGuardrails';
 export interface PlanSection { client: string; rows: Array<[string, string]> }
 export interface PlanPdfInput { firmName: string; brandColor: string; household: string; generatedOn: string; sections: PlanSection[] }
 
+/** @deprecated generic fallback; prefer planRows. */
 export function flatten(value: unknown, prefix = ''): Array<[string, string]> {
   if (value === null || value === undefined) return [];
   if (typeof value !== 'object') return [[prefix, String(value)]];
@@ -22,6 +24,34 @@ function hexToRgb(hex: string) {
 
 // Standard fonts only cover WinAnsi; replace anything else so a stray character cannot fail the render.
 const safe = (t: string) => t.replace(/[^\x20-\x7E]/g, '?');
+
+const usd = (cents: number) => `$${(cents / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+const pct = (bps: number) => `${(bps / 100).toFixed(2)}%`;
+
+/** Client-readable rows for a stored plan and its projection. Wording is descriptive, not advice. */
+export function planRows(inputs: FinancialInputs, projection: ReturnType<typeof projectPlan>): Array<[string, string]> {
+  const last = projection.rows[projection.rows.length - 1];
+  return [
+    ['Plan name', inputs.name],
+    ['As of', inputs.asOf],
+    ['Source of figures', inputs.source],
+    ['Cash', usd(inputs.balances.cash)],
+    ['Bonds', usd(inputs.balances.bonds)],
+    ['Equities', usd(inputs.balances.equities)],
+    ['Other assets', usd(inputs.balances.other)],
+    ['Total starting balance', usd(projection.initialCents)],
+    ['Monthly income', usd(inputs.monthlyIncomeCents)],
+    ['Monthly spending', usd(inputs.monthlySpendingCents)],
+    ['Assumed annual return', pct(inputs.annualReturnBps)],
+    ['Assumed annual fee', pct(inputs.annualFeeBps)],
+    ['Assumed inflation', pct(inputs.annualInflationBps)],
+    ['Years projected', String(inputs.years)],
+    [`Projected balance, year ${last.year} (nominal)`, usd(last.nominalCents)],
+    [`Projected balance, year ${last.year} (today's dollars)`, usd(last.realCents)],
+    ['Cumulative fees over horizon', usd(last.cumulativeFeesCents)],
+    ['Months until balance reaches zero', projection.depletionMonth === null ? 'Not within horizon' : String(projection.depletionMonth)],
+  ];
+}
 
 export async function renderPlanPdf(p: PlanPdfInput): Promise<Buffer> {
   const pdf = await PDFDocument.create();
