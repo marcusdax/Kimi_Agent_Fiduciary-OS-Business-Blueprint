@@ -26,6 +26,9 @@ model User {
   financialPlan FinancialPlan?
   toolScenarios ToolScenario[]
   authSessions AuthSession[]
+  firmMemberships FirmMember[]
+  householdLinks HouseholdClient[]
+  householdAssignments HouseholdAssignment[]
 
   @@map("users")
 }
@@ -215,4 +218,80 @@ model SessionRefresh {
   usedAt DateTime?
   session AuthSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   @@index([sessionId])
+}
+
+// Firm -> advisor -> household relationships. Access decisions live in services/access.ts.
+model Firm {
+  id         String   @id @default(uuid())
+  name       String
+  brandColor String   @default("#1d5c4a")
+  createdAt  DateTime @default(now())
+  members    FirmMember[]
+  households Household[]
+
+  @@map("firms")
+}
+
+model FirmMember {
+  id     String @id @default(uuid())
+  firmId String
+  userId String
+  role   String // owner | advisor
+  firm   Firm   @relation(fields: [firmId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([firmId, userId])
+  @@map("firm_members")
+}
+
+model Household {
+  id          String   @id @default(uuid())
+  firmId      String
+  name        String
+  createdAt   DateTime @default(now())
+  firm        Firm     @relation(fields: [firmId], references: [id], onDelete: Cascade)
+  clients     HouseholdClient[]
+  assignments HouseholdAssignment[]
+
+  @@index([firmId])
+  @@map("households")
+}
+
+model HouseholdClient {
+  id          String    @id @default(uuid())
+  householdId String
+  userId      String
+  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([householdId, userId])
+  @@index([userId])
+  @@map("household_clients")
+}
+
+model HouseholdAssignment {
+  id            String    @id @default(uuid())
+  householdId   String
+  advisorUserId String
+  scope         String // view | manage
+  household     Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  advisor       User      @relation(fields: [advisorUserId], references: [id], onDelete: Cascade)
+
+  @@unique([householdId, advisorUserId])
+  @@index([advisorUserId])
+  @@map("household_assignments")
+}
+
+// Every access decision on a household, allowed or denied, for supervisory review.
+model AccessLog {
+  id          String   @id @default(uuid())
+  actorId     String
+  householdId String
+  action      String
+  allowed     Boolean
+  reason      String
+  createdAt   DateTime @default(now())
+
+  @@index([householdId])
+  @@map("access_logs")
 }

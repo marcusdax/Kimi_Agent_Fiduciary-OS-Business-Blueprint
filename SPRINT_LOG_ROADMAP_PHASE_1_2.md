@@ -22,3 +22,20 @@ Backend 107 passing (was 86); frontend 68 passing (was 64); `tsc --noEmit` clean
 
 ## Deferred
 - shadcn/Tremor/Recharts UI-kit swap (Phase 1 sec. 1), Phases 3 and 4.
+
+---
+
+# Sprint 2: Phase 3 slice (branch `feat/roadmap-phase3-advisor-sprint`)
+
+## Done
+- **Firm -> advisor -> household permissions:** new Prisma models (Firm, FirmMember, Household, HouseholdClient, HouseholdAssignment, AccessLog) with migration `firms_households`; `services/access.ts` makes relationship-based decisions with a stated reason and logs every allow/deny. An assignment stops working if the advisor leaves the firm. Routes under `/api/.../org`.
+- **Branded household plan PDF:** `GET /org/households/:id/plan.pdf`, firm name and colour, plan inputs and projection, educational disclosure footer; permission-checked.
+- Backend tests: 115 passing; `tsc` clean; `npm audit --omit=dev` clean.
+
+## Deviations from the roadmap (honest)
+- **Not OpenFGA/Better Auth:** the permission model is an in-house relationship check shaped so an OpenFGA server could replace `checkHousehold`. Better Auth was not adopted; the existing JWT/session auth is unchanged.
+- **pdf-lib instead of react-pdf:** `@react-pdf/renderer` 4.x is ESM-only and does not load in this CommonJS backend.
+- **PDF content is plain:** raw field names and cents values, not formatted for clients yet.
+
+## Deferred
+- Plaid account aggregation (needs developer keys and a Link UI), react-email templates, e-signature (AGPL Documenso, separate service), frontend screens for firms/households, firm-owner invitation flow for users who have not registered. Phase 4 untouched.
