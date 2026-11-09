@@ -43,3 +43,13 @@ Backend 107 passing (was 86); frontend 68 passing (was 64); `tsc --noEmit` clean
 
 ## Deferred
 - Plaid account aggregation (needs developer keys and a Link UI), react-email templates, e-signature (AGPL Documenso, separate service), invitation flow for users who have not registered (advisors and clients must register first), a "list my firms" endpoint, removing/revoking from the UI. Phase 4 untouched.
+
+
+---
+
+# Sprint 3: Phase 4 slice (branch `feat/roadmap-phase4-scale-sprint`)
+
+- **OpenAPI + reference page:** `src/openapi.ts`, `/docs`, drift test. `@scalar/express-api-reference` and `@react-pdf/renderer` are ESM-only and fail in this CommonJS/Jest setup, so the docs page is a small HTML shell serving Scalar's standalone bundle from `node_modules`.
+- **OpenTelemetry:** `src/telemetry.ts`, middleware and `ai.deliver` spans; metadata only.
+- Backend tests 123 passing; `npm audit --omit=dev` clean.
+- **Deferred with reasons:** Postgres, BullMQ, AGPL services, SOC 2. See `PHASE4_READINESS_PLAN.md`.

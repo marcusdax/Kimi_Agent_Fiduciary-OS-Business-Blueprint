@@ -28,9 +28,14 @@
     "lint:security": "eslint src/services/sessions.ts src/middleware/requestLogger.ts src/middleware/errorHandler.ts src/middleware/auth.ts src/routes/auth.ts src/routes/documents.ts tests/unit/sessions.test.ts tests/unit/request-privacy.test.ts --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^9.1.0",
     "@formulajs/formulajs": "^4.6.1",
     "@modelcontextprotocol/sdk": "^1.32.2",
+    "@opentelemetry/api": "^1.9.1",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.300.0",
+    "@opentelemetry/sdk-trace-node": "^2.12.1",
     "@prisma/client": "^5.10.2",
+    "@scalar/api-reference": "^1.77.0",
     "bcryptjs": "^2.4.3",
     "compression": "^1.8.2",
     "cors": "^2.8.5",

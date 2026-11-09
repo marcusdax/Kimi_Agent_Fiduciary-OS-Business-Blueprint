@@ -8,6 +8,7 @@ import dotenv from 'dotenv';
 
 import { errorHandler } from './middleware/errorHandler';
 import { requestLogger } from './middleware/requestLogger';
+import { startTelemetry, tracingMiddleware } from './telemetry';
 import { healthRouter } from './routes/health';
 import { authRouter } from './routes/auth';
 import { userRouter } from './routes/users';
@@ -16,6 +17,7 @@ import { portfolioRouter } from './routes/portfolio';
 import { calculationsRouter } from './routes/calculations';
 import { toolsRouter } from './routes/tools';
 import { financialPlanRouter } from './routes/financial-plan';
+import { docsRouter } from './routes/docs';
 import { firmsRouter } from './routes/firms';
 import { planningRouter } from './routes/planning';
 import { documentsRouter } from './routes/documents';
@@ -40,6 +42,10 @@ const httpServer = createServer(app);
 
 const PORT = process.env.PORT || 3001;
 const API_PREFIX = process.env.API_PREFIX || '/api/v1';
+
+// Optional OpenTelemetry (off unless OTEL_EXPORTER_OTLP_ENDPOINT is set).
+startTelemetry();
+app.use(tracingMiddleware);
 
 // Redacted request diagnostics also cover rejected bodies and rate limits.
 app.use(requestLogger);
@@ -77,6 +83,9 @@ app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 app.use(compression());
 
 // Request diagnostics are registered before security/body middleware.
+
+// Public API reference (no auth; describes shapes only)
+app.use('/docs', docsRouter);
 
 // Health check (no auth required)
 app.use('/health', healthRouter);

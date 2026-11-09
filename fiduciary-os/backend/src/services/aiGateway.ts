@@ -1,4 +1,6 @@
 import { prisma } from '../config/database';
+import { withSpan } from '../telemetry';
+
 import { emitTrace } from './traceSink';
 import { logger } from '../utils/logger';
 import { assertPlaceholdersAllowed, type DataSource } from '../utils/dataSource';
@@ -41,7 +43,7 @@ export interface AiCall<T> {
   withheld: () => T;
 }
 
-export async function deliverAiOutput<T>(call: AiCall<T>): Promise<{ output: T; envelope: AiEnvelope }> {
+async function deliverInner<T>(call: AiCall<T>): Promise<{ output: T; envelope: AiEnvelope }> {
   if (call.source !== 'live') {
     assertPlaceholdersAllowed('AI insights');
   }
@@ -88,6 +90,11 @@ export async function deliverAiOutput<T>(call: AiCall<T>): Promise<{ output: T; 
       interactionId,
     },
   };
+}
+
+export function deliverAiOutput<T>(call: AiCall<T>): Promise<{ output: T; envelope: AiEnvelope }> {
+  // Span attributes are metadata only: never prompt or response text.
+  return withSpan('ai.deliver', { 'ai.endpoint': call.endpoint, 'ai.provider': call.provider, 'ai.source': call.source }, () => deliverInner(call));
 }
 
 export const WITHHELD_TEXT = BLOCKED_RESPONSE;
