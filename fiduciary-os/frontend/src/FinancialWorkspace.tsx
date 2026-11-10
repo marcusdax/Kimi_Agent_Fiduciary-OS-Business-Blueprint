@@ -1,6 +1,7 @@
 import BlueprintTools from "./BlueprintTools";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { api, ApiError } from "./planning-api";
+import { signedOut, useSessionToken } from "./session-signal";
 
 type Balances = {
   cash: number;
@@ -82,7 +83,8 @@ export default function FinancialWorkspace({
   requestedTool,
   toolRequestId,
 }: { requestedTool?: string; toolRequestId?: number } = {}) {
-  const [token, setToken] = useState<string | null>(null);
+  // Shared across routes so leaving this view doesn't drop the session.
+  const [token, setToken] = useSessionToken("financial-workspace");
   const [register, setRegister] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -109,23 +111,24 @@ export default function FinancialWorkspace({
     setBlocked(false);
   }
   async function revokeSessions(all = false) {
+    let notice = "";
     setBusy(true);
     try {
       await api(all ? "/auth/logout-all" : "/auth/logout", token!, "POST");
       clearSession();
-      setStatus(
+      notice =
         all
           ? "All server sessions revoked and local session cleared."
-          : "Server session revoked and local session cleared.",
-      );
+          : "Server session revoked and local session cleared.";
     } catch {
       clearSession();
-      setStatus(
-        "Local session cleared; server revocation was not confirmed. Sign in again to revoke all sessions.",
-      );
+      notice =
+        "Local session cleared; server revocation was not confirmed. Sign in again to revoke all sessions.";
     } finally {
       setBusy(false);
     }
+    setStatus(notice);
+    signedOut("financial-workspace", notice);
   }
   async function work(fn: () => Promise<void>, mutation = false) {
     if (inFlight.current || (mutation && uncertain.current)) return;
@@ -184,8 +187,16 @@ export default function FinancialWorkspace({
         : "No saved plan yet. Enter your own test inputs.",
     );
   }
+  useEffect(() => {
+    // Returning to this view with a live session: reload the saved plan
+    // rather than showing a blank draft that could be saved over it.
+    if (token) void work(() => load());
+    // Mount only; sign-in loads explicitly.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   async function signIn(event: FormEvent) {
     event.preventDefault();
+    let acquired = "";
     await work(async () => {
       const session = await api<{ accessToken: string }>(
         register ? "/auth/register" : "/auth/login",
@@ -196,10 +207,13 @@ export default function FinancialWorkspace({
       if (typeof session?.accessToken !== "string")
         throw new Error("Invalid session response.");
       await load(session.accessToken);
-      setToken(session.accessToken);
+      acquired = session.accessToken;
       setEmail("");
       setName("");
     });
+    // Publish the shared session once the sign-in work has settled, so the
+    // panel never shows signed-in while still busy.
+    if (acquired) setToken(acquired);
     setPassword("");
   }
   async function save(event: FormEvent) {
@@ -289,8 +303,8 @@ export default function FinancialWorkspace({
               : "Sign in to your financial workspace"}
           </h3>
           <p>
-            Sessions stay in memory. Reloading or leaving this view requires
-            sign-in again. Existing planning accounts work here; no
+            Sessions stay in memory. Reloading the page requires sign-in
+            again. Existing planning accounts work here; no
             demonstration account is pre-filled.
           </p>
           <form onSubmit={signIn} className="financial-form">
