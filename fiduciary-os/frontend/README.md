@@ -81,7 +81,13 @@ The earlier dark/cyan Fiduciary visual system is independently adapted without d
   that don't exist yet are tagged "Not built yet". A valid request is
   held in page memory only ("not sent yet"): no network call, no storage, no
   account. There is no advice-request endpoint on the backend yet.
-- The workspace stays the default entry (`#/` or no hash).
+- Default entry (decided by Marcus): with no hash or a bare `#`, visitors who
+  aren't signed in land on `#/start`; a signed-in user stays on the workspace.
+  `#/start`, `#/request`, `#/workspace` and `#/` are always honoured. Explicit
+  sign-out ("Clear local session", "Sign out all sessions") returns to
+  `#/start` and shows the sign-out notice there. Sign-in state is the existing
+  in-memory session in the workspace panels, observed via
+  `src/session-signal.ts` (no new auth; a reload still starts signed out).
 - Styles live in `src/funnel/funnel.css`, scoped under `.fos-funnel`, with
   the designer's official `--fos-*` tokens (`fos-circuit-sample/tokens.css`),
   scoped to `.fos-funnel` rather than `:root`. Funnel-only extensions:

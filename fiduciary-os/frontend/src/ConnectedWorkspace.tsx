@@ -1,4 +1,5 @@
-import { useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { reportSession, signedOut } from "./session-signal";
 import {
   api,
   savedAction,
@@ -28,6 +29,10 @@ const empty: ActionFields = {
 };
 export default function ConnectedWorkspace() {
   const [token, setToken] = useState<string | null>(null);
+  useEffect(() => {
+    reportSession("connected-workspace", !!token);
+    return () => reportSession("connected-workspace", false);
+  }, [token]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [actions, setActions] = useState<SavedAction[]>([]);
@@ -270,9 +275,10 @@ export default function ConnectedWorkspace() {
                   setConfirmed(false);
                   setReviewDate("");
                   setError("");
-                  setStatus(
-                    "Local session cleared. Existing backend tokens remain valid until expiry.",
-                  );
+                  const notice =
+                    "Local session cleared. Existing backend tokens remain valid until expiry.";
+                  setStatus(notice);
+                  signedOut("connected-workspace", notice);
                 }}
               >
                 Clear local session

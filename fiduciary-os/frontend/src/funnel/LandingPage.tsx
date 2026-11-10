@@ -1,4 +1,5 @@
-import { useId, useState, type ReactNode } from "react";
+import { useEffect, useId, useState, type ReactNode } from "react";
+import { clearSignOutNotice, peekSignOutNotice } from "../session-signal";
 import FunnelLayout from "./FunnelLayout";
 import { stages } from "../workflow";
 import {
@@ -119,6 +120,9 @@ function NumberField({
 }
 
 export default function LandingPage({ focusOnMount = false }: { focusOnMount?: boolean }) {
+  // Shown once after an explicit sign-out sends someone here.
+  const [signOutNotice] = useState(peekSignOutNotice);
+  useEffect(() => clearSignOutNotice(), []);
   const [inputs, setInputs] = useState<DemoInputs>(defaultDemoInputs);
   const [step, setStep] = useState(0);
   const [mode, setMode] = useState<GuideMode>("on");
@@ -227,6 +231,11 @@ export default function LandingPage({ focusOnMount = false }: { focusOnMount?: b
   return (
     <FunnelLayout current="start" focusOnMount={focusOnMount}>
       <div className="fx-wrap">
+        {signOutNotice && (
+          <p className="fx-signed-out" role="status">
+            <strong>You're signed out.</strong> {signOutNotice}
+          </p>
+        )}
         <section className="fx-hero" aria-labelledby="fx-hero-h">
           <div>
             <p className="fx-etched">Symphony Composer · Retirement planning</p>

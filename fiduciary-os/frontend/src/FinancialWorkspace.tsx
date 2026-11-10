@@ -1,6 +1,7 @@
 import BlueprintTools from "./BlueprintTools";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { api, ApiError } from "./planning-api";
+import { reportSession, signedOut } from "./session-signal";
 
 type Balances = {
   cash: number;
@@ -83,6 +84,10 @@ export default function FinancialWorkspace({
   toolRequestId,
 }: { requestedTool?: string; toolRequestId?: number } = {}) {
   const [token, setToken] = useState<string | null>(null);
+  useEffect(() => {
+    reportSession("financial-workspace", !!token);
+    return () => reportSession("financial-workspace", false);
+  }, [token]);
   const [register, setRegister] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -109,23 +114,24 @@ export default function FinancialWorkspace({
     setBlocked(false);
   }
   async function revokeSessions(all = false) {
+    let notice = "";
     setBusy(true);
     try {
       await api(all ? "/auth/logout-all" : "/auth/logout", token!, "POST");
       clearSession();
-      setStatus(
+      notice =
         all
           ? "All server sessions revoked and local session cleared."
-          : "Server session revoked and local session cleared.",
-      );
+          : "Server session revoked and local session cleared.";
     } catch {
       clearSession();
-      setStatus(
-        "Local session cleared; server revocation was not confirmed. Sign in again to revoke all sessions.",
-      );
+      notice =
+        "Local session cleared; server revocation was not confirmed. Sign in again to revoke all sessions.";
     } finally {
       setBusy(false);
     }
+    setStatus(notice);
+    signedOut("financial-workspace", notice);
   }
   async function work(fn: () => Promise<void>, mutation = false) {
     if (inFlight.current || (mutation && uncertain.current)) return;
