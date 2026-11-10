@@ -19,6 +19,6 @@ const bundle = path.resolve(__dirname, '../../node_modules/@scalar/api-reference
 router.use('/assets', express.static(bundle));
 // Minimal shell (the wrapper package is ESM-only). The script is Scalar's standalone bundle.
 router.get('/', (_req, res) =>
-  res.type('html').send(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fiduciary OS API reference</title></head><body><script id="api-reference" data-url="./openapi.json"></script><script src="./assets/standalone.js"></script></body></html>`)
+  res.type('html').send(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fiduciary OS API reference</title></head><body><script id="api-reference" data-url="./openapi.json" data-configuration='{"showDeveloperTools":"never","withDefaultFonts":false,"agent":{"disabled":true},"hideClientButton":true}'></script><script src="./assets/standalone.js"></script></body></html>`)
 );
 export { router as docsRouter };

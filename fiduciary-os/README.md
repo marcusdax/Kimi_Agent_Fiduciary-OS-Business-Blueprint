@@ -90,3 +90,21 @@ MIT — see [LICENSE](LICENSE).
 ## Calculator MCP server
 
 `cd backend && npm run mcp` starts a read-only stdio MCP server (`annuity_income`, `retirement_historical_replay`, `federal_income_tax`). Pure functions, no database or client data; every result carries the educational disclosure.
+
+## Run the full stack in Docker (demo)
+
+```bash
+export JWT_SECRET="$(openssl rand -hex 32)"      # PowerShell: $env:JWT_SECRET = -join ((1..32) | % { '{0:x2}' -f (Get-Random -Max 256) })
+docker compose -f docker-compose.demo.yml up --build
+```
+
+Web: http://localhost:5173 (Next steps > Firm and households). API: http://localhost:3001, reference at `/docs`. Data lives in the `demo-data` volume; `down -v` resets it.
+
+Register in the app or via `POST /api/v1/auth/register`; new accounts are `client`. Whoever creates a firm is that firm's owner. To grant the global `admin` role (gates `/users`):
+
+```bash
+docker compose -f docker-compose.demo.yml run --rm --no-deps migrate sh -c \
+  "echo \"UPDATE users SET role='admin' WHERE email='you@example.com';\" | npx prisma db execute --stdin --url file:/data/app.db"
+```
+
+`NODE_ENV=production` is set deliberately: placeholder data fails closed instead of appearing as live data. The older `docker-compose.yml` is stale (missing `infra/`, expects Postgres).
