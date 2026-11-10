@@ -60,9 +60,8 @@ export default function FunnelLayout({
       </main>
       <footer className="fx-footer">
         <div className="fx-wrap">
-          Fiduciary OS preview. Example figures are illustrations, not advice
-          or a promise of results. The guide is a guided assistant, not a
-          licensed advisor. Nothing on these pages is saved or sent.
+          Sample results only, not advice. The guide is a guided assistant,
+          not a licensed advisor. Nothing on these pages is saved or sent.
         </div>
       </footer>
     </div>

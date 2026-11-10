@@ -35,7 +35,7 @@ const movements = [
   ["01 · Listen", "Gather your picture", "Accounts, income, spending and what matters most to you."],
   ["02 · Compose", "Build scenarios", "Several realistic paths, not one guess."],
   ["03 · Tune", "Adjust for real life", "Taxes, income timing, Roth conversions and risk."],
-  ["04 · Perform", "Act and review", "Dated next steps, with review when your life changes."],
+  ["04 · Perform", "Act and review", "Dated next steps that you review and approve."],
 ] as const;
 
 type GuideMode = "on" | "paused" | "skipped" | "finished";
@@ -263,7 +263,7 @@ export default function LandingPage({ focusOnMount = false }: { focusOnMount?: b
               {[
                 ["FOS-01 · Today", "Done", "done", "Your picture", "Savings, income and goals, in one place."],
                 ["FOS-02 · Tune", "Ready", "ready", "Income you can count on", "Spending matched to guaranteed income."],
-                ["FOS-03 · Retire", "Next", "wait", "Your retirement plan", "Dated steps, reviewed with you."],
+                ["FOS-03 · Retire", "Next", "wait", "Your retirement plan", "Dated steps you review and approve."],
               ].map(([code, word, tone, title, mean], i) => (
                 <div className={`fx-chip${i === 1 ? " fx-active" : ""}`} key={code}>
                   <div className="fx-face">
@@ -433,7 +433,7 @@ export default function LandingPage({ focusOnMount = false }: { focusOnMount?: b
                     <Explain label="Explain this estimate" name="Explain this estimate: sample retirement result">
                       <p><strong>In plain words:</strong> each year savings pay the gap between spending and guaranteed income. The gap grows with inflation and savings grow with the assumed return. We count the years until savings run out, up to {MAX_YEARS}.</p>
                       <p><code>gap = spending − guaranteed income</code>, rising {SAMPLE_INFLATION * 100}% a year; savings grow {SAMPLE_RETURN * 100}% a year after each withdrawal.</p>
-                      <p>This simple example ignores taxes, market swings and one-time costs. A full plan models those.</p>
+                      <p>This simple example ignores taxes, market swings and one-time costs. A fuller model would need to include those.</p>
                     </Explain>
                     <a className="fx-btn fx-btn-dark fx-btn-small-link" href="#/request">
                       Get a full plan
@@ -493,7 +493,7 @@ export default function LandingPage({ focusOnMount = false }: { focusOnMount?: b
           <ul className="fx-trust">
             <li>Sample data only: the plan check uses what you type and two stated assumptions.</li>
             <li>No account linking and no sign-up on this page.</li>
-            <li>Recommendations that need a professional are handed to a human.</li>
+            <li>Sample results only, not advice.</li>
           </ul>
         </div>
       </section>

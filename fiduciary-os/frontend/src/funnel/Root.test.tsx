@@ -31,6 +31,13 @@ describe("funnel routing", () => {
     });
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Tell us what you need");
   });
+  it.each(["#/start", "#/request"])("%s never promises professional review and says sample only", (hash) => {
+    history.replaceState(null, "", hash);
+    render(<Root />);
+    const text = document.body.textContent ?? "";
+    expect(text).not.toMatch(/qualified professional|reviewed by an? (advisor|professional)|reviewed with you/i);
+    expect(screen.getByRole("contentinfo")).toHaveTextContent("Sample results only, not advice.");
+  });
   it("does not steal focus from the skip link on first load", () => {
     history.replaceState(null, "", "#/start");
     render(<Root />);

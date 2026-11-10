@@ -77,12 +77,17 @@ The earlier dark/cyan Fiduciary visual system is independently adapted without d
   three-chip plan check (sample math, labeled as an example), the six planning
   stages, and a compliance placeholder for any comparative claim.
 - `#/request` — guided advice request plus Free / Premium / Advisor-led plan
-  cards. Prices read "Price to be set"; there is no checkout. A valid request is
+  cards. Prices read "Price to be set"; there is no checkout. Plan features
+  that don't exist yet are tagged "Not built yet". A valid request is
   held in page memory only ("not sent yet"): no network call, no storage, no
   account. There is no advice-request endpoint on the backend yet.
 - The workspace stays the default entry (`#/` or no hash).
 - Styles live in `src/funnel/funnel.css`, scoped under `.fos-funnel`, with
-  colour tokens taken from the designer's circuit-board style sample.
+  the designer's official `--fos-*` tokens (`fos-circuit-sample/tokens.css`),
+  scoped to `.fos-funnel` rather than `:root`. Funnel-only extensions:
+  `--fos-focus-on-light` (the designer's `--fos-focus` is ~1.6:1 on light
+  chip faces, below 3:1), `--fos-on-board-quiet`, `--fos-pin-chip-ink`,
+  `--fos-example-line`, `--fos-error`, `--fos-meter-duration`.
   `npm run lint:styles` checks token contrast (text ≥ 4.5:1, focus ≥ 3:1),
   scoping and reduced motion.
 - Out of scope: client/advisor portals, payments, MFA, advisor access rules.

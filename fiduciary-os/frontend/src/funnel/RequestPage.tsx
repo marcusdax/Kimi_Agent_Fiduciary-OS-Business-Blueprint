@@ -276,7 +276,15 @@ export default function RequestPage({ focusOnMount = false }: { focusOnMount?: b
                   <p className="fx-mean">{p.fits}</p>
                   <ul>
                     {p.includes.map((x) => (
-                      <li key={x}>{x}</li>
+                      <li key={x.label}>
+                        {x.label}
+                        {!x.built && (
+                          <>
+                            {" "}
+                            <span className="fx-tag">Not built yet</span>
+                          </>
+                        )}
+                      </li>
                     ))}
                   </ul>
                   {p.note && <p className="fx-hint">{p.note}</p>}

@@ -52,12 +52,15 @@ export const helpOptions = [
 export const contactMethods = ["Email", "Phone", "Don't contact me yet"];
 
 export type PlanId = "free" | "premium" | "advisor";
+export type PlanFeature = { label: string; built: boolean };
+// built: false marks features that don't exist in the app today; the card
+// shows "Not built yet" beside each so no plan promises more than exists.
 export const plans: {
   id: PlanId;
   code: string;
   name: string;
   fits: string;
-  includes: string[];
+  includes: PlanFeature[];
   note?: string;
 }[] = [
   {
@@ -65,21 +68,34 @@ export const plans: {
     code: "Tier 01",
     name: "Free",
     fits: "Curious and early planners",
-    includes: ["Free plan check", "Guided tour of the board", "Sample data only"],
+    includes: [
+      { label: "Free plan check", built: true },
+      { label: "Guided walk-through of the chips", built: true },
+      { label: "Sample data only", built: true },
+    ],
   },
   {
     id: "premium",
     code: "Tier 02",
     name: "Premium",
     fits: "People who want a full plan",
-    includes: ["Your full board, saved", "Roth and income planners", "Review reminders"],
+    includes: [
+      { label: "Saved financial workspace", built: true },
+      { label: "Roth and income planners", built: false },
+      { label: "Review reminders", built: false },
+    ],
+    note: "Roth and income planners and review reminders aren't built yet. Review dates can be recorded today, but no reminders are sent.",
   },
   {
     id: "advisor",
     code: "Tier 03",
     name: "Advisor-led",
     fits: "People who want a professional",
-    includes: ["Everything in Premium", "Advisor reviews your plan", "Shared, recorded decisions"],
+    includes: [
+      { label: "Everything in Premium", built: true },
+      { label: "Advisor reviews your plan", built: false },
+      { label: "Decisions shared with your advisor", built: false },
+    ],
     note: "Advisor access isn't built yet. This tier is shown so you can tell us it interests you.",
   },
 ];

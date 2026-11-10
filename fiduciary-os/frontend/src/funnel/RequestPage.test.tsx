@@ -79,6 +79,20 @@ describe("advice request and plans", () => {
     expect(screen.getByText(/noted on this page only. No checkout and no charge/)).toBeInTheDocument();
   });
 
+  it("marks every plan feature that isn't built yet", () => {
+    render(<RequestPage />);
+    const [free, premium, advisor] = screen.getAllByRole("article");
+    expect(within(free).queryByText("Not built yet")).not.toBeInTheDocument();
+    const item = (card: HTMLElement, text: string) => within(card).getAllByRole("listitem").find((li) => li.textContent?.startsWith(text))!;
+    expect(item(premium, "Review reminders")).toHaveTextContent("Not built yet");
+    expect(item(premium, "Roth and income planners")).toHaveTextContent("Not built yet");
+    expect(item(premium, "Saved financial workspace")).not.toHaveTextContent("Not built yet");
+    expect(within(premium).getByText(/no reminders are sent/)).toBeVisible();
+    expect(item(advisor, "Advisor reviews your plan")).toHaveTextContent("Not built yet");
+    expect(item(advisor, "Decisions shared with your advisor")).toHaveTextContent("Not built yet");
+    expect(within(advisor).getByText(/Advisor access isn't built yet/)).toBeVisible();
+  });
+
   it("maps help choices to plans", () => {
     expect(recommendPlan("On my own, with the guide")).toBe("free");
     expect(recommendPlan("With a dedicated advisor")).toBe("advisor");
