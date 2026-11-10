@@ -153,7 +153,7 @@
 /* Sections */
 .fx-panel { padding: 64px 0; }
 .fx-tight { padding-top: 0; }
-.fx-light { background: var(--fos-light-section); color: var(--fos-ink); }
+.fx-light { background: var(--fos-light-section); color: var(--fos-ink); color-scheme: light; }
 .fx-light .fx-etched { color: var(--fos-etched-on-light); }
 .fx-dark .fx-etched { color: var(--fos-on-board-label); }
 .fx-dark .fx-face .fx-etched, .fx-light .fx-face .fx-etched:not(.fx-num) { color: var(--fos-etched-on-face); }
@@ -194,7 +194,10 @@
 /* Forms */
 .fos-funnel label { display: block; font-weight: 600; font-size: 0.92rem; margin: 10px 0 4px; color: var(--fos-ink); }
 .fos-funnel :is(input[type="number"], input[type="email"], input[type="tel"], input:not([type]), select) { display: block; width: 100%; margin: 0; font: 500 1rem var(--fos-font-sans); padding: 10px 12px; border-radius: 8px; border: 1.5px solid var(--fos-input-border); background: #fff; color: var(--fos-ink); }
-.fos-funnel :is(input[type="radio"], input[type="checkbox"]) { display: inline-block; width: auto; padding: 0; border: 0; margin: 4px 0 0; }
+/* Native radios/checkboxes: undo the workspace's global input fill
+   (#0a0a0f), rounding and dark colour-scheme, which made every unchecked
+   control render as a solid dark dot. */
+.fos-funnel :is(input[type="radio"], input[type="checkbox"]) { appearance: auto; color-scheme: light; display: inline-block; width: 18px; height: 18px; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; margin: 3px 0 0; accent-color: var(--fos-ink); }
 .fos-funnel [aria-invalid="true"] { border-color: var(--fos-error); }
 .fx-hint { font-size: 0.82rem; color: var(--fos-muted); margin: 4px 0 0; }
 .fx-error { font-size: 0.85rem; color: var(--fos-error); font-weight: 600; margin: 4px 0 0; }
@@ -205,7 +208,7 @@
 .fos-funnel .fx-opt { display: flex; min-width: 0; overflow-wrap: anywhere; gap: 10px; align-items: flex-start; padding: 12px; margin: 0; border-radius: 10px; background: #fff; border: 1.5px solid var(--fos-input-border); cursor: pointer; font-weight: 500; }
 .fx-opt:has(input:checked) { border-color: var(--fos-ink); box-shadow: 0 0 0 2px var(--fos-ink) inset; }
 .fx-opt:has(input:focus-visible) { outline: 3px solid var(--fos-focus-on-light); outline-offset: 2px; }
-.fx-opt input, .fx-check input { accent-color: var(--fos-ink); flex: none; }
+.fx-opt input, .fx-check input { flex: none; }
 .fx-contact { display: grid; gap: 4px; margin: 0 0 18px; max-width: 520px; }
 .fx-check { display: grid; grid-template-columns: auto 1fr; gap: 0 10px; align-items: start; margin-top: 10px; }
 .fos-funnel .fx-check label { margin: 0; font-weight: 500; }

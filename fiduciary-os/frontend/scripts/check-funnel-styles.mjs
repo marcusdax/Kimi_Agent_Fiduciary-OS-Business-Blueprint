@@ -44,6 +44,19 @@ describe("circuit funnel visual contracts", () => {
     assert.ok(ratio("--fos-focus-on-light", "--fos-face") >= 3);
     assert.ok(ratio("--fos-focus-on-light", "--fos-light-section") >= 3);
   });
+  it("resets global input styling on funnel radios and checkboxes", () => {
+    const rule = [];
+    sheet.walkRules((r) => { if (r.selector === '.fos-funnel :is(input[type="radio"], input[type="checkbox"])') rule.push(r); });
+    assert.equal(rule.length, 1, "missing radio/checkbox reset rule");
+    const v = {};
+    rule[0].walkDecls((d) => { v[d.prop] = d.value; });
+    assert.equal(v.background, "transparent");
+    assert.equal(v["border-radius"], "0");
+    assert.equal(v.appearance, "auto");
+    assert.equal(v["color-scheme"], "light");
+    assert.equal(v["accent-color"], "var(--fos-ink)");
+    assert.ok(Number.parseInt(v.width) >= 16 && v.width === v.height, "controls need a visible fixed size");
+  });
   it("scopes every rule to the funnel and disables motion when reduced", () => {
     sheet.walkRules((r) => {
       if (r.parent?.type === "atrule" && r.parent.name === "keyframes") return;
