@@ -1478,3 +1478,41 @@ textarea {
 .under-hood summary { cursor: pointer; min-height: 44px; }
 .under-hood pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px; }
 @media(max-width:640px) { .tools-dialog { padding: 16px; } }
+
+/* Firm workspace: spacing and buttons only; colors come from the shared design tokens. */
+.firm-workspace form.panel,
+.firm-workspace article.panel {
+  display: grid;
+  gap: 12px;
+  margin-block: 16px;
+}
+.firm-workspace label {
+  display: grid;
+  gap: 6px;
+}
+.firm-workspace label input,
+.firm-workspace label select {
+  padding: 10px 12px;
+  border-radius: 8px;
+}
+.firm-workspace button.primary,
+.firm-workspace button.button {
+  justify-self: start;
+  padding: 10px 18px;
+  border-radius: 8px;
+  min-height: 44px;
+}
+.firm-workspace button.button.white {
+  border: 1px solid var(--cyan);
+}
+.firm-workspace button.button.white[aria-pressed="true"] {
+  background: var(--cyan);
+  color: #050508;
+}
+.firm-workspace ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0;
+  list-style: none;
+}

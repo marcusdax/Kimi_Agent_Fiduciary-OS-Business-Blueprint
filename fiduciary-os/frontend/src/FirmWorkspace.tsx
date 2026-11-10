@@ -146,13 +146,13 @@ export default function FirmWorkspace() {
 
   if (!token)
     return (
-      <section aria-labelledby="firm-login">
+      <section className="firm-workspace" aria-labelledby="firm-login">
         <h2 id="firm-login">Firm workspace sign-in</h2>
         <p>
           Sign in with the same account you use for the saved planning
           workspace.
         </p>
-        <form onSubmit={login}>
+        <form className="panel" onSubmit={login}>
           <label>
             Email
             <input
@@ -171,24 +171,36 @@ export default function FirmWorkspace() {
               required
             />
           </label>
-          <button disabled={busy}>Sign in</button>
+          <button type="submit" className="primary" disabled={busy}>
+            Sign in
+          </button>
         </form>
-        {error && <p role="alert">{error}</p>}
+        {error && (
+          <p role="alert" className="error">
+            {error}
+          </p>
+        )}
       </section>
     );
 
   return (
-    <section aria-labelledby="firm-title">
+    <section className="firm-workspace" aria-labelledby="firm-title">
       <h2 id="firm-title">Firms and households</h2>
       <p>
         Access is relationship-based: owners see their firm, advisors see
         assigned households, clients see their own. Every access decision is
         logged.
       </p>
-      <div role="status">{status}</div>
-      {error && <p role="alert">{error}</p>}
+      <div role="status" className="callout" hidden={!status}>
+        {status}
+      </div>
+      {error && (
+        <p role="alert" className="error">
+          {error}
+        </p>
+      )}
 
-      <form onSubmit={createFirm}>
+      <form className="panel" onSubmit={createFirm}>
         <h3>Create a firm</h3>
         <label>
           Firm name
@@ -199,7 +211,9 @@ export default function FirmWorkspace() {
             maxLength={100}
           />
         </label>
-        <button disabled={busy}>Create firm</button>
+        <button type="submit" className="primary" disabled={busy}>
+          Create firm
+        </button>
       </form>
       <label>
         Active firm ID (set automatically when you create a firm; paste one you
@@ -208,7 +222,7 @@ export default function FirmWorkspace() {
       </label>
       {firmId && (
         <>
-          <form onSubmit={addAdvisor}>
+          <form className="panel" onSubmit={addAdvisor}>
             <h3>Add an advisor (owner only)</h3>
             <label>
               Advisor email (must be registered)
@@ -219,9 +233,11 @@ export default function FirmWorkspace() {
                 required
               />
             </label>
-            <button disabled={busy}>Add advisor</button>
+            <button type="submit" className="primary" disabled={busy}>
+              Add advisor
+            </button>
           </form>
-          <form onSubmit={createHousehold}>
+          <form className="panel" onSubmit={createHousehold}>
             <h3>Create a household</h3>
             <label>
               Household name
@@ -232,7 +248,9 @@ export default function FirmWorkspace() {
                 maxLength={100}
               />
             </label>
-            <button disabled={busy}>Create household</button>
+            <button type="submit" className="primary" disabled={busy}>
+              Create household
+            </button>
           </form>
         </>
       )}
@@ -245,6 +263,8 @@ export default function FirmWorkspace() {
           {households.map((h) => (
             <li key={h.id}>
               <button
+                type="button"
+                className="button white"
                 onClick={() => open(h.id)}
                 aria-pressed={detail?.id === h.id}
               >
@@ -256,7 +276,7 @@ export default function FirmWorkspace() {
       )}
 
       {detail && (
-        <article aria-label={`Household ${detail.name}`}>
+        <article className="panel" aria-label={`Household ${detail.name}`}>
           <h3>{detail.name}</h3>
           <p>
             Firm: {detail.firm}. Your access: {detail.access}.
@@ -266,10 +286,15 @@ export default function FirmWorkspace() {
               <li key={c.id}>{c.name}</li>
             ))}
           </ul>
-          <button onClick={pdf} disabled={busy}>
+          <button
+            type="button"
+            className="button white"
+            onClick={pdf}
+            disabled={busy}
+          >
             Download plan PDF
           </button>
-          <form onSubmit={addClient}>
+          <form className="panel" onSubmit={addClient}>
             <label>
               Link a client by email
               <input
@@ -279,9 +304,11 @@ export default function FirmWorkspace() {
                 required
               />
             </label>
-            <button disabled={busy}>Link client</button>
+            <button type="submit" className="primary" disabled={busy}>
+              Link client
+            </button>
           </form>
-          <form onSubmit={assign}>
+          <form className="panel" onSubmit={assign}>
             <label>
               Assign advisor by email
               <input
@@ -301,7 +328,9 @@ export default function FirmWorkspace() {
                 <option value="manage">manage</option>
               </select>
             </label>
-            <button disabled={busy}>Assign advisor</button>
+            <button type="submit" className="primary" disabled={busy}>
+              Assign advisor
+            </button>
           </form>
           <p>
             Linking and assigning need manage access; assigning needs firm-owner
