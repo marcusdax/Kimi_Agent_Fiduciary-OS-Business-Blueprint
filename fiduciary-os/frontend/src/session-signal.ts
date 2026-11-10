@@ -1,20 +1,31 @@
-// Observes the app's existing sign-in state; it is not an auth mechanism.
-// Sessions still live only in FinancialWorkspace / ConnectedWorkspace memory
-// (no storage, no cookie), so a reload always starts signed out, exactly as
-// before. This module only lets the router see whether any panel currently
-// holds a session token, and lets explicit sign-out send people to #/start.
-const holders = new Set<string>();
+import { useSyncExternalStore } from "react";
+
+// Holds the app's existing sign-in sessions above the router; it is not an
+// auth mechanism. Tokens live in module memory only (no storage, no cookie),
+// so a reload still starts signed out, exactly as before. Because the store
+// outlives the routes, a panel unmounting (e.g. going to #/start) does not
+// sign anyone out; only an explicit sign-out, a clear, or an expiry does.
+const tokens = new Map<string, string>();
 const listeners = new Set<() => void>();
 let signOutNotice = "";
 
-export function reportSession(source: string, signedIn: boolean) {
-  if (signedIn) holders.add(source);
-  else holders.delete(source);
+function notify() {
   listeners.forEach((l) => l());
 }
 
+export function getSessionToken(source: string) {
+  return tokens.get(source) ?? null;
+}
+
+/** Set (sign in) or clear (expiry or local clear) one panel's session. */
+export function setSessionToken(source: string, token: string | null) {
+  if (token) tokens.set(source, token);
+  else tokens.delete(source);
+  notify();
+}
+
 export function isSignedIn() {
-  return holders.size > 0;
+  return tokens.size > 0;
 }
 
 export function subscribeSession(listener: () => void) {
@@ -24,9 +35,17 @@ export function subscribeSession(listener: () => void) {
   };
 }
 
+/** A panel's session token, shared across routes and remounts. */
+export function useSessionToken(source: string) {
+  const token = useSyncExternalStore(subscribeSession, () =>
+    getSessionToken(source),
+  );
+  return [token, (next: string | null) => setSessionToken(source, next)] as const;
+}
+
 /** Call after an explicit sign-out has cleared the local session. */
 export function signedOut(source: string, notice: string) {
-  reportSession(source, false);
+  setSessionToken(source, null);
   signOutNotice = notice;
   location.hash = "#/start";
 }
@@ -41,6 +60,7 @@ export function clearSignOutNotice() {
 
 /** Test helper. */
 export function resetSessionSignal() {
-  holders.clear();
+  tokens.clear();
   signOutNotice = "";
+  notify();
 }

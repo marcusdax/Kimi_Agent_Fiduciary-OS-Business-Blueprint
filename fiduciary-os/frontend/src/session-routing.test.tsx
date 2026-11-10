@@ -1,7 +1,7 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import Root from "./funnel/Root";
-import { isSignedIn, resetSessionSignal } from "./session-signal";
+import { getSessionToken, isSignedIn, resetSessionSignal, setSessionToken } from "./session-signal";
 vi.mock("./BlueprintTools", () => ({ default: () => null }));
 
 const plan = {
@@ -96,5 +96,103 @@ describe("sign-in aware default route", () => {
     });
     expect(screen.getByLabelText("Plan name")).toBeInTheDocument();
     expect(location.hash).toBe("");
+  });
+
+  function backendForBothPanels() {
+    const calls: string[] = [];
+    const fetcher = vi.fn(async (url: string, init: RequestInit = {}) => {
+      calls.push(`${init.method ?? "GET"} ${url}`);
+      if (url.endsWith("/auth/login")) {
+        const body = JSON.parse(String(init.body));
+        return response({ accessToken: body.email.startsWith("actions") ? "actions-token" : "fin-token" });
+      }
+      if (url.endsWith("/financial-plan")) return response(plan);
+      if (url.endsWith("/planning/actions")) return response([]);
+      return response({ message: "ok" });
+    });
+    vi.stubGlobal("fetch", fetcher);
+    return calls;
+  }
+  async function hashTo(hash: string) {
+    await act(async () => {
+      location.hash = hash;
+      window.dispatchEvent(new HashChangeEvent("hashchange"));
+    });
+  }
+  async function signInBothPanels() {
+    await signInToFinancialWorkspace();
+    fireEvent.click(screen.getByRole("button", { name: /^Next steps/ }));
+    fireEvent.click(await screen.findByRole("button", { name: "Saved planning workspace" }));
+    fireEvent.change(await screen.findByLabelText("Email"), { target: { value: "actions@example.test" } });
+    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "test-password-123" } });
+    fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
+    await screen.findByRole("heading", { name: "Your saved planning actions" });
+    expect(getSessionToken("financial-workspace")).toBe("fin-token");
+    expect(getSessionToken("connected-workspace")).toBe("actions-token");
+  }
+  async function expectBothPanelsStillSignedIn() {
+    fireEvent.click(screen.getByRole("button", { name: "Financial workspace" }));
+    expect(await screen.findByLabelText("Plan name")).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByLabelText("Plan name")).toHaveValue("My test plan"));
+    expect(screen.queryByRole("button", { name: "Sign in" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /^Next steps/ }));
+    fireEvent.click(await screen.findByRole("button", { name: "Saved planning workspace" }));
+    expect(await screen.findByRole("heading", { name: "Your saved planning actions" })).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Sign in" })).not.toBeInTheDocument();
+  }
+
+  it.each(["#/start", "#/request"])(
+    "keeps both panel sessions through a visit to %s and back, with no sign-out",
+    async (away) => {
+      const calls = backendForBothPanels();
+      history.replaceState(null, "", "#/workspace");
+      render(<Root />);
+      await signInBothPanels();
+      await hashTo(away);
+      expect(screen.getByRole("main").closest(".fos-funnel")).not.toBeNull();
+      expect(screen.queryByText(/You're signed out/)).not.toBeInTheDocument();
+      expect(isSignedIn()).toBe(true);
+      await hashTo("#/workspace");
+      await expectBothPanelsStillSignedIn();
+      expect(screen.queryByText(/You're signed out/)).not.toBeInTheDocument();
+      expect(calls.some((c) => c.includes("/auth/logout"))).toBe(false);
+      expect(getSessionToken("financial-workspace")).toBe("fin-token");
+      expect(getSessionToken("connected-workspace")).toBe("actions-token");
+    },
+  );
+
+  it("sends a signed-in user on #/start to the workspace on a no-hash navigation or load", async () => {
+    backendForBothPanels();
+    history.replaceState(null, "", "#/workspace");
+    const { unmount } = render(<Root />);
+    await signInToFinancialWorkspace();
+    await hashTo("#/start");
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Your retirement, composed and tuned.");
+    await act(async () => {
+      history.replaceState(null, "", location.pathname);
+      window.dispatchEvent(new HashChangeEvent("hashchange"));
+    });
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Your next step, clearer.");
+    unmount();
+    // Same session, fresh no-hash load of the router.
+    history.replaceState(null, "", "#/start");
+    render(<Root />).unmount();
+    history.replaceState(null, "", location.pathname);
+    render(<Root />);
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Your next step, clearer.");
+    expect(location.hash).toBe("");
+  });
+
+  it("an expiry clears the session without redirecting", async () => {
+    setSessionToken("connected-workspace", "stale");
+    history.replaceState(null, "", "#/workspace");
+    vi.stubGlobal("fetch", vi.fn(async () => response({ error: "Session expired" }, 401)));
+    render(<Root />);
+    fireEvent.click(screen.getByRole("button", { name: /^Next steps/ }));
+    fireEvent.click(await screen.findByRole("button", { name: "Saved planning workspace" }));
+    expect(await screen.findByRole("button", { name: "Sign in" })).toBeVisible();
+    expect(getSessionToken("connected-workspace")).toBeNull();
+    expect(location.hash).toBe("#/workspace");
+    expect(screen.queryByText(/You're signed out/)).not.toBeInTheDocument();
   });
 });

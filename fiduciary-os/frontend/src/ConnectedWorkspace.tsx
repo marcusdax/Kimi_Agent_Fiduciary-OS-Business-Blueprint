@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { reportSession, signedOut } from "./session-signal";
+import { signedOut, useSessionToken } from "./session-signal";
 import {
   api,
   savedAction,
@@ -28,11 +28,8 @@ const empty: ActionFields = {
   costs: "",
 };
 export default function ConnectedWorkspace() {
-  const [token, setToken] = useState<string | null>(null);
-  useEffect(() => {
-    reportSession("connected-workspace", !!token);
-    return () => reportSession("connected-workspace", false);
-  }, [token]);
+  // Shared across routes so leaving this view doesn't drop the session.
+  const [token, setToken] = useSessionToken("connected-workspace");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [actions, setActions] = useState<SavedAction[]>([]);
@@ -117,8 +114,14 @@ export default function ConnectedWorkspace() {
     reconciliationRequired.current = false;
     setRequiresReload(false);
   }
+  useEffect(() => {
+    // Returning with a live session: reload the saved actions.
+    if (token) void work(() => load());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   async function signIn(event: FormEvent) {
     event.preventDefault();
+    let acquired = "";
     await work(async () => {
       const session = await api<{ accessToken: string }>(
         "/auth/login",
@@ -133,10 +136,12 @@ export default function ConnectedWorkspace() {
       )
         throw new Error("The API did not return a valid session.");
       await load(session.accessToken);
-      setToken(session.accessToken);
+      acquired = session.accessToken;
       setEmail("");
       setPassword("");
     });
+    // Publish the shared session once the sign-in work has settled.
+    if (acquired) setToken(acquired);
     setPassword("");
   }
   function select(action: SavedAction) {
