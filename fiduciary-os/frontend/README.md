@@ -70,3 +70,19 @@ Full backend lint still fails on inherited findings; the repaired resolver and n
 The **Financial workspace** navigation entry now provides test-account registration/login, owner-scoped manual asset balances, monthly cash flow, versioned persistence, deterministic nominal/real balance charts, allocation and exact data tables. Existing sample cards stay separate; no data provider or bank is linked. Chart values update only after a confirmed save. Use synthetic inputs only.
 
 The earlier dark/cyan Fiduciary visual system is independently adapted without discarding current workflow/accessibility fixes. See [source research, methods, limitations and production gates](../docs/RESEARCH_AND_PRODUCTION_GATES.md). It remains a pre-launch sandbox, not production financial advice or a certified platform.
+
+## Circuit-board funnel preview (pages 1–2)
+
+- `#/start` — free landing page: how the Symphony Composer works, a guided
+  three-chip plan check (sample math, labeled as an example), the six planning
+  stages, and a compliance placeholder for any comparative claim.
+- `#/request` — guided advice request plus Free / Premium / Advisor-led plan
+  cards. Prices read "Price to be set"; there is no checkout. A valid request is
+  held in page memory only ("not sent yet"): no network call, no storage, no
+  account. There is no advice-request endpoint on the backend yet.
+- The workspace stays the default entry (`#/` or no hash).
+- Styles live in `src/funnel/funnel.css`, scoped under `.fos-funnel`, with
+  colour tokens taken from the designer's circuit-board style sample.
+  `npm run lint:styles` checks token contrast (text ≥ 4.5:1, focus ≥ 3:1),
+  scoping and reduced motion.
+- Out of scope: client/advisor portals, payments, MFA, advisor access rules.
