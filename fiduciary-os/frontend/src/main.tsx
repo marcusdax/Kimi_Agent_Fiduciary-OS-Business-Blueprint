@@ -1,9 +1,10 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App";
+// Workspace styles load first so the scoped funnel sheet wins equal-specificity ties.
 import "./styles.css";
+import Root from "./funnel/Root";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
+    <Root />
   </StrictMode>,
 );
