@@ -49,7 +49,7 @@ A fiduciary product cannot ship a lookup table wearing a percentage sign, and it
 |---|---|---|
 | **HTTP service** | Dependency-free API, consistent error contract, request ids, **scoped bearer auth**, **token-bucket rate limits**, **Prometheus metrics**, **generated OpenAPI** | `src/server.ts` + `src/routes.ts` · 22 integration tests |
 | **MCP server** | Five calculators exposed to assistants over JSON-RPC, each carrying provenance and the disclaimer | `src/mcp/server.ts` · 7 tests · verified over stdio |
-| **Provenance console** | A served UI where every figure renders with its receipt: source, observation date, freshness, licence and method. Placeholder or unverifiable values are visibly flagged | `src/ui/*` · 18 tests · strict CSP, no inline script |
+| **Provenance console** | A served UI where every figure renders with its receipt: source, observation date, freshness, licence and method. Placeholder or unverifiable values are visibly flagged. Skinned in the **Machined Chrome** design language | `src/ui/*` · 18 tests · strict CSP, no inline script · [design language](docs/06_CONSOLE_DESIGN_LANGUAGE.md) |
 | **Static audit** | Rules against markup injection, dynamic code execution, process spawning, checked-in secrets, stray logging and undocumented modules — each tested with a planted violation | `tools/audit.mjs` · 11 tests |
 
 **Zero runtime dependencies.** `typescript` and `@types/node` are dev-only, and `npm run verify` gates on a static audit before it runs a single test. This process sits in front of every number a client sees, so its supply-chain surface is deliberately empty.
@@ -205,6 +205,7 @@ TypeScript type-stripper: no build step, no transpiler, no child processes.
 | **[Real Data Integration](docs/03_REAL_DATA_INTEGRATION.md)** | Every endpoint, its licence, its measured latency, and the hazards observed in production |
 | **[Production Readiness](docs/04_PRODUCTION_READINESS.md)** | The scorecard: 10 gaps closed, 2 partial, **4 new ones created by the fix and named**, launch gates, SLOs, runbook |
 | **[Adoption Roadmap](docs/05_ADOPTION_ROADMAP.md)** | Four phases with exit criteria, and a value-per-engineering-week ranking |
+| **[Console Design Language](docs/06_CONSOLE_DESIGN_LANGUAGE.md)** | Machined Chrome: the flow model, material system, palette, type and motion rules for trust-core surfaces |
 
 ---
 
