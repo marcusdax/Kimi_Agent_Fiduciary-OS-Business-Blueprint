@@ -1,0 +1,863 @@
+/*
+ * console.css — the Machined Chrome design language for the Fiduciary OS trust console.
+ *
+ * The material metaphor: an instrument panel milled from gunmetal and anodized
+ * aluminium, edge-lit in cyan. Every surface looks machined because every number
+ * on it is — cut from a cited source, measured, and stamped with its receipt.
+ *
+ * Design decisions, and why they are decisions rather than taste:
+ *  - Chrome is structure, not decoration. The specular gradients trace real edges:
+ *    card rims, bezels, wells and the masthead rule. Nothing glows that is not a
+ *    boundary or an affordance.
+ *  - One accent (anodized cyan) marks interactive affordances only. The semantic
+ *    freshness palette — green current, amber aging, red stale, magenta
+ *    placeholder — owns meaning, and colour is never the only signal: every
+ *    badge still carries a word.
+ *  - Surfaces are layered like hardware: a brushed plate, a specular sheen that
+ *    fades a third of the way down, a 1px machined hairline drawn with a masked
+ *    gradient so it follows the corner radius, and an inset bevel pair
+ *    (top highlight / bottom shade) that makes the plate read as milled stock.
+ *  - Instrument wells (figures, KPIs, inputs) are recessed: inset shadow below a
+ *    top inner shade, so values read as displays set into the panel.
+ *  - Micro-labels are set in uppercase letterspaced monospace, like etched
+ *    panel legends; readings stay in the UI sans with tabular figures so columns
+ *    align and digits do not shimmer when a value updates.
+ *  - Contrast holds above WCAG AA: body text >12:1 on the plate, muted >5:1.
+ *  - Ambient motion is limited to a single slow sheen on the masthead rule and
+ *    120–160ms state transitions; everything stops under prefers-reduced-motion.
+ */
+
+:root {
+  /* Deep-space ground */
+  --bg: #05070b;
+  --bg-glow-steel: rgba(64, 92, 120, 0.16);
+  --bg-glow-cyan: rgba(76, 194, 212, 0.07);
+
+  /* Machined plates */
+  --surface: #11161e;
+  --surface-2: #161c26;
+  --well: #0a0e14;
+  --plate-fill: linear-gradient(158deg, #1b212c 0%, #131822 44%, #0d1118 100%);
+  --plate-fill-raised: linear-gradient(158deg, #212835 0%, #171d28 44%, #10141d 100%);
+  --plate-brush: repeating-linear-gradient(
+    0deg,
+    rgba(226, 236, 246, 0.014) 0 1px,
+    transparent 1px 4px
+  );
+  --plate-sheen: linear-gradient(
+    112deg,
+    rgba(236, 244, 252, 0.05) 0%,
+    rgba(236, 244, 252, 0.012) 26%,
+    transparent 42%
+  );
+  --plate-bevel:
+    inset 0 1px 0 rgba(236, 244, 252, 0.09),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.7);
+  --plate-shadow: 0 18px 44px -22px rgba(0, 0, 0, 0.85);
+
+  /* Machined hairlines — a chrome gradient masked to the border band */
+  --chrome-edge: linear-gradient(
+    125deg,
+    #3d4855 0%,
+    #c3cdd8 14%,
+    #49545f 30%,
+    #7c8b99 47%,
+    #dde5ec 52%,
+    #414d5a 68%,
+    #96a4b1 84%,
+    #4a5560 100%
+  );
+  --chrome-edge-dim: linear-gradient(
+    125deg,
+    #2c3540 0%,
+    #6d7a88 16%,
+    #333d48 34%,
+    #57646f 52%,
+    #2b333d 70%,
+    #66727e 100%
+  );
+  --border: #232c38;
+  --border-strong: #314051;
+
+  /* Ink */
+  --text: #edf2f8;
+  --muted: #96a4b6;
+  --faint: #6b7889;
+
+  /* Anodized accent + semantic freshness palette */
+  --accent: #5fd8e8;
+  --accent-deep: #2a8b9c;
+  --accent-ink: #03222b;
+  --good: #4ecb71;
+  --warn: #e2b04c;
+  --bad: #ff8089;
+  --mock: #d795f2;
+
+  --radius: 14px;
+  --radius-inner: 10px;
+  --micro: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background:
+    radial-gradient(1100px 540px at 12% -12%, var(--bg-glow-steel) 0%, transparent 62%),
+    radial-gradient(900px 480px at 88% -8%, var(--bg-glow-cyan) 0%, transparent 58%),
+    var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Inter, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* Blueprint grid floor: major cells every 56px, minor every 14px, faded at the edges. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(148, 174, 200, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 174, 200, 0.045) 1px, transparent 1px),
+    linear-gradient(rgba(148, 174, 200, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 174, 200, 0.022) 1px, transparent 1px);
+  background-size:
+    56px 56px,
+    56px 56px,
+    14px 14px,
+    14px 14px;
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 30%, transparent 78%);
+  z-index: 0;
+}
+
+/* A single static specular band across the viewport — light, not motion. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    104deg,
+    transparent 42%,
+    rgba(214, 228, 240, 0.018) 50%,
+    transparent 58%
+  );
+  z-index: 0;
+}
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--accent);
+  color: var(--accent-ink);
+  padding: 10px 16px;
+  border-radius: 0 0 var(--radius-inner) 0;
+  font-weight: 650;
+  z-index: 10;
+}
+.skip:focus {
+  left: 0;
+}
+
+/* Masthead ------------------------------------------------------------------ */
+
+.masthead {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 30px clamp(16px, 4vw, 48px) 22px;
+  max-width: 1240px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+  z-index: 1;
+}
+
+/* The machined rule under the masthead — the one ambient motion in the product. */
+.masthead::after {
+  content: "";
+  position: absolute;
+  left: clamp(16px, 4vw, 48px);
+  right: clamp(16px, 4vw, 48px);
+  bottom: 8px;
+  height: 1px;
+  background: var(--chrome-edge-dim);
+  overflow: visible;
+}
+.masthead::before {
+  content: "";
+  position: absolute;
+  bottom: 7px;
+  left: clamp(16px, 4vw, 48px);
+  width: 220px;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, transparent, rgba(233, 242, 250, 0.55), transparent);
+  filter: blur(0.5px);
+  animation: sheen-drift 9s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes sheen-drift {
+  from {
+    transform: translateX(0);
+    opacity: 0.35;
+  }
+  to {
+    transform: translateX(min(58vw, 760px));
+    opacity: 0.8;
+  }
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* The medallion: conic chrome with a machined bezel and an engraved core. */
+.mark {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: conic-gradient(
+    from 210deg,
+    #8ba3b8 0deg,
+    #e9f2fa 42deg,
+    #5c6d7d 96deg,
+    #3b4852 140deg,
+    #aebfd0 200deg,
+    #4c5b6a 220deg,
+    #d7e3ee 284deg,
+    #8ba3b8 360deg
+  );
+  box-shadow:
+    0 0 0 1px rgba(8, 11, 15, 0.9),
+    0 0 0 2px rgba(148, 168, 188, 0.28),
+    inset 0 1px 1px rgba(255, 255, 255, 0.35),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.55),
+    0 8px 22px -10px rgba(95, 216, 232, 0.35);
+}
+.mark::after {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border-radius: 5px;
+  background: linear-gradient(150deg, #1c242f, #0b0f15);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.8),
+    inset 0 -1px 0 rgba(214, 228, 240, 0.14),
+    0 0 0 1px rgba(95, 216, 232, 0.28);
+}
+
+h1 {
+  font-size: 20px;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+  margin: 0;
+  font-weight: 700;
+  background: linear-gradient(178deg, #f4f8fc 22%, #aebdcb 48%, #6e7e8e 52%, #cfd9e4 78%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.6);
+}
+
+.tagline {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-family: var(--micro);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* HUD readout chip */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: linear-gradient(180deg, #151b24, #0b0f15);
+  box-shadow:
+    inset 0 1px 0 rgba(236, 244, 252, 0.07),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.6);
+  font-family: var(--micro);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.status .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--faint);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.6);
+  transition: background 140ms ease, box-shadow 140ms ease;
+}
+.status.ok {
+  color: var(--text);
+}
+.status.ok .dot {
+  background: var(--good);
+  box-shadow:
+    0 0 6px rgba(78, 203, 113, 0.7),
+    0 0 0 3px rgba(78, 203, 113, 0.14);
+}
+.status.err .dot {
+  background: var(--bad);
+  box-shadow:
+    0 0 6px rgba(255, 128, 137, 0.7),
+    0 0 0 3px rgba(255, 128, 137, 0.14);
+}
+
+main {
+  position: relative;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 4vw, 48px) 56px;
+  z-index: 1;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+  counter-reset: module;
+}
+
+/* Cards — milled plates with a chrome hairline that follows the radius. */
+.card {
+  position: relative;
+  background: var(--plate-brush), var(--plate-sheen), var(--plate-fill);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 22px 20px;
+  box-shadow: var(--plate-bevel), var(--plate-shadow);
+  counter-increment: module;
+}
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--chrome-edge-dim);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0.5;
+  pointer-events: none;
+}
+.card:hover::before {
+  opacity: 0.85;
+}
+
+/* Etched module index, like a panel legend: 01 · TAX ENGINE */
+.card h2 {
+  font-family: var(--micro);
+  font-size: 11.5px;
+  margin: 0 0 6px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.grid .card h2::before {
+  content: counter(module, decimal-leading-zero) " · ";
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.lede {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 13px;
+  max-width: 62ch;
+}
+
+.connect {
+  margin-top: 10px;
+}
+
+/* Controls ------------------------------------------------------------------ */
+
+.form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: end;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--micro);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.field.grow {
+  flex: 1;
+}
+
+input,
+select {
+  background: linear-gradient(180deg, #0b0f15, #10151d);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: var(--radius-inner);
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.55),
+    inset 0 -1px 0 rgba(214, 228, 240, 0.05);
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+  min-width: 0;
+}
+
+input:hover,
+select:hover {
+  border-color: var(--border-strong);
+}
+
+input:focus-visible,
+select:focus-visible,
+.btn:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-color: var(--accent);
+}
+
+/* Machined buttons: brushed cap, bevel, and an anodized primary. */
+.btn {
+  appearance: none;
+  position: relative;
+  border: 1px solid var(--border-strong);
+  background: var(--plate-brush), var(--plate-fill-raised);
+  color: var(--text);
+  border-radius: var(--radius-inner);
+  padding: 10px 16px;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(236, 244, 252, 0.12),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.6),
+    0 6px 14px -8px rgba(0, 0, 0, 0.8);
+  transition: border-color 140ms ease, box-shadow 140ms ease, transform 60ms ease, filter 140ms ease;
+  white-space: nowrap;
+}
+.btn:hover {
+  border-color: #46586c;
+  filter: brightness(1.12);
+}
+.btn:active {
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.6),
+    0 2px 6px -6px rgba(0, 0, 0, 0.8);
+}
+.btn.primary {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent 46%),
+    linear-gradient(180deg, var(--accent), var(--accent-deep));
+  border-color: #7fe3f0;
+  color: var(--accent-ink);
+  font-weight: 700;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.btn.primary:hover {
+  filter: brightness(1.08);
+}
+.btn.ghost {
+  background: transparent;
+  box-shadow: none;
+}
+.btn.small {
+  padding: 6px 11px;
+  font-size: 12.5px;
+}
+.btn[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  align-items: end;
+  flex-wrap: wrap;
+}
+
+.hint {
+  min-height: 18px;
+  margin: 10px 0 0;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.hint.err {
+  color: var(--bad);
+}
+.hint.ok {
+  color: var(--good);
+}
+
+/* Results — recessed instrument wells --------------------------------------- */
+
+.result {
+  margin-top: 18px;
+}
+
+.figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-inner);
+  overflow: hidden;
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.5),
+    0 1px 0 rgba(236, 244, 252, 0.05);
+}
+
+.figure {
+  background: linear-gradient(180deg, #0b0f16, #10151e);
+  padding: 14px 15px;
+}
+
+.figure .k {
+  display: block;
+  font-family: var(--micro);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 5px;
+}
+
+.figure .v {
+  font-size: 21px;
+  font-weight: 640;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  background: linear-gradient(180deg, #f6fafd 30%, #c2cfdd);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-inner);
+  overflow: hidden;
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.5),
+    0 1px 0 rgba(236, 244, 252, 0.05);
+}
+
+/* Provenance receipt — the stamped plate ------------------------------------ */
+
+.receipt {
+  margin-top: 14px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-inner);
+  padding: 13px 15px;
+  background:
+    linear-gradient(112deg, rgba(95, 216, 232, 0.05), transparent 55%),
+    rgba(95, 216, 232, 0.02);
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.receipt .top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-family: var(--micro);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  background: linear-gradient(180deg, #151b24, #0c1017);
+  box-shadow: inset 0 1px 0 rgba(236, 244, 252, 0.06);
+  white-space: nowrap;
+}
+
+.badge::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 5px currentColor;
+}
+
+.badge.fresh {
+  color: var(--good);
+}
+.badge.aging {
+  color: var(--warn);
+}
+.badge.stale {
+  color: var(--bad);
+}
+.badge.placeholder {
+  color: var(--mock);
+}
+.badge.unknown {
+  color: var(--muted);
+}
+
+.receipt .src {
+  color: var(--text);
+  font-family: var(--micro);
+  font-size: 12px;
+}
+
+.receipt .method {
+  margin: 6px 0 0;
+  line-height: 1.5;
+}
+
+.receipt a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(95, 216, 232, 0.35);
+}
+.receipt a:hover {
+  border-bottom-color: var(--accent);
+}
+
+.warnbar {
+  margin-top: 12px;
+  border: 1px solid rgba(255, 128, 137, 0.4);
+  background: rgba(255, 128, 137, 0.08);
+  color: #ffd9db;
+  border-radius: var(--radius-inner);
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+.exclusions {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+.exclusions li {
+  margin: 2px 0;
+}
+
+/* Ledger -------------------------------------------------------------------- */
+
+.ledger {
+  font-size: 13px;
+}
+
+.kv {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 14px;
+  margin: 0;
+}
+.kv dt {
+  color: var(--faint);
+  font-family: var(--micro);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding-top: 2px;
+}
+.kv dd {
+  margin: 0;
+  font-family: var(--micro);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+  color: var(--text);
+}
+
+.verify {
+  margin-top: 12px;
+  border-radius: var(--radius-inner);
+  padding: 10px 12px;
+  font-size: 13px;
+  border: 1px solid var(--border);
+}
+.verify.ok {
+  border-color: rgba(78, 203, 113, 0.45);
+  background: rgba(78, 203, 113, 0.08);
+  color: #c8f0d0;
+}
+.verify.err {
+  border-color: rgba(255, 128, 137, 0.5);
+  background: rgba(255, 128, 137, 0.1);
+  color: #ffd9db;
+}
+
+/* Sources ------------------------------------------------------------------- */
+
+.sources {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.source {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-inner);
+  padding: 12px 14px;
+  background: var(--plate-brush), linear-gradient(180deg, #141a23, #0f141c);
+  box-shadow: inset 0 1px 0 rgba(236, 244, 252, 0.05);
+}
+
+.source .name {
+  font-weight: 600;
+  font-size: 13.5px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.source .meta {
+  color: var(--muted);
+  font-size: 12.5px;
+  margin-top: 4px;
+}
+
+.chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.chip {
+  font-family: var(--micro);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 6px;
+  padding: 2px 8px;
+  background: rgba(214, 228, 240, 0.04);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.placeholder {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 0;
+}
+
+.error {
+  color: var(--bad);
+  font-size: 13px;
+  margin: 0;
+}
+
+/* Footer -------------------------------------------------------------------- */
+
+.foot {
+  position: relative;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 4vw, 48px) 40px;
+  color: var(--muted);
+  font-size: 12.5px;
+  z-index: 1;
+}
+.foot::before {
+  content: "";
+  display: block;
+  height: 1px;
+  background: var(--chrome-edge-dim);
+  opacity: 0.6;
+  margin-bottom: 18px;
+}
+.foot p {
+  margin: 0 0 6px;
+}
+.muted {
+  color: var(--muted);
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .form {
+    grid-template-columns: 1fr;
+  }
+  .masthead {
+    padding-top: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
