@@ -1,0 +1,4 @@
+node_modules/
+.npmcache/
+*.log
+.env.data/

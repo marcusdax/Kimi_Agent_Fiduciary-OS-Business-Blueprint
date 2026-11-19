@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fiduciary OS — Trust Console</title>
+    <meta name="description" content="Every number, with its receipt: data provenance, freshness and licensing for the Fiduciary OS trust core." />
+    <link rel="stylesheet" href="/assets/console.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="masthead">
+      <div class="brand">
+        <span class="mark" aria-hidden="true"></span>
+        <div>
+          <h1>Fiduciary OS</h1>
+          <p class="tagline">Trust console — every number, with its receipt</p>
+        </div>
+      </div>
+      <div class="status" id="status" role="status" aria-live="polite">
+        <span class="dot" aria-hidden="true"></span>
+        <span id="statusText">Not connected</span>
+      </div>
+    </header>
+
+    <main id="main">
+      <!-- Connection ------------------------------------------------------ -->
+      <section class="card connect" aria-labelledby="connectHeading">
+        <h2 id="connectHeading">Connect</h2>
+        <p class="lede">
+          The console uses the same scoped API as the product. Paste a bearer token, or — in a
+          development build only — ask the server for one.
+        </p>
+        <div class="row">
+          <label class="field grow">
+            <span>Bearer token</span>
+            <input id="token" type="password" autocomplete="off" spellcheck="false" placeholder="eyJhbGciOi…" />
+          </label>
+          <button class="btn" id="connectBtn" type="button">Use token</button>
+          <button class="btn ghost" id="devTokenBtn" type="button">Get dev token</button>
+        </div>
+        <p class="hint" id="connectHint" role="status" aria-live="polite"></p>
+      </section>
+
+      <div class="grid">
+        <!-- Tax calculator ------------------------------------------------- -->
+        <section class="card" aria-labelledby="taxHeading">
+          <h2 id="taxHeading">Federal income tax</h2>
+          <p class="lede">
+            Computed from a cited, versioned table — not a formula of the month. The exclusions are
+            part of the answer.
+          </p>
+
+          <form id="taxForm" class="form">
+            <label class="field">
+              <span>Tax year</span>
+              <select id="taxYear" name="taxYear">
+                <option value="2026" selected>2026</option>
+                <option value="2025">2025</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Filing status</span>
+              <select id="filingStatus" name="filingStatus">
+                <option value="single" selected>Single</option>
+                <option value="married">Married filing jointly</option>
+                <option value="head">Head of household</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Ordinary income</span>
+              <input id="ordinaryIncome" name="ordinaryIncome" type="number" inputmode="numeric" min="0" step="1000" value="145000" />
+            </label>
+            <label class="field">
+              <span>Long-term gains + qualified dividends</span>
+              <input id="preferentialIncome" name="preferentialIncome" type="number" inputmode="numeric" min="0" step="1000" value="22000" />
+            </label>
+            <button class="btn primary" type="submit">Compute</button>
+          </form>
+
+          <div id="taxResult" class="result" aria-live="polite"></div>
+        </section>
+
+        <!-- Macro ----------------------------------------------------------- -->
+        <section class="card" aria-labelledby="macroHeading">
+          <div class="cardHead">
+            <h2 id="macroHeading">Market context</h2>
+            <button class="btn ghost small" id="refreshMacro" type="button">Refresh</button>
+          </div>
+          <p class="lede">Official US government series. Each figure carries its own observation date.</p>
+          <div id="macro" class="kpis" aria-live="polite">
+            <p class="placeholder">Not loaded.</p>
+          </div>
+        </section>
+
+        <!-- Ledger ---------------------------------------------------------- -->
+        <section class="card" aria-labelledby="ledgerHeading">
+          <div class="cardHead">
+            <h2 id="ledgerHeading">Evidence ledger</h2>
+            <button class="btn ghost small" id="verifyLedger" type="button">Verify chain</button>
+          </div>
+          <p class="lede">
+            Append-only hash chain. Verification recomputes every hash and every link — if a single
+            character changed, it says so, and where.
+          </p>
+          <div id="ledger" class="ledger" aria-live="polite">
+            <p class="placeholder">Not loaded.</p>
+          </div>
+        </section>
+
+        <!-- Data sources ---------------------------------------------------- -->
+        <section class="card" aria-labelledby="sourcesHeading">
+          <h2 id="sourcesHeading">Data sources</h2>
+          <p class="lede">
+            Every external dependency, what it backs, and the terms we rely on. A source with
+            undefined redistribution terms is never the basis of a client-facing number.
+          </p>
+          <div id="sources" class="sources" aria-live="polite">
+            <p class="placeholder">Not loaded.</p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="foot">
+      <p id="disclosure">Educational estimates only. Not a quote, offer, recommendation, or tax or investment advice.</p>
+      <p class="muted">
+        No compliance certification is claimed. Provenance is structural: a value with no source is
+        not rendered.
+      </p>
+    </footer>
+
+    <script type="module" src="/assets/console.js"></script>
+  </body>
+</html>
