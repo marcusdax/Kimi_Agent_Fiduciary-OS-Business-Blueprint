@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -123,7 +123,7 @@ model AiInteraction {
   prompt        String
   response      String
   blocked       Boolean  @default(false)
-  flags         String   @default("")
+  flags         String[] @default([])
   createdAt     DateTime @default(now())
 
   user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
@@ -215,4 +215,37 @@ model SessionRefresh {
   usedAt DateTime?
   session AuthSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   @@index([sessionId])
+}
+
+// Vector embeddings for semantic search over planning actions, AI interactions, and documents.
+// Requires pgvector extension (enable in supabase/setup.sql).
+model Embedding {
+  id         String   @id @default(cuid())
+  entityType String
+  entityId   String
+  vector     Unsupported("vector(1536)")
+  model      String
+  createdAt  DateTime @default(now())
+
+  @@unique([entityType, entityId])
+  @@map("embedding")
+}
+
+// Durable ledger entries mirrored from trust-core for SQL queries and backup.
+// The authoritative source is always trust-core; this is a queryable replica.
+model LedgerEntry {
+  seq         Int      @id
+  id          String   @unique
+  at          DateTime
+  action      String
+  actor       String
+  subject     String
+  anchors     Json     @default("{}")
+  payloadHash String?
+  supersedes  String?
+  prevHash    String
+  hash        String   @unique
+
+  @@index([subject, at])
+  @@map("ledger_entries")
 }

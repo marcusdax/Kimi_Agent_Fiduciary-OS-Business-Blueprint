@@ -15,6 +15,9 @@ import { cacheFromEnv } from '../cache.ts';
 import { CalibrationService } from '../calibration.ts';
 import { SecSource } from '../sources/sec.ts';
 import { DisclosureWatch } from '../features/disclosure-watch.ts';
+import { EvidenceLedger } from '../trust/ledger.ts';
+import { FileLedgerStore, MemoryLedgerStore, defaultLedgerDir } from '../store/ledger-store.ts';
+import { MasternexFiduciaryBridge } from '../trust/masternex-bridge.ts';
 import { runStdio } from './server.ts';
 
 const http = new HttpClient({
@@ -27,4 +30,11 @@ const http = new HttpClient({
 const calibration = new CalibrationService(http);
 const watch = new DisclosureWatch(new SecSource(http));
 
-await runStdio({ calibration, watch });
+const ledgerStore =
+  process.env.NODE_ENV === 'test'
+    ? new MemoryLedgerStore()
+    : new FileLedgerStore(defaultLedgerDir());
+const ledger = EvidenceLedger.open(ledgerStore, process.env.LEDGER_ID ?? 'fiduciary-os-primary');
+const masternexBridge = new MasternexFiduciaryBridge();
+
+await runStdio({ calibration, watch, ledger, masternexBridge });
