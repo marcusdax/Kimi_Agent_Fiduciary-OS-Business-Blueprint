@@ -1,0 +1,137 @@
+# Full Ecosystem Localhost Stack:
+#   PostgreSQL 16 + pgvector (:5432)
+#   Redis 7 (:6379)
+#   MASTERNEX.os Core (:8080)
+#   Fiduciary OS trust-core (:3002)
+#   Fiduciary OS Express API (:3001)
+#   Fiduciary OS Web + Advisor Command Center (:4173)
+#
+# Run from fiduciary-os/:
+#   docker compose -f docker-compose.ecosystem.yml up -d --build
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: fiduciary_os
+    volumes:
+      - ecosystem_pg_data:/var/lib/postgresql/data
+      - ./backend/docker/init-pgvector.sql:/docker-entrypoint-initdb.d/01-init-pgvector.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d fiduciary_os"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - ecosystem-net
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - ecosystem_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - ecosystem-net
+
+  masternex:
+    build:
+      context: ../../MASTERNEX.os
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      MASTERNEX_ENV: development
+      MASTERNEX_JWT_SECRET: ${MASTERNEX_JWT_SECRET:-fiduciary-ecosystem-local-jwt-secret-32chars}
+    volumes:
+      - ecosystem_masternex_data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8080/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    networks:
+      - ecosystem-net
+
+  trust-core:
+    build:
+      context: ../trust-core
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3002"
+    environment:
+      NODE_ENV: development
+      PORT: 3002
+      LEDGER_MODE: memory
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3002/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    networks:
+      - ecosystem-net
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: sh -c "npx prisma db push --skip-generate && npm start"
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/fiduciary_os
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: local-dev-jwt-secret-minimum-32-chars-ok
+      CORS_ORIGIN: http://localhost:4173,http://localhost:5173
+      TRUST_CORE_URL: http://trust-core:3002
+      MASTERNEX_API_URL: http://masternex:8080
+      MASTERNEX_JWT: ${MASTERNEX_JWT:-}
+      KDENSE_API_URL: ${KDENSE_API_URL:-http://host.docker.internal:8000}
+      HF_TOKEN: ${HF_TOKEN:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      masternex:
+        condition: service_healthy
+      trust-core:
+        condition: service_healthy
+    networks:
+      - ecosystem-net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:3001/api/v1
+    ports:
+      - "4173:4173"
+    environment:
+      PORT: 4173
+      VITE_API_BASE_URL: http://localhost:3001/api/v1
+    depends_on:
+      - backend
+    networks:
+      - ecosystem-net
+
+volumes:
+  ecosystem_pg_data:
+  ecosystem_redis_data:
+  ecosystem_masternex_data:
+
+networks:
+  ecosystem-net:
+    driver: bridge

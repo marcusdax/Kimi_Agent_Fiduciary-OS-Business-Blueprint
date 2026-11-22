@@ -2,6 +2,7 @@ import ToolDiscovery from "./ToolDiscovery";
 import { useRef, useState, type KeyboardEvent } from "react";
 import FinancialWorkspace from "./FinancialWorkspace";
 import ConnectedWorkspace from "./ConnectedWorkspace";
+import AdvisorCommandCenter from "./AdvisorCommandCenter";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -77,6 +78,7 @@ function revealBoardCard(card: HTMLButtonElement) {
 }
 const navigation = [
   { label: "Overview", icon: LayoutDashboard },
+  { label: "Advisor Command Center", icon: ShieldCheck },
   { label: "My plan", icon: Compass },
   { label: "Financial workspace", icon: Waypoints },
   { label: "Compare choices", icon: Waypoints },
@@ -282,6 +284,7 @@ export default function App() {
                   : "Sample plan"}
             </span>
           </div>
+          {page === "Advisor Command Center" && <AdvisorCommandCenter />}
           {page === "Overview" && (
             <>
               <section className="hero" aria-labelledby="hero-title">

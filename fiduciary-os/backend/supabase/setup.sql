@@ -2,7 +2,7 @@
 -- Run once after creating the Supabase project, before `prisma migrate dev`.
 
 -- Extensions ----------------------------------------------------------------
-CREATE EXTENSION IF NOT EXISTS "pgvector";
+CREATE EXTENSION IF NOT EXISTS "vector";
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Row-Level Security --------------------------------------------------------

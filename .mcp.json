@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "trust-core": {
+      "command": "node",
+      "args": ["trust-core/src/mcp/main.ts"],
+      "env": {
+        "LEDGER_MODE": "file"
+      },
+      "description": "Fiduciary OS trust-core — 5 deterministic financial calculators (tax, retirement, annuity, macro, suitability) with provenance"
+    },
+    "masternex-mcp": {
+      "command": "python3",
+      "args": ["-m", "masternex.mcp_server"],
+      "env": {
+        "MASTERNEX_API_URL": "http://localhost:8080"
+      },
+      "description": "MASTERNEX.os MCP server — 11 sovereign trust, audit_verify, status_matrix, NADE-2.0, and SR 11-7 / EU AI Act tools"
+    }
+  }
+}

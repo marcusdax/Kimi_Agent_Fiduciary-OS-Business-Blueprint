@@ -58,15 +58,13 @@ export class MasternexFiduciaryBridge {
     while (currentLevel.length > 1) {
       const nextLevel: string[] = [];
       for (let i = 0; i < currentLevel.length; i += 2) {
-        if (i + 1 < currentLevel.length) {
-          nextLevel.push(createHash('sha256').update(currentLevel[i] + currentLevel[i + 1]).digest('hex'));
-        } else {
-          nextLevel.push(createHash('sha256').update(currentLevel[i] + currentLevel[i]).digest('hex'));
-        }
+        const left = currentLevel[i] ?? '';
+        const right = currentLevel[i + 1] ?? left;
+        nextLevel.push(createHash('sha256').update(left + right).digest('hex'));
       }
       currentLevel = nextLevel;
     }
-    return currentLevel[0];
+    return currentLevel[0] ?? createHash('sha256').update('').digest('hex');
   }
 
   /**

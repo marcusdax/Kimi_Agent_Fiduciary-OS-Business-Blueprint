@@ -22,6 +22,9 @@ import { aiRouter } from './routes/ai';
 import { aiEnhancedRouter } from './routes/ai-enhanced';
 import { marketRouter } from './routes/market';
 import { cryptoRouter } from './routes/crypto';
+import { trustRouter } from './routes/trust';
+import { intelligenceRouter } from './routes/intelligence';
+import { advisorRouter } from './routes/advisor';
 import { logger } from './utils/logger';
 import { connectDatabase } from './config/database';
 import { connectRedis } from './config/redis';
@@ -55,8 +58,13 @@ app.use(helmet({
   },
 }));
 
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173,http://localhost:4173')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  origin: allowedOrigins.length === 1 ? allowedOrigins[0] : allowedOrigins,
   credentials: true,
 }));
 
@@ -94,6 +102,9 @@ app.use(`${API_PREFIX}/ai`, aiRouter);
 app.use(`${API_PREFIX}/ai-v2`, aiEnhancedRouter); // Enhanced AI with Kimi
 app.use(`${API_PREFIX}/market`, marketRouter);   // Real-time market data & insurance
 app.use(`${API_PREFIX}/crypto`, cryptoRouter);   // Cryptocurrency prices
+app.use(`${API_PREFIX}/trust`, trustRouter);     // Phase 1: MASTERNEX Trust, SHAP & Compliance
+app.use(`${API_PREFIX}/intelligence`, intelligenceRouter); // Phase 2/4/5: pgvector, Doc Intel, Nature, PRINCE, ZK
+app.use(`${API_PREFIX}/advisor`, advisorRouter); // Phase 3: Advisor Command Center productivity
 
 // Error handling
 app.use(errorHandler);
