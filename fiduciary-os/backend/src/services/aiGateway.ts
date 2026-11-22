@@ -1,5 +1,10 @@
+import { createHash } from 'crypto';
 import { prisma } from '../config/database';
 import { logger } from '../utils/logger';
+import * as masternexService from './masternexService';
+
+const TRUST_CORE_URL = process.env.TRUST_CORE_URL ?? null;
+const TRUST_CORE_SERVICE_TOKEN = process.env.TRUST_CORE_SERVICE_TOKEN ?? null;
 import { assertPlaceholdersAllowed, type DataSource } from '../utils/dataSource';
 import {
   AI_DISCLOSURE,
@@ -65,6 +70,36 @@ export async function deliverAiOutput<T>(call: AiCall<T>): Promise<{ output: T; 
     flags: review.flags,
   });
 
+  // Non-blocking: append to trust-core EvidenceLedger for tamper-evident AI audit trail.
+  if (TRUST_CORE_URL) {
+    void fetch(`${TRUST_CORE_URL}/api/v1/ledger/entries`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(TRUST_CORE_SERVICE_TOKEN ? { Authorization: `Bearer ${TRUST_CORE_SERVICE_TOKEN}` } : {}),
+      },
+      body: JSON.stringify({
+        action: 'advice.ai.generated',
+        subject: call.userId ?? 'anonymous',
+        anchors: {
+          interactionId: interactionId ?? 'unrecorded',
+          endpoint: call.endpoint,
+          provider: call.provider,
+          model: call.model ?? 'unknown',
+          blocked: review.blocked,
+          policyVersion: AI_POLICY_VERSION,
+          promptDigest: createHash('sha256').update(call.prompt).digest('hex').slice(0, 16),
+        },
+      }),
+    }).catch((err: Error) => logger.warn('trust-core ledger append failed', { error: err.message }));
+  }
+  // Non-blocking: record to MASTERNEX AI Flight Recorder for SR 11-7 compliance.
+  masternexService.recordEvent({
+    engine: `${call.provider}:${call.model ?? 'unknown'}`,
+    action: call.endpoint,
+    inputDigest: createHash('sha256').update(call.prompt).digest('hex'),
+  });
+
   return {
     output,
     envelope: {
@@ -103,7 +138,7 @@ async function recordInteraction(entry: {
         prompt: entry.prompt,
         response: entry.response,
         blocked: entry.blocked,
-        flags: entry.flags.join(','),
+        flags: entry.flags,
       },
       select: { id: true },
     });

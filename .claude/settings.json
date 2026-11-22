@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "trust-core": {
+      "command": "node",
+      "args": ["src/mcp/main.ts"],
+      "cwd": "../../trust-core",
+      "description": "FiduciaryOS trust-core: 5 calculators + compliance audit (fidos_compliance_audit)"
+    },
+    "masternex": {
+      "command": "python",
+      "args": ["-m", "masternex.mcp_server"],
+      "cwd": "../../masternex.os",
+      "description": "MASTERNEX.os: ZK Shapley proofs, ACPLedger, PRINCE federated benchmarks, 16 MCP tools"
+    }
+  }
+}

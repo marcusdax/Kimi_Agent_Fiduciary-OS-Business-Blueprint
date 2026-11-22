@@ -22,6 +22,8 @@ import { assessSuitability, type PlanFacts } from '../trust/suitability.ts';
 import type { CalibrationService } from '../calibration.ts';
 import type { DisclosureWatch } from '../features/disclosure-watch.ts';
 import { LATEST_TAX_YEAR } from '../sources/taxTables.ts';
+import type { EvidenceLedger } from '../trust/ledger.ts';
+import type { MasternexFiduciaryBridge } from '../trust/masternex-bridge.ts';
 
 const PROTOCOL_VERSION = '2025-06-18';
 const SERVER_INFO = { name: 'fiduciary-os', version: '1.0.0' };
@@ -33,6 +35,8 @@ const NOT_ADVICE =
 export interface McpDeps {
   calibration: CalibrationService;
   watch: DisclosureWatch;
+  ledger?: EvidenceLedger;
+  masternexBridge?: MasternexFiduciaryBridge;
 }
 
 interface JsonRpcRequest {
@@ -152,6 +156,17 @@ export const TOOLS = [
         lookbackDays: { type: 'number', default: 90 },
         forms: { type: 'array', items: { type: 'string' } },
       },
+    },
+  },
+  {
+    name: 'fidos_compliance_audit',
+    description:
+      'Generate a MASTERNEX EU AI Act Art. 12 + SR 11-7 compliance audit report from the live EvidenceLedger. ' +
+      'Returns the Merkle root, chain integrity status, compliance_status (CONFORMANT/NON_CONFORMANT) and ' +
+      'per-framework coverage flags. Zero-argument — no inputs required.',
+    inputSchema: {
+      type: 'object',
+      properties: {},
     },
   },
 ] as const;
@@ -302,6 +317,14 @@ async function callTool(name: string, args: Record<string, unknown>, deps: McpDe
         ...(Array.isArray(args.forms) ? { forms: args.forms.map(String) } : {}),
       });
       return { data: d.value, provenance: d.provenance };
+    }
+
+    case 'fidos_compliance_audit': {
+      if (!deps.ledger || !deps.masternexBridge) {
+        throw new Error('fidos_compliance_audit requires ledger and masternexBridge — start trust-core with --mcp mode');
+      }
+      const report = deps.masternexBridge.generateComplianceAudit(deps.ledger);
+      return { data: report };
     }
 
     default:
