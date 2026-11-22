@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:16
+        image: pgvector/pgvector:pg16
         env:
           POSTGRES_USER: ci
           POSTGRES_PASSWORD: ci
@@ -46,6 +46,8 @@ jobs:
       - run: npm ci
       - run: npx prisma generate
       - run: npm run type-check
+      - name: Enable pgvector extension
+        run: psql "$DATABASE_URL" -c 'CREATE EXTENSION IF NOT EXISTS "vector";'
       - run: npx prisma db push --skip-generate
       - run: npx jest --runInBand --coverage
       - run: npm run build
