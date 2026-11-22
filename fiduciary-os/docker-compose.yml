@@ -1,87 +1,93 @@
-version: '3.8'
-
 services:
-  # Frontend Development Server
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: ../infra/docker/Dockerfile.frontend.dev
-    ports:
-      - "5173:5173"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    environment:
-      - VITE_API_URL=http://localhost:3001
-      - VITE_WEBSOCKET_URL=ws://localhost:3001
-      - CHOKIDAR_USEPOLLING=true
-    depends_on:
-      - backend
-    networks:
-      - fiduciary-network
-
-  # Backend API Server
-  backend:
-    build:
-      context: ./backend
-      dockerfile: ../infra/docker/Dockerfile.backend.dev
-    ports:
-      - "3001:3001"
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
-    environment:
-      - NODE_ENV=development
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/fiduciary_os
-      - REDIS_URL=redis://redis:6379
-      - PORT=3001
-      - JWT_SECRET=dev-jwt-secret-change-in-production
-    depends_on:
-      - postgres
-      - redis
-    networks:
-      - fiduciary-network
-
-  # PostgreSQL Database
   postgres:
-    image: postgres:15-alpine
+    image: pgvector/pgvector:pg16
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=fiduciary_os
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: fiduciary_os
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./backend/prisma/migrations:/docker-entrypoint-initdb.d
+      - ./backend/docker/init-pgvector.sql:/docker-entrypoint-initdb.d/01-init-pgvector.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d fiduciary_os"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
     networks:
       - fiduciary-network
 
-  # Redis Cache & Session Store
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
     networks:
       - fiduciary-network
 
-  # Nginx Reverse Proxy (Production)
-  nginx:
-    image: nginx:alpine
+  trust-core:
+    build:
+      context: ../trust-core
+      dockerfile: Dockerfile
     ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./infra/docker/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./frontend/dist:/usr/share/nginx/html:ro
+      - "3002:3002"
+    environment:
+      NODE_ENV: development
+      PORT: 3002
+      LEDGER_MODE: memory
+    networks:
+      - fiduciary-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: sh -c "npx prisma db push --skip-generate && npm start"
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/fiduciary_os
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: local-dev-jwt-secret-minimum-32-chars-ok
+      CORS_ORIGIN: http://localhost:4173,http://localhost:5173
+      TRUST_CORE_URL: http://trust-core:3002
+      MASTERNEX_API_URL: ${MASTERNEX_API_URL:-}
+      MASTERNEX_JWT: ${MASTERNEX_JWT:-}
+      HF_TOKEN: ${HF_TOKEN:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      trust-core:
+        condition: service_started
+    networks:
+      - fiduciary-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:3001/api/v1
+    ports:
+      - "4173:4173"
+    environment:
+      PORT: 4173
+      VITE_API_BASE_URL: http://localhost:3001/api/v1
     depends_on:
       - backend
     networks:
       - fiduciary-network
-    profiles:
-      - production
 
 volumes:
   postgres_data:

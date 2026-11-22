@@ -28,6 +28,13 @@ export interface AiEnvelope {
   policyVersion: string;
   guardrail: { blocked: boolean; flags: string[] };
   interactionId: string | null;
+  trustReceipt?: {
+    sr117ReceiptId: string | null;
+    shapBasisPoints: Record<string, number>;
+    piiRedacted: boolean;
+    masternexAllowed: boolean;
+    source: 'masternex-live' | 'unconfigured' | 'fallback';
+  };
 }
 
 export interface AiCall<T> {
@@ -50,11 +57,18 @@ export async function deliverAiOutput<T>(call: AiCall<T>): Promise<{ output: T; 
     assertPlaceholdersAllowed('AI insights');
   }
 
-  const review = reviewAiOutput(call.texts(call.output));
-  const output = review.blocked ? call.withheld() : call.output;
+  const rawTexts = call.texts(call.output);
+  const review = reviewAiOutput(rawTexts);
+  const masternexEval = await masternexService.evaluateFiduciary({
+    explanationText: rawTexts.filter((t): t is string => typeof t === 'string' && t.length > 0).join('\n'),
+  });
 
-  if (review.blocked) {
-    logger.warn(`AI output withheld on ${call.endpoint}: ${review.flags.join(', ')}`);
+  const combinedBlocked = review.blocked || !masternexEval.allowed;
+  const combinedFlags = Array.from(new Set([...review.flags, ...masternexEval.flags]));
+  const output = combinedBlocked ? call.withheld() : call.output;
+
+  if (combinedBlocked) {
+    logger.warn(`AI output withheld on ${call.endpoint}: ${combinedFlags.join(', ')}`);
   }
 
   const interactionId = await recordInteraction({
@@ -66,8 +80,8 @@ export async function deliverAiOutput<T>(call: AiCall<T>): Promise<{ output: T; 
     prompt: call.prompt,
     // Log what the model produced, not the replacement, so reviewers see the real output.
     response: JSON.stringify(call.output),
-    blocked: review.blocked,
-    flags: review.flags,
+    blocked: combinedBlocked,
+    flags: combinedFlags,
   });
 
   // Non-blocking: append to trust-core EvidenceLedger for tamper-evident AI audit trail.
@@ -86,18 +100,20 @@ export async function deliverAiOutput<T>(call: AiCall<T>): Promise<{ output: T; 
           endpoint: call.endpoint,
           provider: call.provider,
           model: call.model ?? 'unknown',
-          blocked: review.blocked,
+          blocked: combinedBlocked,
           policyVersion: AI_POLICY_VERSION,
+          sr117ReceiptId: masternexEval.sr117ReceiptId ?? 'none',
           promptDigest: createHash('sha256').update(call.prompt).digest('hex').slice(0, 16),
         },
       }),
     }).catch((err: Error) => logger.warn('trust-core ledger append failed', { error: err.message }));
   }
   // Non-blocking: record to MASTERNEX AI Flight Recorder for SR 11-7 compliance.
-  masternexService.recordEvent({
+  void masternexService.recordEvent({
     engine: `${call.provider}:${call.model ?? 'unknown'}`,
     action: call.endpoint,
     inputDigest: createHash('sha256').update(call.prompt).digest('hex'),
+    outputDigest: createHash('sha256').update(JSON.stringify(output)).digest('hex'),
   });
 
   return {
@@ -107,8 +123,15 @@ export async function deliverAiOutput<T>(call: AiCall<T>): Promise<{ output: T; 
       notARecommendation: true,
       source: call.source,
       policyVersion: AI_POLICY_VERSION,
-      guardrail: review,
+      guardrail: { blocked: combinedBlocked, flags: combinedFlags },
       interactionId,
+      trustReceipt: {
+        sr117ReceiptId: masternexEval.sr117ReceiptId,
+        shapBasisPoints: masternexEval.shapBasisPoints,
+        piiRedacted: masternexEval.piiRedacted,
+        masternexAllowed: masternexEval.allowed,
+        source: masternexEval.source,
+      },
     },
   };
 }

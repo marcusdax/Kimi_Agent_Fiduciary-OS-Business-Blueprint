@@ -1011,7 +1011,7 @@ function logLine(requestId: string, method: string, path: string, status: number
 export function start(port = PORT): Promise<{ port: number; close: () => Promise<void> }> {
   return new Promise((resolve) => {
     const s = createServer(requestHandler);
-    s.listen(port, '127.0.0.1', () => {
+    s.listen(port, process.env.HOST ?? '127.0.0.1', () => {
       const address = s.address();
       const actual = typeof address === 'object' && address ? address.port : port;
       void warmUp().catch(() => undefined);
