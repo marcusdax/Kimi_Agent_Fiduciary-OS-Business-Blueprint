@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SymphonyComposerPanel from "./SymphonyComposerPanel";
 
 export type ExpandedView = "symphony" | "proposed" | "willtrust" | null;
@@ -238,6 +238,39 @@ export default function ExpandedModules({
       }),
     }).catch(() => {});
   }
+
+  // Sprint 4: Hydrate persisted Will & Trust clients & Proposed Symphony state from PostgreSQL on mount
+  useEffect(() => {
+    const base = import.meta.env.VITE_API_BASE_URL || "/api/v1";
+    fetch(`${base}/workspace-state?category=willtrust`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        const recs = Array.isArray(data?.records) ? data.records : [];
+        const loaded: HouseholdIntake[] = recs
+          .map((rec: { payload?: { intake?: HouseholdIntake } }) => rec?.payload?.intake)
+          .filter((x: HouseholdIntake | undefined): x is HouseholdIntake => Boolean(x && x.name));
+        if (loaded.length > 0) {
+          setSavedClients((prev) => {
+            const byName = new Map(prev.map((c) => [c.name, c]));
+            loaded.forEach((c) => byName.set(c.name, c));
+            return Array.from(byName.values());
+          });
+        }
+      })
+      .catch(() => {});
+
+    fetch(`${base}/workspace-state/symphony:proposed`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        const p = data?.record?.payload;
+        if (Array.isArray(p?.answers) && p.answers.length > 0) setAnswers(p.answers);
+        if (typeof p?.advisorSigned === "boolean") setAdvisorSigned(p.advisorSigned);
+        if (typeof p?.workflowStep === "number" && p.workflowStep >= 1 && p.workflowStep <= 5) {
+          setWorkflowStep(p.workflowStep as 1 | 2 | 3 | 4 | 5);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const taxableEstate = Math.max(0, intake.netWorth - intake.lifeFace);
   const exemption2026 = intake.marital === "Married" ? 30000000 : 15000000;

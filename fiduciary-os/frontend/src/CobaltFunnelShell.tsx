@@ -78,6 +78,10 @@ export default function CobaltFunnelShell({ children }: { children: ReactNode })
   const [studioView, setStudioView] = useState<ExpandedView>(null);
   const [chatOpen, setChatOpen] = useState(false);
   const [brandOpen, setBrandOpen] = useState(false);
+  const [cmdOpen, setCmdOpen] = useState(false);
+  const [cmdQuery, setCmdQuery] = useState("");
+  const [auditRecords, setAuditRecords] = useState<{ scopeKey: string; category: string; label: string; updatedAt: string }[]>([]);
+  const [dbHealth, setDbHealth] = useState("checking…");
   const [tenantName, setTenantName] = useState("Fiduciary OS");
   const [tenantAccent, setTenantAccent] = useState("#38BDF8");
   const [brandNotice, setBrandNotice] = useState("");
@@ -89,6 +93,28 @@ export default function CobaltFunnelShell({ children }: { children: ReactNode })
     },
   ]);
 
+  async function refreshAuditTrail() {
+    const base = import.meta.env.VITE_API_BASE_URL || "/api/v1";
+    try {
+      const [hRes, wRes] = await Promise.all([
+        fetch(base.replace(/\/api\/v1$/, "") + "/health").catch(() => null),
+        fetch(`${base}/workspace-state`).catch(() => null),
+      ]);
+      if (hRes?.ok) {
+        const h = await hRes.json();
+        setDbHealth(`DB: ${h?.services?.database ?? "ok"} · Redis: ${h?.services?.redis ?? "ok"}`);
+      } else {
+        setDbHealth("Local preview mode");
+      }
+      if (wRes?.ok) {
+        const w = await wRes.json();
+        setAuditRecords(Array.isArray(w?.records) ? w.records : []);
+      }
+    } catch {
+      setDbHealth("Offline");
+    }
+  }
+
   useEffect(() => {
     document.documentElement.dataset.foBoard = board;
   }, [board]);
@@ -96,6 +122,29 @@ export default function CobaltFunnelShell({ children }: { children: ReactNode })
   useEffect(() => {
     document.documentElement.style.setProperty("--fo-accent", tenantAccent);
   }, [tenantAccent]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setCmdQuery("");
+        setCmdOpen((o) => !o);
+      }
+      if (e.key === "Escape") {
+        setMenuOpen(false);
+        setProofOpen(false);
+        setBrandOpen(false);
+        setCmdOpen(false);
+        setAuthMode(null);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  useEffect(() => {
+    if (proofOpen) refreshAuditTrail();
+  }, [proofOpen]);
 
   useEffect(() => {
     const base = import.meta.env.VITE_API_BASE_URL || "/api/v1";
@@ -221,6 +270,9 @@ export default function CobaltFunnelShell({ children }: { children: ReactNode })
           <button className="fo-btn" onClick={() => setBrandOpen(true)}>
             ⚙ Brand
           </button>
+          <button className="fo-btn" onClick={() => { setCmdQuery(""); setCmdOpen(true); }} title="Quick Jump (Ctrl+K / Cmd+K)">
+            ⌘K
+          </button>
           <button className="fo-btn" onClick={() => setChatOpen((o) => !o)}>
             ✦ AI Guide
           </button>
@@ -336,21 +388,95 @@ export default function CobaltFunnelShell({ children }: { children: ReactNode })
         </aside>
       )}
 
-      {/* Right Show the Work Proof Drawer */}
+      {/* Right Show the Work Proof Drawer with Live PostgreSQL Audit Ledger */}
       {proofOpen && (
         <aside className="fo-drawer-right" aria-label="Verification Drawer">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <h3 style={{ margin: 0 }}>Show the work · Verification</h3>
+            <h3 style={{ margin: 0 }}>Show the work · Live Audit Ledger</h3>
             <button className="fo-btn" onClick={() => setProofOpen(false)}>Close</button>
           </div>
           <p style={{ fontSize: 12.5, color: "var(--fo-muted)", margin: 0 }}>
-            Every figure in Fiduciary OS is backed by transparent assumptions, public economic data sources, privacy redaction, and tamper-evident audit receipts.
+            Every figure in Fiduciary OS is backed by transparent assumptions, a 500-path retirement guardrail engine, privacy redaction, and durable PostgreSQL records.
           </p>
+          <div style={{ padding: 12, borderRadius: 8, background: "var(--fo-well)", border: "1px solid var(--fo-line)", fontSize: 12 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+              <strong style={{ color: "var(--fo-accent-hi)" }}>LIVE ENGINE &amp; DATABASE STATUS</strong>
+              <button className="fo-btn" style={{ padding: "2px 8px", minHeight: 24, fontSize: 11 }} onClick={refreshAuditTrail}>Refresh</button>
+            </div>
+            <div style={{ fontFamily: "ui-monospace, monospace", fontSize: 11.5 }}>{dbHealth}</div>
+            <div style={{ fontFamily: "ui-monospace, monospace", fontSize: 11, color: "var(--fo-muted)", marginTop: 3 }}>
+              Simulation Engine: fiduciary-mc-guardrail@1.1.0 (500 paths)
+            </div>
+          </div>
+          <div style={{ padding: 12, borderRadius: 8, background: "var(--fo-well)", border: "1px solid var(--fo-line)", fontSize: 12 }}>
+            <strong style={{ color: "var(--fo-proof)", display: "block", marginBottom: 6 }}>
+              PERSISTED POSTGRESQL RECORDS ({auditRecords.length})
+            </strong>
+            {auditRecords.length === 0 ? (
+              <div style={{ color: "var(--fo-muted)", fontSize: 11.5 }}>No saved workspace records yet — save a Will &amp; Trust client, Proposed Symphony answer, or Brand theme to see it logged here.</div>
+            ) : (
+              <div style={{ display: "grid", gap: 6 }}>
+                {auditRecords.map((r) => (
+                  <div key={r.scopeKey} style={{ padding: "6px 8px", borderRadius: 6, border: "1px solid var(--fo-line)", fontSize: 11.5 }}>
+                    <strong>{r.label}</strong> <span style={{ color: "var(--fo-brass)" }}>[{r.category}]</span>
+                    <div style={{ fontFamily: "ui-monospace, monospace", fontSize: 10.5, color: "var(--fo-muted)" }}>
+                      {r.scopeKey} · {new Date(r.updatedAt).toLocaleString()}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
           <div style={{ padding: 12, borderRadius: 8, background: "var(--fo-well)", border: "1px solid var(--fo-brass)", fontSize: 12 }}>
             <strong style={{ color: "var(--fo-brass)", display: "block", marginBottom: 4 }}>LOCKED REGULATORY DISCLOSURE</strong>
             All outputs are educational, illustrative planning estimates based on user-supplied assumptions. Past performance does not guarantee future results. No brokerage execution is performed.
           </div>
         </aside>
+      )}
+
+      {/* Global Cmd+K / Ctrl+K Quick-Jump Palette */}
+      {cmdOpen && (
+        <div className="fo-modal" role="dialog" aria-modal="true" aria-label="Quick Jump Palette">
+          <div style={{ padding: "12px 14px", borderBottom: "1px solid var(--fo-line)", display: "flex", gap: 8, alignItems: "center" }}>
+            <input
+              autoFocus
+              className="fo-field"
+              style={{ marginTop: 0, flex: 1 }}
+              value={cmdQuery}
+              onChange={(e) => setCmdQuery(e.target.value)}
+              placeholder="Jump to Symphony, Will & Trust, Advisor CRM, Roth, Brand, Proof…"
+            />
+            <button className="fo-btn" onClick={() => setCmdOpen(false)} style={{ padding: "4px 9px", minHeight: 28 }}>ESC</button>
+          </div>
+          <div style={{ padding: 8, maxHeight: 300, overflowY: "auto", display: "grid", gap: 4 }}>
+            {[
+              { label: "♦ Symphony Composer (500-Path Live Engine)", run: () => setStudioView("symphony") },
+              { label: "♬ Proposed Symphony (5-Stage Workflow)", run: () => setStudioView("proposed") },
+              { label: "⚖ Will & Trust Atelier (5-Step Intake + 7 Drafts)", run: () => setStudioView("willtrust") },
+              { label: "4. Advisor Full Stack (CRM, Campaigns & Research Hub)", run: () => { setStudioView(null); navigateStage("advisor"); } },
+              { label: "1. Landing Hub", run: () => { setStudioView(null); navigateStage("landing"); } },
+              { label: "2. Consumer Free Workspace", run: () => { setStudioView(null); navigateStage("free"); } },
+              { label: "3. Consumer Premium Workspace", run: () => { setStudioView(null); navigateStage("premium"); } },
+              { label: "⚙ White-Label Brand Theme Editor", run: () => setBrandOpen(true) },
+              { label: "✦ Educational AI Guide", run: () => setChatOpen(true) },
+              { label: "✓ Show the work · Live Audit Ledger", run: () => setProofOpen(true) },
+            ]
+              .filter((c) => c.label.toLowerCase().includes(cmdQuery.toLowerCase()))
+              .map((c) => (
+                <button
+                  key={c.label}
+                  className="fo-tool-item"
+                  onClick={() => {
+                    setCmdOpen(false);
+                    c.run();
+                  }}
+                >
+                  <span>{c.label}</span>
+                  <span style={{ fontFamily: "ui-monospace, monospace", fontSize: 10.5, color: "var(--fo-muted)" }}>↵</span>
+                </button>
+              ))}
+          </div>
+        </div>
       )}
 
       {/* Live PostgreSQL Sign In / Create Account Modal */}
