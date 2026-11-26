@@ -1,66 +1,92 @@
-# docker-compose.dev.yml — multi-service local development stack.
-# Bring up with: docker compose -f docker-compose.dev.yml up
+version: "3.9"
+
+# Local development stack — Fiduciary OS + trust-core + MASTERNEX
+# Usage: docker compose -f docker-compose.dev.yml up
 #
-# Services:
-#   backend      — Fiduciary OS Express API (port 3001)
-#   trust-core   — trust-core HTTP + MCP server (port 3002)
-#   masternex    — MASTERNEX.os FastAPI service (port 8080)
-#
-# Required host env vars (copy from .env.example and fill in):
-#   MASTERNEX_DATABASE_URL — SQLite or Postgres URL for MASTERNEX
-#   TRUST_CORE_SERVICE_TOKEN — ledger:write scoped JWT for backend→trust-core calls
+# Secrets go in a .env file in this directory (not committed).
+# Minimum required vars: DATABASE_URL, JWT_SECRET, TRUST_CORE_JWT_SECRET
+# Optional: MASTERNEX_JWT, ANTHROPIC_API_KEY, KIMI_API_KEY
 
 services:
+  # ── Fiduciary OS Express API ───────────────────────────────────────────────
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     ports:
       - "3001:3001"
+    env_file: .env
     environment:
       NODE_ENV: development
-      DATABASE_URL: file:/data/dev.db
+      PORT: "3001"
       TRUST_CORE_URL: http://trust-core:3002
       MASTERNEX_API_URL: http://masternex:8080
-      TRUST_CORE_SERVICE_TOKEN: ${TRUST_CORE_SERVICE_TOKEN:-}
-      MASTERNEX_JWT: ${MASTERNEX_JWT:-}
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
-      KIMI_API_KEY: ${KIMI_API_KEY:-}
-    volumes:
-      - backend-data:/data
+      REDIS_ENABLED: "false"
     depends_on:
-      - trust-core
-      - masternex
-    restart: unless-stopped
+      trust-core:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3001/api/v1/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    volumes:
+      - ./backend/logs:/app/logs
 
+  # ── trust-core MCP + HTTP sidecar ─────────────────────────────────────────
   trust-core:
     build:
       context: ../../trust-core
       dockerfile: Dockerfile
     ports:
       - "3002:3002"
+    env_file: .env
     environment:
+      PORT: "3002"
       NODE_ENV: development
-      PORT: 3002
-      LEDGER_MODE: file
-      SEC_USER_AGENT: "FiduciaryOS/1.0 dev"
-    volumes:
-      - trust-core-ledger:/data/ledger
-    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3002/api/v1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
 
+  # ── MASTERNEX.os FastAPI service (optional) ────────────────────────────────
   masternex:
     build:
       context: ../../masternex.os
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    env_file: .env
     environment:
-      DATABASE_URL: ${MASTERNEX_DATABASE_URL:-sqlite:///data/masternex.db}
-    volumes:
-      - masternex-data:/data
-    restart: unless-stopped
+      PORT: "8080"
+      ENVIRONMENT: development
+    profiles:
+      - masternex
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
-volumes:
-  backend-data:
-  trust-core-ledger:
-  masternex-data:
+  # ── React frontend dev server ──────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+      args:
+        VITE_API_BASE_URL: http://localhost:3001/api/v1
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+    environment:
+      VITE_API_BASE_URL: http://localhost:3001/api/v1
+    depends_on:
+      - backend
+    profiles:
+      - fullstack
