@@ -317,48 +317,113 @@ export default function ExpandedModules({
             </div>
 
             <div className="fo-draft-banner">
-              <strong>{workflowStep} · Your plan</strong>
+              <strong>{workflowStep} · {["Discovery Intake", "Side-by-Side Plan", "Your Plan (Client View)", "Client Acceptance Record", "Execution Tracker"][workflowStep - 1]}</strong>
               <p style={{ margin: "4px 0 0" }}>
                 {advisorSigned
-                  ? "Advisor signed off. You can review, respond, and record explicit authorization before any execution."
+                  ? "Advisor signed off. You can review, record explicit acceptance, and track each implementation step."
                   : "This is a draft. Your advisor has not signed off yet, so you can read it and edit your answers, but not execute."}
               </p>
-              <p style={{ margin: "4px 0 0", fontSize: 11.5, color: "var(--fo-muted)" }}>
-                Educational and illustrative, not individualized advice.
-              </p>
-              <button className="fo-btn" style={{ marginTop: 8 }} onClick={() => setAdvisorSigned((s) => !s)}>
-                {advisorSigned ? "Revert to Draft Mode" : "Simulate Advisor Sign-Off ✓"}
-              </button>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}>
+                <button className="fo-btn" onClick={() => setAdvisorSigned((s) => !s)}>
+                  {advisorSigned ? "Revert to Draft Mode" : "Simulate Advisor Sign-Off ✓"}
+                </button>
+                {workflowStep < 5 && (
+                  <button className="fo-btn fo-btn-primary" onClick={() => setWorkflowStep((s) => Math.min(5, s + 1) as 1 | 2 | 3 | 4 | 5)}>
+                    Advance to Stage {workflowStep + 1} →
+                  </button>
+                )}
+              </div>
             </div>
 
-            <div style={{ marginTop: 14 }}>
-              <span className="fo-ns-label">YOUR ANSWERS ({answers.length})</span>
-              <p style={{ fontSize: 12, color: "var(--fo-muted)", margin: "4px 0 10px" }}>
-                These are the words we used. Edit or add anything that is wrong; your advisor will see the change.
-              </p>
-              <div style={{ display: "grid", gap: 8 }}>
-                {answers.map((item, idx) => (
-                  <div key={idx} className="td-item">
-                    <strong>{item.q}</strong>
-                    <span style={{ fontSize: 12.5, color: "var(--fo-muted)" }}>{item.a}</span>
-                  </div>
-                ))}
+            {workflowStep === 1 && (
+              <div className="td-item" style={{ marginTop: 14 }}>
+                <span className="fo-ns-label">STAGE 1 · DISCOVERY SUMMARY</span>
+                <p style={{ margin: "4px 0", fontSize: 13 }}>
+                  Household: <strong>{intake.name}</strong> ({intake.state}) · Net Worth: <strong>{usd(intake.netWorth)}</strong> · Retirement Accounts: <strong>{usd(intake.retirement)}</strong> · Life Face: <strong>{usd(intake.lifeFace)}</strong>
+                </p>
+                <p style={{ margin: 0, fontSize: 12, color: "var(--fo-muted)" }}>
+                  All discovery inputs flow directly into Symphony Composer, Will &amp; Trust Atelier, and your Client Answers ledger with zero re-entry.
+                </p>
               </div>
-              <form
-                style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 10 }}
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (!newAnsQ.trim() || !newAnsA.trim()) return;
-                  setAnswers((list) => [...list, { q: newAnsQ.trim(), a: newAnsA.trim() }]);
-                  setNewAnsQ("");
-                  setNewAnsA("");
-                }}
-              >
-                <input className="fo-field" style={{ flex: "1 1 160px", marginTop: 0 }} placeholder="Topic (e.g. Homestead goal)" value={newAnsQ} onChange={(e) => setNewAnsQ(e.target.value)} />
-                <input className="fo-field" style={{ flex: "2 1 220px", marginTop: 0 }} placeholder="Your answer in your own words…" value={newAnsA} onChange={(e) => setNewAnsA(e.target.value)} />
-                <button className="fo-btn fo-btn-primary" type="submit">Save Answer</button>
-              </form>
-            </div>
+            )}
+
+            {workflowStep === 2 && (
+              <div className="table-wrap" style={{ marginTop: 14 }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12.5 }}>
+                  <thead>
+                    <tr>
+                      <th style={{ textAlign: "left", padding: "8px" }}>Planning Pillar</th>
+                      <th style={{ textAlign: "left", padding: "8px" }}>Current Baseline</th>
+                      <th style={{ textAlign: "left", padding: "8px" }}>Proposed Symphony</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style={{ borderTop: "1px solid var(--fo-line)" }}><td style={{ padding: "8px" }}><strong>Savings Rate</strong></td><td style={{ padding: "8px", color: "var(--fo-muted)" }}>6% 401(k)</td><td style={{ padding: "8px", color: "var(--fo-proof)" }}>9% + Max HSA (+6 DNA pts)</td></tr>
+                    <tr style={{ borderTop: "1px solid var(--fo-line)" }}><td style={{ padding: "8px" }}><strong>Asset Location</strong></td><td style={{ padding: "8px", color: "var(--fo-muted)" }}>Mixed taxable / IRA</td><td style={{ padding: "8px", color: "var(--fo-proof)" }}>Bonds in IRA, VTI/VXUS Taxable, VNQ Roth</td></tr>
+                    <tr style={{ borderTop: "1px solid var(--fo-line)" }}><td style={{ padding: "8px" }}><strong>Tax Corridor</strong></td><td style={{ padding: "8px", color: "var(--fo-muted)" }}>Unconverted IRA → age-73 RMD spike</td><td style={{ padding: "8px", color: "var(--fo-proof)" }}>5-Yr Roth Conversion Ladder</td></tr>
+                    <tr style={{ borderTop: "1px solid var(--fo-line)" }}><td style={{ padding: "8px" }}><strong>Estate &amp; Protection</strong></td><td style={{ padding: "8px", color: "var(--fo-muted)" }}>Probate exposure + unreviewed forms</td><td style={{ padding: "8px", color: "var(--fo-proof)" }}>Joint Revocable Trust + Pour-Over Will + Beneficiary Audit</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {workflowStep === 3 && (
+              <div style={{ marginTop: 14 }}>
+                <span className="fo-ns-label">YOUR ANSWERS ({answers.length})</span>
+                <p style={{ fontSize: 12, color: "var(--fo-muted)", margin: "4px 0 10px" }}>
+                  These are the words we used. Edit or add anything that is wrong; your advisor will see the change.
+                </p>
+                <div style={{ display: "grid", gap: 8 }}>
+                  {answers.map((item, idx) => (
+                    <div key={idx} className="td-item">
+                      <strong>{item.q}</strong>
+                      <span style={{ fontSize: 12.5, color: "var(--fo-muted)" }}>{item.a}</span>
+                    </div>
+                  ))}
+                </div>
+                <form
+                  style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 10 }}
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (!newAnsQ.trim() || !newAnsA.trim()) return;
+                    setAnswers((list) => [...list, { q: newAnsQ.trim(), a: newAnsA.trim() }]);
+                    setNewAnsQ("");
+                    setNewAnsA("");
+                  }}
+                >
+                  <input className="fo-field" style={{ flex: "1 1 160px", marginTop: 0 }} placeholder="Topic (e.g. Homestead goal)" value={newAnsQ} onChange={(e) => setNewAnsQ(e.target.value)} />
+                  <input className="fo-field" style={{ flex: "2 1 220px", marginTop: 0 }} placeholder="Your answer in your own words…" value={newAnsA} onChange={(e) => setNewAnsA(e.target.value)} />
+                  <button className="fo-btn fo-btn-primary" type="submit">Save Answer</button>
+                </form>
+              </div>
+            )}
+
+            {workflowStep === 4 && (
+              <div className="td-item" style={{ marginTop: 14, borderColor: "var(--fo-brass)" }}>
+                <span className="fo-ns-label">STAGE 4 · CLIENT ACCEPTANCE RECORD (AUCTUM EVIDENCE STANDARD)</span>
+                <p style={{ margin: "4px 0 8px", fontSize: 12.5, color: "var(--fo-muted)" }}>
+                  Confirming this record logs an explicit, timestamped acceptance of the planning scope and assumptions. This is an educational acceptance record, not a brokerage order or legal e-signature.
+                </p>
+                <label className="fo-check-inline">
+                  <input type="checkbox" checked={advisorSigned} onChange={(e) => setAdvisorSigned(e.target.checked)} />
+                  <span>I have reviewed the assumptions, alternatives, costs, and illustrative disclosures for all {answers.length} recorded items.</span>
+                </label>
+                {advisorSigned && (
+                  <div style={{ marginTop: 8, fontFamily: "ui-monospace, monospace", fontSize: 11.5, color: "var(--fo-proof)" }}>
+                    ✓ ACCEPTANCE RECORD LOGGED · {new Date().toISOString()} · RECEIPT: ACC-{intake.name.slice(0, 3).toUpperCase()}-2026
+                  </div>
+                )}
+              </div>
+            )}
+
+            {workflowStep === 5 && (
+              <div className="td-item" style={{ marginTop: 14 }}>
+                <span className="fo-ns-label">STAGE 5 · IMPLEMENTATION &amp; EXECUTION TRACKER</span>
+                <label className="fo-check-row"><input type="checkbox" defaultChecked /><span><strong>1. Escalate 401(k) deferral to 9% &amp; max HSA</strong><div style={{ color: "var(--fo-muted)", fontSize: 11.5 }}>Owner: Household payroll portal</div></span></label>
+                <label className="fo-check-row"><input type="checkbox" /><span><strong>2. Execute Q4 Roth Conversion inside 22%/24% bracket</strong><div style={{ color: "var(--fo-muted)", fontSize: 11.5 }}>Owner: Advisor + CPA review</div></span></label>
+                <label className="fo-check-row"><input type="checkbox" /><span><strong>3. Complete Will &amp; Trust Atelier counsel review &amp; funding</strong><div style={{ color: "var(--fo-muted)", fontSize: 11.5 }}>Owner: Licensed state estate counsel</div></span></label>
+              </div>
+            )}
           </div>
         </div>
       )}

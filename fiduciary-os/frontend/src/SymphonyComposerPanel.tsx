@@ -1,8 +1,15 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 interface SymphonyProps {
   onSendToProposed: (topic: string, answer: string) => void;
   onOpenProposed: () => void;
+}
+
+interface LiveSimResponse {
+  engineVersion: string;
+  pathsSimulated: number;
+  successRate: number;
+  rows: { age: number; yearOffset: number; p10: number; median: number; p90: number }[];
 }
 
 const usd = (n: number) =>
@@ -27,6 +34,7 @@ export default function SymphonyComposerPanel({ onSendToProposed, onOpenProposed
   const [showAssumptions, setShowAssumptions] = useState(true);
   const [generatedAt, setGeneratedAt] = useState<string>(() => new Date().toLocaleTimeString());
   const [toast, setToast] = useState("");
+  const [liveSim, setLiveSim] = useState<LiveSimResponse | null>(null);
 
   const retireAge = age + horizon;
 
@@ -35,6 +43,41 @@ export default function SymphonyComposerPanel({ onSendToProposed, onOpenProposed
   const glideBase = horizon >= 10 ? 70 : Math.max(30, 70 - (10 - horizon) * 5);
   const equityPct = Math.min(90, Math.max(25, glideBase + riskOffset));
   const bondPct = 100 - equityPct;
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
+      try {
+        const base = import.meta.env.VITE_API_BASE_URL || "/api/v1";
+        const res = await fetch(`${base}/calculations/retirement-simulation`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          signal: controller.signal,
+          body: JSON.stringify({
+            currentAge: age,
+            retirementAge: Math.min(85, age + horizon),
+            endAge: Math.max(92, age + horizon + 5),
+            currentPortfolio: portfolio,
+            annualContribution: Math.round(income * 0.16),
+            monthlyRetirementSpend: monthlySpend,
+            equityWeight: equityPct,
+            yearOneShockPct: stressShock,
+            paths: 500,
+          }),
+        });
+        if (res.ok) {
+          const data = (await res.json()) as LiveSimResponse;
+          setLiveSim(data);
+        }
+      } catch {
+        // Offline / aborted — keep client-side fallback
+      }
+    }, 200);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [age, horizon, income, portfolio, monthlySpend, equityPct, stressShock]);
 
   const sleeves = useMemo(() => {
     const usEq = Math.round(equityPct * 0.68);
@@ -51,8 +94,17 @@ export default function SymphonyComposerPanel({ onSendToProposed, onOpenProposed
     ];
   }, [equityPct, bondPct]);
 
-  // Fan Chart Projection (Illustrative)
+  // Fan Chart Projection (Live Backend 500-Path Engine with Offline Fallback)
   const fanRows = useMemo(() => {
+    if (liveSim?.rows?.length) {
+      return liveSim.rows.map((r) => ({
+        yearOffset: r.yearOffset,
+        ageAt: r.age,
+        p10: Math.round(r.p10 / 1000),
+        med: Math.round(r.median / 1000),
+        p90: Math.round(r.p90 / 1000),
+      }));
+    }
     const annualSpend = monthlySpend * 12;
     const baseReturn = 0.045 + (equityPct / 100) * 0.032;
     const points = [0, 5, 10, 15, 20, 25, 30];
@@ -67,13 +119,14 @@ export default function SymphonyComposerPanel({ onSendToProposed, onOpenProposed
       const p10 = Math.max(0, Math.round(med * (0.82 - yr * 0.012) - stressShock * yr * 1.4));
       return { yearOffset: yr, ageAt: age + yr, p10, med, p90 };
     });
-  }, [age, horizon, income, portfolio, monthlySpend, equityPct, stressShock]);
+  }, [liveSim, age, horizon, income, portfolio, monthlySpend, equityPct, stressShock]);
 
   const successRate = useMemo(() => {
+    if (liveSim) return liveSim.successRate;
     const endP10 = fanRows[fanRows.length - 1]?.p10 ?? 0;
     const ratio = endP10 / Math.max(1, (monthlySpend * 12) / 1000);
     return Math.max(38, Math.min(97, Math.round(62 + ratio * 2.1 - stressShock * 0.5)));
-  }, [fanRows, monthlySpend, stressShock]);
+  }, [liveSim, fanRows, monthlySpend, stressShock]);
 
   // Tax & Roth Headroom (2026 illustrative)
   const stdDeduction = filing === "Married" ? 30000 : 15000;

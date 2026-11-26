@@ -3,6 +3,7 @@ import type { Request, Response, NextFunction } from 'express';
 import { body } from 'express-validator';
 import { authenticateToken } from '../middleware/auth';
 import { validateRequest } from '../middleware/validateRequest';
+import { runRetirementSimulation } from '../services/retirementSimulation';
 
 const router = Router();
 
@@ -250,6 +251,39 @@ router.post(
       taxYearAssumed: 2024,
       ...illustrative,
     });
+  }
+);
+
+// Sprint 2: Real 500-path Monte Carlo + Guyton-Klinger Guardrail Retirement Simulation
+router.post(
+  '/retirement-simulation',
+  [
+    body('currentAge').isFloat({ min: 20, max: 85 }),
+    body('retirementAge').isFloat({ min: 25, max: 85 }),
+    body('currentPortfolio').isFloat({ min: 0 }),
+    body('annualContribution').optional().isFloat({ min: 0 }),
+    body('monthlyRetirementSpend').isFloat({ min: 500 }),
+    body('equityWeight').isFloat({ min: 0, max: 100 }),
+    body('yearOneShockPct').optional().isFloat({ min: 0, max: 50 }),
+    validateRequest,
+  ],
+  (req: Request, res: Response) => {
+    const result = runRetirementSimulation({
+      currentAge: Number(req.body.currentAge),
+      retirementAge: Number(req.body.retirementAge),
+      endAge: req.body.endAge ? Number(req.body.endAge) : 92,
+      currentPortfolio: Number(req.body.currentPortfolio),
+      annualContribution: Number(req.body.annualContribution ?? 25000),
+      monthlyRetirementSpend: Number(req.body.monthlyRetirementSpend),
+      guaranteedMonthlyIncome: req.body.guaranteedMonthlyIncome
+        ? Number(req.body.guaranteedMonthlyIncome)
+        : undefined,
+      equityWeight: Number(req.body.equityWeight),
+      yearOneShockPct: Number(req.body.yearOneShockPct ?? 0),
+      guardrailsEnabled: req.body.guardrailsEnabled !== false,
+      paths: req.body.paths ? Number(req.body.paths) : 500,
+    });
+    res.json(result);
   }
 );
 
