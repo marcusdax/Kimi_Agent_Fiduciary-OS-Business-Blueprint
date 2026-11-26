@@ -10,6 +10,7 @@
  */
 
 import { createHash } from 'crypto';
+import { classifyDocumentHf, bartLabelToCategory, scoreFinancialSentiment } from './huggingfaceService';
 
 export type DocumentCategory =
   | 'insurance_policy'
@@ -135,49 +136,22 @@ function extractKeyTerms(content: string): DocumentAnalysisResult['extractedTerm
   return { dollarAmounts, percentages, dates, identifiers };
 }
 
-async function runFinBertSentiment(content: string): Promise<{
-  label: 'positive' | 'neutral' | 'negative';
-  score: number;
-  live: boolean;
-}> {
-  const hfToken = process.env.HF_TOKEN;
-  if (hfToken) {
-    try {
-      const res = await fetch('https://api-inference.huggingface.co/models/ProsusAI/finbert', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${hfToken}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ inputs: content.slice(0, 1500), options: { wait_for_model: true } }),
-        signal: AbortSignal.timeout(8000),
-      });
-      if (res.ok) {
-        const json = (await res.json()) as Array<Array<{ label: string; score: number }>>;
-        const top = json?.[0]?.[0];
-        if (top) {
-          const normalized = top.label.toLowerCase();
-          const label =
-            normalized === 'positive' || normalized === 'negative' ? normalized : 'neutral';
-          return { label, score: Number(top.score.toFixed(3)), live: true };
-        }
-      }
-    } catch {
-      // Fall back to deterministic sentiment
-    }
-  }
-
-  const negHits = (content.match(/\b(risk|penalty|surrender|loss|decline|conflict|lawsuit|default|weakness)\b/gi) ?? []).length;
-  const posHits = (content.match(/\b(growth|dividend|surplus|compliant|diversified|low-cost|tax-efficient|fiduciary)\b/gi) ?? []).length;
-  if (negHits > posHits + 1) return { label: 'negative', score: 0.78, live: false };
-  if (posHits > negHits + 1) return { label: 'positive', score: 0.81, live: false };
-  return { label: 'neutral', score: 0.66, live: false };
-}
 
 export async function analyzeDocument(params: {
   filename: string;
   content: string;
 }): Promise<DocumentAnalysisResult> {
-  const { category, confidence } = classifyDeterministic(params.filename, params.content);
   const extractedTerms = extractKeyTerms(params.content);
-  const sentiment = await runFinBertSentiment(params.content);
+
+  // Phase 4: attempt HuggingFace BART-MNLI zero-shot classification first
+  const hfClass = await classifyDocumentHf(`${params.filename}\n${params.content}`);
+  const { category, confidence } = hfClass
+    ? { category: bartLabelToCategory(hfClass.label), confidence: hfClass.score }
+    : classifyDeterministic(params.filename, params.content);
+
+  const sentimentResult = await scoreFinancialSentiment(params.content);
+  const sentiment = { label: sentimentResult.label, score: sentimentResult.score };
+  const isHfLive = !!hfClass || sentimentResult.source === 'huggingface-finbert';
 
   const riskFlags: DocumentRiskFlag[] = [];
   for (const rule of RISK_RULES) {
@@ -201,9 +175,9 @@ export async function analyzeDocument(params: {
     filename: params.filename,
     category,
     confidence,
-    classificationSource: sentiment.live ? 'huggingface-finbert' : 'deterministic-layout-rules',
+    classificationSource: isHfLive ? 'huggingface-finbert' : 'deterministic-layout-rules',
     extractedTerms,
-    sentiment: { label: sentiment.label, score: sentiment.score },
+    sentiment,
     riskFlags,
     vaultAnchor: {
       sha256,

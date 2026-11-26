@@ -6,6 +6,7 @@
   "type": "commonjs",
   "scripts": {
     "dev": "tsx watch src/index.ts",
+    "generate-service-token": "tsx scripts/generate-service-token.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "test": "jest",
