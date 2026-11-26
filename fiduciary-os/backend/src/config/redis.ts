@@ -7,9 +7,9 @@ export async function connectRedis(): Promise<Redis> {
   if (process.env.REDIS_ENABLED === 'false') throw new Error('Redis explicitly disabled');
   const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
   
-  // Skip Redis if URL is explicitly empty
-  if (!redisUrl || redisUrl === 'redis://localhost:6379' && process.env.NODE_ENV === 'development') {
-    throw new Error('Redis disabled in development');
+  // Skip Redis when using the default localhost URL outside production (dev, unset NODE_ENV)
+  if (!redisUrl || (redisUrl === 'redis://localhost:6379' && process.env.NODE_ENV !== 'production')) {
+    throw new Error('Redis disabled outside production');
   }
 
   redis = new Redis(redisUrl, {
