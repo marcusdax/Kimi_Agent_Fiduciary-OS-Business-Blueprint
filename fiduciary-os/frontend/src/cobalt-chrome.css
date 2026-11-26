@@ -1,0 +1,245 @@
+/* Polished 3D Metallic Cobalt BGA Chrome Shell — AUCTUM Foundational Aesthetic */
+:root {
+  --fo-bg: #050C1D;
+  --fo-chrome-top: rgba(34, 56, 98, 0.86);
+  --fo-chrome-bot: rgba(8, 16, 35, 0.97);
+  --fo-surface-solid: #0C1833;
+  --fo-well: rgba(5, 11, 25, 0.84);
+  --fo-ink: #F1F6FF;
+  --fo-muted: #9AB0D4;
+  --fo-line: rgba(148, 188, 255, 0.24);
+  --fo-line-hi: rgba(196, 224, 255, 0.48);
+  --fo-accent: #38BDF8;
+  --fo-accent-hi: #7DD3FC;
+  --fo-accent-ink: #031322;
+  --fo-brass: #E0B86B;
+  --fo-brass-soft: rgba(224, 184, 107, 0.16);
+  --fo-proof: #34D399;
+  --fo-proof-soft: rgba(52, 211, 153, 0.16);
+  --fo-btn: linear-gradient(180deg, rgba(44, 68, 114, 0.9) 0%, rgba(18, 32, 62, 0.96) 100%);
+}
+
+html[data-fo-board="cobalt"] body {
+  background-color: #050C1D !important;
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(56, 189, 248, 0.14), transparent 55%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='340' height='340' viewBox='0 0 340 340'%3E%3Cg fill='none' stroke='%235CC8FF' stroke-opacity='0.17' stroke-width='1.2'%3E%3Cpath d='M0 32 H98 L122 56 H226 L250 32 H340'/%3E%3Cpath d='M48 0 V98 L72 122 V236 L48 260 V340'/%3E%3Cpath d='M0 242 H88 L112 218 H228 L252 242 H340'/%3E%3C/g%3E%3Crect x='134' y='124' width='72' height='72' rx='6' fill='%230B1A3B' fill-opacity='0.52' stroke='%238BD3FF' stroke-opacity='0.26'/%3E%3Crect x='236' y='140' width='22' height='9' rx='1.5' fill='%23C58E52' fill-opacity='0.34' stroke='%23DCE8FA' stroke-opacity='0.34'/%3E%3Ccircle cx='98' cy='32' r='3.5' fill='%23050C1D' stroke='%23E0B86B' stroke-opacity='0.5' stroke-width='1.5'/%3E%3C/svg%3E") !important;
+  background-size: auto, 340px 340px !important;
+}
+
+html[data-fo-board="emerald"] {
+  --fo-accent: #34D399;
+  --fo-accent-hi: #6EE7B7;
+  --fo-chrome-top: rgba(20, 66, 46, 0.86);
+  --fo-chrome-bot: rgba(6, 22, 15, 0.97);
+  --fo-surface-solid: #0A2419;
+  --fo-line: rgba(94, 214, 162, 0.26);
+  --fo-btn: linear-gradient(180deg, rgba(24, 78, 54, 0.9) 0%, rgba(10, 38, 26, 0.96) 100%);
+}
+html[data-fo-board="emerald"] body {
+  background-color: #051D13 !important;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320' viewBox='0 0 320 320'%3E%3Cg fill='none' stroke='%2334D399' stroke-opacity='0.18' stroke-width='1.2'%3E%3Cpath d='M0 36 H76 L96 56 H204 L224 36 H320'/%3E%3Cpath d='M44 0 V94 L68 118 V228 L44 252 V320'/%3E%3C/g%3E%3Crect x='250' y='74' width='22' height='10' rx='1.5' fill='%23C58E52' fill-opacity='0.36' stroke='%23DCE8FA' stroke-opacity='0.34'/%3E%3Ccircle cx='76' cy='36' r='3.5' fill='%23051D13' stroke='%23E0B86B' stroke-opacity='0.5' stroke-width='1.5'/%3E%3C/svg%3E") !important;
+  background-size: 320px 320px !important;
+}
+
+.fo-chrome-bar {
+  position: sticky;
+  top: 0;
+  z-index: 900;
+  background: linear-gradient(180deg, var(--fo-chrome-top) 0%, var(--fo-chrome-bot) 100%);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--fo-line);
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.06), 0 8px 24px -14px rgba(0, 0, 0, 0.72);
+  color: var(--fo-ink);
+  font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  padding: 8px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.fo-funnel-strip {
+  position: relative;
+  z-index: 890;
+  background: rgba(6, 13, 28, 0.94);
+  border-bottom: 1px solid var(--fo-line);
+  color: var(--fo-ink);
+  padding: 7px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.fo-btn {
+  appearance: none;
+  border: 1px solid var(--fo-line);
+  background: var(--fo-btn);
+  color: var(--fo-ink);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 11px;
+  border-radius: 7px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 2px 6px rgba(0, 0, 0, 0.32);
+}
+.fo-btn:hover { border-color: var(--fo-line-hi); filter: brightness(1.08); }
+.fo-btn-primary {
+  background: linear-gradient(180deg, var(--fo-accent-hi) 0%, var(--fo-accent) 100%);
+  color: var(--fo-accent-ink);
+  border-color: var(--fo-accent-hi);
+  font-weight: 600;
+}
+.fo-btn-brass {
+  background: linear-gradient(180deg, #F0CE86 0%, #CFA24E 100%);
+  color: #1A1103;
+  border-color: #F6DDA2;
+  font-weight: 600;
+}
+
+.fo-seg {
+  display: inline-flex;
+  padding: 2px;
+  border-radius: 8px;
+  background: var(--fo-well);
+  border: 1px solid var(--fo-line);
+  gap: 2px;
+}
+.fo-seg button {
+  appearance: none;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--fo-muted);
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
+  padding: 4px 9px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.fo-seg button[aria-pressed="true"] {
+  background: var(--fo-btn);
+  border-color: var(--fo-line-hi);
+  color: var(--fo-ink);
+}
+
+.fo-funnel-pill {
+  appearance: none;
+  border: 1px solid var(--fo-line);
+  background: transparent;
+  color: var(--fo-muted);
+  font-size: 12px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.fo-funnel-pill[aria-current="true"] {
+  background: linear-gradient(180deg, var(--fo-accent-hi) 0%, var(--fo-accent) 100%);
+  color: var(--fo-accent-ink);
+  border-color: rgba(255, 255, 255, 0.45);
+  font-weight: 600;
+}
+
+.fo-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 7, 18, 0.72);
+  backdrop-filter: blur(5px);
+  z-index: 950;
+}
+
+.fo-drawer-left {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: min(315px, 88vw);
+  background: linear-gradient(180deg, #0D1B38 0%, #060E21 100%);
+  border-right: 1px solid var(--fo-line-hi);
+  color: var(--fo-ink);
+  z-index: 960;
+  padding: 16px;
+  overflow-y: auto;
+  box-shadow: 18px 0 48px rgba(0, 0, 0, 0.75);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fo-drawer-right {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(440px, 92vw);
+  background: var(--fo-surface-solid);
+  border-left: 1px solid var(--fo-line-hi);
+  color: var(--fo-ink);
+  z-index: 960;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fo-modal {
+  position: fixed;
+  top: 9vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(460px, 92vw);
+  background: linear-gradient(165deg, var(--fo-chrome-top) 0%, var(--fo-chrome-bot) 100%);
+  border: 1px solid var(--fo-line-hi);
+  border-radius: 12px;
+  color: var(--fo-ink);
+  z-index: 970;
+  box-shadow: 0 28px 68px rgba(0, 0, 0, 0.78);
+  overflow: hidden;
+}
+
+.fo-field {
+  width: 100%;
+  padding: 9px 11px;
+  border-radius: 7px;
+  border: 1px solid var(--fo-line);
+  background: var(--fo-well);
+  color: var(--fo-ink);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.fo-tool-item {
+  appearance: none;
+  width: 100%;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--fo-ink);
+  text-align: left;
+  padding: 7px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12.5px;
+}
+.fo-tool-item:hover { background: rgba(56, 189, 248, 0.14); border-color: var(--fo-line); }
+.fo-tool-group {
+  font-family: ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fo-brass);
+  padding: 7px 8px 3px;
+  border-top: 1px solid var(--fo-line);
+  margin-top: 2px;
+}
