@@ -36,7 +36,7 @@ services:
       trust-core:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:3001/api/v1/health"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:3001/health"]
       interval: 15s
       timeout: 5s
       retries: 5
@@ -67,7 +67,7 @@ services:
   # ── MASTERNEX.os FastAPI service (optional — requires sibling repo) ────────
   masternex:
     build:
-      context: ../../masternex.os
+      context: ../../MASTERNEX.os
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
@@ -76,11 +76,12 @@ services:
         required: false
     environment:
       PORT: "8080"
-      ENVIRONMENT: development
+      MASTERNEX_ENV: development
+      MASTERNEX_JWT_SECRET: ${MASTERNEX_JWT_SECRET:-fiduciary-ecosystem-local-jwt-secret-32chars}
     profiles:
       - masternex
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8080/health')"]
       interval: 15s
       timeout: 5s
       retries: 5
