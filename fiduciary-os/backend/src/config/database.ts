@@ -26,8 +26,7 @@ export async function connectDatabase(): Promise<void> {
     await prisma.$connect();
     logger.info('Connected to application database');
   } catch (error) {
-    logger.error('Failed to connect to database:', error);
-    throw error;
+    logger.warn('Database unavailable — running in degraded mode (DB endpoints will fail):', (error as Error).message);
   }
 }
 
