@@ -565,3 +565,56 @@ dialog.tools-dialog::backdrop {
   cursor: pointer;
 }
 .fo-check-inline:hover { border-color: var(--fo-accent); }
+
+/* Sprint 5: 3D Machined Chrome Rocker Toggle Switches */
+.fo-rocker-card {
+  appearance: none;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--fo-line);
+  background: linear-gradient(165deg, rgba(24, 42, 78, 0.85) 0%, rgba(8, 16, 35, 0.96) 100%);
+  color: var(--fo-ink);
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 6px 16px -10px rgba(0, 0, 0, 0.7);
+  transition: border-color 0.16s ease, transform 0.12s ease;
+}
+.fo-rocker-card:hover { border-color: var(--fo-line-hi); }
+.fo-rocker-card.on { border-color: var(--fo-accent); }
+.fo-rocker-switch {
+  flex: 0 0 62px;
+  height: 28px;
+  border-radius: 7px;
+  padding: 3px;
+  background: #040915;
+  border: 1px solid var(--fo-line-hi);
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  perspective: 300px;
+}
+.fo-rocker-cap {
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  display: grid;
+  place-items: center;
+  font-family: ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  background: linear-gradient(180deg, #334C7A 0%, #162544 100%);
+  color: var(--fo-muted);
+  transform: rotateY(-16deg);
+  transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+.fo-rocker-card.on .fo-rocker-cap {
+  background: linear-gradient(180deg, var(--fo-accent-hi) 0%, var(--fo-accent) 100%);
+  color: var(--fo-accent-ink);
+  transform: rotateY(16deg);
+}

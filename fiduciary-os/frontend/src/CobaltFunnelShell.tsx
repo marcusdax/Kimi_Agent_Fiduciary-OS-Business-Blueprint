@@ -267,6 +267,9 @@ export default function CobaltFunnelShell({ children }: { children: ReactNode })
           <button className="fo-btn" onClick={() => setStudioView(studioView === "symphony" ? null : "symphony")}>
             ♦ Symphony
           </button>
+          <button className="fo-btn" onClick={() => setStudioView(studioView === "growth3d" ? null : "growth3d")}>
+            ↗ 3D Studio
+          </button>
           <button className="fo-btn" onClick={() => setBrandOpen(true)}>
             ⚙ Brand
           </button>
@@ -344,8 +347,8 @@ export default function CobaltFunnelShell({ children }: { children: ReactNode })
                       setProofOpen(true);
                       return;
                     }
-                    if (it.id === "symphony" || it.id === "proposed" || it.id === "will") {
-                      setStudioView(it.id === "will" ? "willtrust" : it.id);
+                    if (it.id === "symphony" || it.id === "proposed" || it.id === "will" || it.id === "growth") {
+                      setStudioView(it.id === "will" ? "willtrust" : it.id === "growth" ? "growth3d" : it.id);
                       return;
                     }
                     setStudioView(null);

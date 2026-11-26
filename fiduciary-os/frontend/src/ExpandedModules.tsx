@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import SymphonyComposerPanel from "./SymphonyComposerPanel";
+import GrowthStudio3D from "./GrowthStudio3D";
 
-export type ExpandedView = "symphony" | "proposed" | "willtrust" | null;
+export type ExpandedView = "symphony" | "proposed" | "willtrust" | "growth3d" | null;
 
 interface HouseholdIntake {
   name: string;
@@ -339,9 +340,15 @@ export default function ExpandedModules({
           <button aria-pressed={view === "willtrust"} onClick={() => window.dispatchEvent(new CustomEvent("fiduciary:open-studio", { detail: { view: "willtrust" } }))}>
             ⚖ Will &amp; Trust Atelier
           </button>
+          <button aria-pressed={view === "growth3d"} onClick={() => window.dispatchEvent(new CustomEvent("fiduciary:open-studio", { detail: { view: "growth3d" } }))}>
+            ↗ 3D Growth Studio
+          </button>
         </div>
         <button className="fo-btn" onClick={onClose}>✕ Back to Workspace</button>
       </div>
+
+      {/* 4. 3D GROWTH & MARKETING STUDIO */}
+      {view === "growth3d" && <GrowthStudio3D />}
 
       {/* 1. SYMPHONY COMPOSER */}
       {view === "symphony" && (
