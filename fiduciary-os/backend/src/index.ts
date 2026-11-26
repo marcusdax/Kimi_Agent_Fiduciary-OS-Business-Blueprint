@@ -25,6 +25,7 @@ import { cryptoRouter } from './routes/crypto';
 import { trustRouter } from './routes/trust';
 import { intelligenceRouter } from './routes/intelligence';
 import { advisorRouter } from './routes/advisor';
+import { workspaceStateRouter } from './routes/workspace-state';
 import { registerMcpServers } from './services/kdenseService';
 import { logger } from './utils/logger';
 import { connectDatabase } from './config/database';
@@ -106,6 +107,7 @@ app.use(`${API_PREFIX}/crypto`, cryptoRouter);   // Cryptocurrency prices
 app.use(`${API_PREFIX}/trust`, trustRouter);     // Phase 1: MASTERNEX Trust, SHAP & Compliance
 app.use(`${API_PREFIX}/intelligence`, intelligenceRouter); // Phase 2/4/5: pgvector, Doc Intel, Nature, PRINCE, ZK
 app.use(`${API_PREFIX}/advisor`, advisorRouter); // Phase 3: Advisor Command Center productivity
+app.use(`${API_PREFIX}/workspace-state`, workspaceStateRouter); // Sprint 3: Durable Will & Trust, Proposed Symphony, and Tenant Brand persistence
 
 // Error handling
 app.use(errorHandler);

@@ -205,8 +205,38 @@ export default function ExpandedModules({
       const exists = prev.some((c) => c.name === intake.name);
       return exists ? prev.map((c) => (c.name === intake.name ? intake : c)) : [intake, ...prev];
     });
-    setCopyToast(`Saved "${intake.name}" to client roster.`);
-    setTimeout(() => setCopyToast(""), 2500);
+    const slug = intake.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "client";
+    const base = import.meta.env.VITE_API_BASE_URL || "/api/v1";
+    fetch(`${base}/workspace-state/willtrust:${slug}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        category: "willtrust",
+        label: intake.name,
+        payload: { intake, priorities, successorTrustee, guardianName, beneficiaries, assets, companions, fundedIds, checkedIds },
+      }),
+    })
+      .then((r) => {
+        setCopyToast(r.ok ? `✓ Saved "${intake.name}" to PostgreSQL.` : `Saved "${intake.name}" locally (DB offline).`);
+        setTimeout(() => setCopyToast(""), 2800);
+      })
+      .catch(() => {
+        setCopyToast(`Saved "${intake.name}" locally (offline mode).`);
+        setTimeout(() => setCopyToast(""), 2800);
+      });
+  }
+
+  function persistProposedSymphony(nextAnswers = answers, nextSigned = advisorSigned, nextStep = workflowStep) {
+    const base = import.meta.env.VITE_API_BASE_URL || "/api/v1";
+    fetch(`${base}/workspace-state/symphony:proposed`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        category: "symphony",
+        label: "Proposed Symphony",
+        payload: { answers: nextAnswers, advisorSigned: nextSigned, workflowStep: nextStep, clientName: intake.name },
+      }),
+    }).catch(() => {});
   }
 
   const taxableEstate = Math.max(0, intake.netWorth - intake.lifeFace);
@@ -386,14 +416,16 @@ export default function ExpandedModules({
                   onSubmit={(e) => {
                     e.preventDefault();
                     if (!newAnsQ.trim() || !newAnsA.trim()) return;
-                    setAnswers((list) => [...list, { q: newAnsQ.trim(), a: newAnsA.trim() }]);
+                    const next = [...answers, { q: newAnsQ.trim(), a: newAnsA.trim() }];
+                    setAnswers(next);
+                    persistProposedSymphony(next, advisorSigned, workflowStep);
                     setNewAnsQ("");
                     setNewAnsA("");
                   }}
                 >
                   <input className="fo-field" style={{ flex: "1 1 160px", marginTop: 0 }} placeholder="Topic (e.g. Homestead goal)" value={newAnsQ} onChange={(e) => setNewAnsQ(e.target.value)} />
                   <input className="fo-field" style={{ flex: "2 1 220px", marginTop: 0 }} placeholder="Your answer in your own words…" value={newAnsA} onChange={(e) => setNewAnsA(e.target.value)} />
-                  <button className="fo-btn fo-btn-primary" type="submit">Save Answer</button>
+                  <button className="fo-btn fo-btn-primary" type="submit">Save Answer (DB)</button>
                 </form>
               </div>
             )}
@@ -405,7 +437,14 @@ export default function ExpandedModules({
                   Confirming this record logs an explicit, timestamped acceptance of the planning scope and assumptions. This is an educational acceptance record, not a brokerage order or legal e-signature.
                 </p>
                 <label className="fo-check-inline">
-                  <input type="checkbox" checked={advisorSigned} onChange={(e) => setAdvisorSigned(e.target.checked)} />
+                  <input
+                    type="checkbox"
+                    checked={advisorSigned}
+                    onChange={(e) => {
+                      setAdvisorSigned(e.target.checked);
+                      persistProposedSymphony(answers, e.target.checked, workflowStep);
+                    }}
+                  />
                   <span>I have reviewed the assumptions, alternatives, costs, and illustrative disclosures for all {answers.length} recorded items.</span>
                 </label>
                 {advisorSigned && (

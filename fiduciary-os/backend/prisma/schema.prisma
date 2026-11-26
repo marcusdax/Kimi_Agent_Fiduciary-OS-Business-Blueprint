@@ -250,3 +250,16 @@ model LedgerEntry {
   @@index([subject, at])
   @@map("ledger_entries")
 }
+
+// Durable workspace records for Will & Trust Atelier, Proposed Symphony, and White-Label Tenant settings.
+model WorkspaceState {
+  scopeKey  String   @id
+  category  String
+  label     String
+  payload   Json     @default("{}")
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  @@index([category, updatedAt])
+  @@map("workspace_states")
+}

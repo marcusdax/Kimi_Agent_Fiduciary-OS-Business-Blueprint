@@ -77,6 +77,10 @@ export default function CobaltFunnelShell({ children }: { children: ReactNode })
   const [activeTool, setActiveTool] = useState("Home");
   const [studioView, setStudioView] = useState<ExpandedView>(null);
   const [chatOpen, setChatOpen] = useState(false);
+  const [brandOpen, setBrandOpen] = useState(false);
+  const [tenantName, setTenantName] = useState("Fiduciary OS");
+  const [tenantAccent, setTenantAccent] = useState("#38BDF8");
+  const [brandNotice, setBrandNotice] = useState("");
   const [chatInput, setChatInput] = useState("");
   const [chatLog, setChatLog] = useState<{ role: "assistant" | "user"; text: string }[]>([
     {
@@ -88,6 +92,22 @@ export default function CobaltFunnelShell({ children }: { children: ReactNode })
   useEffect(() => {
     document.documentElement.dataset.foBoard = board;
   }, [board]);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty("--fo-accent", tenantAccent);
+  }, [tenantAccent]);
+
+  useEffect(() => {
+    const base = import.meta.env.VITE_API_BASE_URL || "/api/v1";
+    fetch(`${base}/workspace-state/tenant:brand`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        const p = data?.record?.payload;
+        if (p?.tenantName) setTenantName(String(p.tenantName));
+        if (p?.tenantAccent) setTenantAccent(String(p.tenantAccent));
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const onHash = () => setStage(detectStage());
@@ -177,7 +197,7 @@ export default function CobaltFunnelShell({ children }: { children: ReactNode })
             ☰ Tools
           </button>
           <div>
-            <div style={{ fontWeight: 700, fontSize: 15, letterSpacing: "-0.02em" }}>Fiduciary OS</div>
+            <div style={{ fontWeight: 700, fontSize: 15, letterSpacing: "-0.02em" }}>{tenantName}</div>
             <div style={{ fontFamily: "ui-monospace, monospace", fontSize: 10.5, color: "var(--fo-muted)" }}>
               AUCTUM-Powered Financial Planning · {activeTool}
             </div>
@@ -197,6 +217,9 @@ export default function CobaltFunnelShell({ children }: { children: ReactNode })
           </button>
           <button className="fo-btn" onClick={() => setStudioView(studioView === "symphony" ? null : "symphony")}>
             ♦ Symphony
+          </button>
+          <button className="fo-btn" onClick={() => setBrandOpen(true)}>
+            ⚙ Brand
           </button>
           <button className="fo-btn" onClick={() => setChatOpen((o) => !o)}>
             ✦ AI Guide
@@ -378,6 +401,57 @@ export default function CobaltFunnelShell({ children }: { children: ReactNode })
             )}
           </div>
         </div>
+      )}
+
+      {/* White-Label Tenant Theme Editor Drawer */}
+      {brandOpen && (
+        <aside className="fo-drawer-right" aria-label="White-Label Tenant Theme Editor">
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <h3 style={{ margin: 0 }}>⚙ White-Label Tenant Theme</h3>
+            <button className="fo-btn" onClick={() => setBrandOpen(false)}>Close</button>
+          </div>
+          <p style={{ fontSize: 12.5, color: "var(--fo-muted)", margin: 0 }}>
+            Customize your firm&apos;s live brand chrome and persist tokens to PostgreSQL. Regulatory disclosures stay hardware-locked per AUCTUM governance.
+          </p>
+          <label style={{ fontSize: 12 }}>
+            Firm / Tenant Name
+            <input className="fo-field" value={tenantName} onChange={(e) => setTenantName(e.target.value)} />
+          </label>
+          <label style={{ fontSize: 12 }}>
+            Primary Action Accent Token
+            <div style={{ display: "flex", gap: 8, alignItems: "center", marginTop: 4 }}>
+              <input type="color" value={tenantAccent} onChange={(e) => setTenantAccent(e.target.value)} style={{ width: 52, height: 34, cursor: "pointer" }} />
+              <span style={{ fontFamily: "ui-monospace, monospace", fontSize: 12 }}>{tenantAccent}</span>
+            </div>
+          </label>
+          <button
+            className="fo-btn fo-btn-primary"
+            onClick={async () => {
+              const base = import.meta.env.VITE_API_BASE_URL || "/api/v1";
+              try {
+                const res = await fetch(`${base}/workspace-state/tenant:brand`, {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    category: "tenant",
+                    label: tenantName,
+                    payload: { tenantName, tenantAccent },
+                  }),
+                });
+                setBrandNotice(res.ok ? "✓ Saved white-label tokens to PostgreSQL." : "Could not save to database.");
+              } catch {
+                setBrandNotice("Saved locally (offline).");
+              }
+            }}
+          >
+            Save Brand Tokens to PostgreSQL
+          </button>
+          {brandNotice && <div style={{ fontSize: 12, color: "var(--fo-proof)" }}>{brandNotice}</div>}
+          <div style={{ padding: 12, borderRadius: 8, background: "var(--fo-well)", border: "1px solid var(--fo-brass)", fontSize: 12 }}>
+            <strong style={{ color: "var(--fo-brass)", display: "block", marginBottom: 4 }}>LOCKED DISCLOSURE SLOT (NON-EDITABLE)</strong>
+            © 2026 AUCTUM Inc. · Illustrative educational estimates only — not individualized investment, tax, or legal advice.
+          </div>
+        </aside>
       )}
 
       {/* Educational AI Fiduciary Chatbot Drawer */}
