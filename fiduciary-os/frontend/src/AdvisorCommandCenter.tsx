@@ -6,12 +6,20 @@ import {
   CheckCircle2,
   Cpu,
   FileSearch,
+  Globe,
   Lock,
   ShieldCheck,
   Sparkles,
+  Users,
 } from "lucide-react";
+import {
+  AdvisorCrmPanel,
+  EXAMPLE_HOUSEHOLDS,
+  ResearchDataHubPanel,
+  type CrmHousehold,
+} from "./AdvisorCrmAndResearch";
 
-type TabId = "trust" | "kdense" | "intelligence" | "research" | "productivity";
+type TabId = "trust" | "kdense" | "intelligence" | "research" | "productivity" | "crm" | "datahub";
 
 const API_BASE =
   (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, "") ||
@@ -128,6 +136,8 @@ const TABS: Array<{ id: TabId; label: string; icon: typeof ShieldCheck }> = [
   { id: "intelligence", label: "Intelligence & Vault", icon: FileSearch },
   { id: "research", label: "Nature & Regimes", icon: BookOpen },
   { id: "productivity", label: "Advisor Productivity", icon: Briefcase },
+  { id: "crm", label: "CRM & Outreach", icon: Users },
+  { id: "datahub", label: "Research & Data Hub", icon: Globe },
 ];
 
 const money = (n: number) =>
@@ -493,6 +503,27 @@ export default function AdvisorCommandCenter() {
               onClick={() => setTab(id)}
             >
               <Icon size={16} aria-hidden="true" /> {label}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 6, marginTop: 10 }}>
+          <span style={{ fontSize: 11, fontFamily: "ui-monospace, monospace", opacity: 0.75 }}>
+            LOAD EXAMPLE DATASET:
+          </span>
+          {EXAMPLE_HOUSEHOLDS.slice(0, 4).map((h) => (
+            <button
+              key={h.id}
+              type="button"
+              className="button"
+              onClick={() => {
+                setClientName(h.name);
+                setGuardInput(h.emailPreview);
+                setInquiryText(`Follow-up on ${h.trigger} for ${h.name} (${h.state}, net worth $${h.netWorth.toLocaleString()}).`);
+                setStatusMessage(`Loaded example dataset: ${h.name} (${h.trigger}).`);
+              }}
+            >
+              {h.name}
             </button>
           ))}
         </div>
@@ -905,6 +936,19 @@ export default function AdvisorCommandCenter() {
           </section>
         </div>
       )}
+
+      {tab === "crm" && (
+        <AdvisorCrmPanel
+          onSelectHousehold={(h: CrmHousehold) => {
+            setClientName(h.name);
+            setGuardInput(h.emailPreview);
+            setInquiryText(`CRM Trigger: ${h.trigger} (${h.gapAmount}) for ${h.name}.`);
+            setStatusMessage(`Loaded ${h.name} from CRM into all Command Center tools.`);
+          }}
+        />
+      )}
+
+      {tab === "datahub" && <ResearchDataHubPanel />}
     </section>
   );
 }
