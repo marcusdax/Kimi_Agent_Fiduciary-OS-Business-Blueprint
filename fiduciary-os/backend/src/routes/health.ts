@@ -26,8 +26,10 @@ router.get('/', async (req: Request, res: Response) => {
     await prisma.$queryRaw`SELECT 1`;
     health.services.database = 'connected';
   } catch (error) {
-    health.services.database = 'disconnected';
-    health.status = 'unhealthy';
+    health.services.database = 'unavailable';
+    if (process.env.NODE_ENV === 'production') {
+      health.status = 'unhealthy';
+    }
   }
 
   // Check Redis (optional in development)
