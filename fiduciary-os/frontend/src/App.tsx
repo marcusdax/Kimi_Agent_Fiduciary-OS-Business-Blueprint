@@ -727,6 +727,10 @@ export default function App({ initialPage = "Overview" }: { initialPage?: string
                       alternatives: "Compare staying on current path vs. phased implementation.",
                       costs: "Review fees, tax impact, and opportunity cost prior to action.",
                       stage: "Gather information",
+                      authorized: false,
+                      reviewDate: "Pending review",
+                      evidence: "",
+                      history: ["Added in Next steps planning board"],
                     };
                     setActions((list) => [created, ...list]);
                     setSelected(created.id);
