@@ -1,4 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
+import ExpandedModules, { type ExpandedView } from "./ExpandedModules";
 import "./cobalt-chrome.css";
 
 type PlatformStage = "landing" | "free" | "premium" | "advisor";
@@ -74,6 +75,15 @@ export default function CobaltFunnelShell({ children }: { children: ReactNode })
   const [authMsg, setAuthMsg] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [activeTool, setActiveTool] = useState("Home");
+  const [studioView, setStudioView] = useState<ExpandedView>(null);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatInput, setChatInput] = useState("");
+  const [chatLog, setChatLog] = useState<{ role: "assistant" | "user"; text: string }[]>([
+    {
+      role: "assistant",
+      text: "Welcome to Fiduciary OS. Ask about Roth conversion ladders, 70/30 retirement glidepaths, Texas homestead trust rules (§ 11.13(j)), IRC § 2035 life insurance rules, or what any calculator assumes. (Educational guidance only, not individualized advice.)",
+    },
+  ]);
 
   useEffect(() => {
     document.documentElement.dataset.foBoard = board;
@@ -81,9 +91,40 @@ export default function CobaltFunnelShell({ children }: { children: ReactNode })
 
   useEffect(() => {
     const onHash = () => setStage(detectStage());
+    const onStudio = (ev: Event) => {
+      const v = (ev as CustomEvent<{ view: ExpandedView }>).detail?.view ?? null;
+      setStudioView(v);
+    };
     window.addEventListener("hashchange", onHash);
-    return () => window.removeEventListener("hashchange", onHash);
+    window.addEventListener("fiduciary:open-studio", onStudio);
+    return () => {
+      window.removeEventListener("hashchange", onHash);
+      window.removeEventListener("fiduciary:open-studio", onStudio);
+    };
   }, []);
+
+  function sendChat(promptText?: string) {
+    const q = (promptText ?? chatInput).trim();
+    if (!q) return;
+    const low = q.toLowerCase();
+    let reply =
+      "Every calculator in Fiduciary OS uses explicit user-supplied inputs and public economic baselines. Open 'Show the work' on any screen to inspect exact assumptions, formulas, and locked disclosures.";
+    if (low.includes("roth")) {
+      reply =
+        "Roth Conversion Ladder: Between retirement and age 73 RMDs, converting pre-tax IRA balances up to the top of the 22% federal bracket locks in today's tax rate and reduces future forced RMD spikes. Always verify MAGI thresholds for Medicare IRMAA.";
+    } else if (low.includes("texas") || low.includes("homestead") || low.includes("trust")) {
+      reply =
+        "Texas Homestead & Trust (Tax Code § 11.13(j)): Deeding a primary residence into a revocable living trust requires qualifying-trust language that preserves the settlor's rent-free right to occupy — otherwise the school-tax homestead exemption can drop. Never use a generic out-of-state quitclaim deed.";
+    } else if (low.includes("2035") || low.includes("ilit") || low.includes("life")) {
+      reply =
+        "Life Insurance & IRC § 2035: Transferring an existing life policy into an Irrevocable Life Insurance Trust (ILIT) pulls proceeds back into the taxable estate if the insured passes away within 3 years. Having the ILIT apply for and own a new policy from day one avoids the 3-year lookback.";
+    } else if (low.includes("70/30") || low.includes("glide") || low.includes("symphony")) {
+      reply =
+        "Symphony Glidepath Model: With 20 years to retirement, the illustrative baseline uses a 70/30 equity/bond split and shifts 5% per year toward fixed income beginning 10 years before retirement to buffer early-retirement sequence-of-returns risk.";
+    }
+    setChatLog((prev) => [...prev, { role: "user", text: q }, { role: "assistant", text: reply }]);
+    setChatInput("");
+  }
 
   function navigateStage(next: PlatformStage) {
     setStage(next);
@@ -151,6 +192,15 @@ export default function CobaltFunnelShell({ children }: { children: ReactNode })
               </button>
             ))}
           </div>
+          <button className="fo-btn" onClick={() => setStudioView(studioView ? null : "willtrust")}>
+            ⚖ Will &amp; Trust
+          </button>
+          <button className="fo-btn" onClick={() => setStudioView(studioView === "symphony" ? null : "symphony")}>
+            ♦ Symphony
+          </button>
+          <button className="fo-btn" onClick={() => setChatOpen((o) => !o)}>
+            ✦ AI Guide
+          </button>
           <button className="fo-btn" onClick={() => setProofOpen(true)}>Show the work</button>
           {user ? (
             <>
@@ -219,6 +269,11 @@ export default function CobaltFunnelShell({ children }: { children: ReactNode })
                       setProofOpen(true);
                       return;
                     }
+                    if (it.id === "symphony" || it.id === "proposed" || it.id === "will") {
+                      setStudioView(it.id === "will" ? "willtrust" : it.id);
+                      return;
+                    }
+                    setStudioView(null);
                     const toolKeyMap: Record<string, string> = {
                       profile: "profile",
                       annuity: "annuity",
@@ -325,8 +380,51 @@ export default function CobaltFunnelShell({ children }: { children: ReactNode })
         </div>
       )}
 
-      {/* Main Application Content */}
-      {children}
+      {/* Educational AI Fiduciary Chatbot Drawer */}
+      {chatOpen && (
+        <aside className="fo-chat-dock" aria-label="Educational AI Fiduciary Guide">
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: 8, borderBottom: "1px solid var(--fo-line)" }}>
+            <strong style={{ fontSize: 13 }}>✦ Educational AI Guide</strong>
+            <button className="fo-btn" style={{ padding: "2px 8px", minHeight: 24 }} onClick={() => setChatOpen(false)}>✕</button>
+          </div>
+          <div className="fo-chat-prompts">
+            <button className="td-cat-pill" onClick={() => sendChat("Explain Roth conversion ladder")}>Roth ladder</button>
+            <button className="td-cat-pill" onClick={() => sendChat("Texas homestead trust rule")}>TX § 11.13(j)</button>
+            <button className="td-cat-pill" onClick={() => sendChat("IRC 2035 life insurance ILIT")}>IRC § 2035</button>
+            <button className="td-cat-pill" onClick={() => sendChat("70/30 Symphony glidepath")}>70/30 glidepath</button>
+          </div>
+          <div className="fo-chat-log">
+            {chatLog.map((m, i) => (
+              <div key={i} className={`fo-chat-msg ${m.role}`}>
+                <strong>{m.role === "assistant" ? "Guide" : "You"}:</strong> {m.text}
+              </div>
+            ))}
+          </div>
+          <form
+            style={{ display: "flex", gap: 6, marginTop: 8 }}
+            onSubmit={(e) => {
+              e.preventDefault();
+              sendChat();
+            }}
+          >
+            <input
+              className="fo-field"
+              style={{ marginTop: 0, flex: 1 }}
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
+              placeholder="Ask about assumptions, tax, trusts…"
+            />
+            <button className="fo-btn fo-btn-primary" type="submit">Ask</button>
+          </form>
+        </aside>
+      )}
+
+      {/* Expanded Studio or Main Application Content */}
+      {studioView ? (
+        <ExpandedModules view={studioView} onClose={() => setStudioView(null)} />
+      ) : (
+        children
+      )}
     </div>
   );
 }
