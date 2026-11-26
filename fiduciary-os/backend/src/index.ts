@@ -25,6 +25,7 @@ import { cryptoRouter } from './routes/crypto';
 import { trustRouter } from './routes/trust';
 import { intelligenceRouter } from './routes/intelligence';
 import { advisorRouter } from './routes/advisor';
+import { registerMcpServers } from './services/kdenseService';
 import { logger } from './utils/logger';
 import { connectDatabase } from './config/database';
 import { connectRedis } from './config/redis';
@@ -137,6 +138,15 @@ async function startServer() {
       logger.info(`🚀 Fiduciary OS™ API Server running on port ${PORT}`);
       logger.info(`📚 API Documentation: http://localhost:${PORT}/api/v1`);
       logger.info(`💚 Health Check: http://localhost:${PORT}/health`);
+
+      // Phase 3: Register trust-core + MASTERNEX MCP servers into K-Dense Kady (non-blocking)
+      registerMcpServers().then((r) => {
+        if (r.status === 'registered') {
+          logger.info(`K-Dense MCP: registered [${r.servers.join(', ')}] at ${r.kdenseUrl}`);
+        } else if (r.status === 'failed') {
+          logger.warn(`K-Dense MCP registration failed: ${r.error}`);
+        }
+      });
     });
   } catch (error) {
     logger.error('Failed to start server');
