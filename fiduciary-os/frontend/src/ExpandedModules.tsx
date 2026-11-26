@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import SymphonyComposerPanel from "./SymphonyComposerPanel";
 
 export type ExpandedView = "symphony" | "proposed" | "willtrust" | null;
 
@@ -118,14 +119,6 @@ export default function ExpandedModules({
   view: ExpandedView;
   onClose: () => void;
 }) {
-  // Symphony Composer state
-  const [horizon, setHorizon] = useState(20);
-  const [income, setIncome] = useState(285000);
-  const [portfolio, setPortfolio] = useState(1450000);
-  const [age, setAge] = useState(45);
-  const [playbookGenerated, setPlaybookGenerated] = useState(true);
-  const [showAssumptions, setShowAssumptions] = useState(true);
-
   // Proposed Symphony state
   const [workflowStep, setWorkflowStep] = useState<1 | 2 | 3 | 4 | 5>(3);
   const [advisorSigned, setAdvisorSigned] = useState(false);
@@ -216,9 +209,6 @@ export default function ExpandedModules({
     setTimeout(() => setCopyToast(""), 2500);
   }
 
-  const equityPct = useMemo(() => Math.min(90, Math.max(30, horizon >= 10 ? 70 : 70 - (10 - horizon) * 5)), [horizon]);
-  const bondPct = 100 - equityPct;
-
   const taxableEstate = Math.max(0, intake.netWorth - intake.lifeFace);
   const exemption2026 = intake.marital === "Married" ? 30000000 : 15000000;
   const complexity = Math.min(
@@ -292,60 +282,14 @@ export default function ExpandedModules({
 
       {/* 1. SYMPHONY COMPOSER */}
       {view === "symphony" && (
-        <div className="fo-exp-grid">
-          <div className="fo-chrome-card">
-            <span className="fo-ns-label">AI PORTFOLIO RECOMMENDATIONS &amp; PERSONALIZED SYMPHONY PLAYBOOK</span>
-            <h2 style={{ margin: "6px 0 8px" }}>Symphony Composer</h2>
-            <p style={{ color: "var(--fo-muted)", fontSize: 13, margin: "0 0 14px" }}>
-              Adjust your horizon, income, and portfolio to regenerate a coordinated 5-pillar Fiduciary Symphony Playbook with live glidepath allocation and transparent model assumptions.
-            </p>
-            <div className="fo-sliders">
-              <label>Current Age ({age})<input type="range" min={25} max={72} value={age} onChange={(e) => setAge(Number(e.target.value))} /></label>
-              <label>Years to Retirement ({horizon} yrs)<input type="range" min={1} max={35} value={horizon} onChange={(e) => setHorizon(Number(e.target.value))} /></label>
-              <label>Annual Income ({usd(income)})<input type="range" min={75000} max={750000} step={15000} value={income} onChange={(e) => setIncome(Number(e.target.value))} /></label>
-              <label>Investable Portfolio ({usd(portfolio)})<input type="range" min={100000} max={5000000} step={50000} value={portfolio} onChange={(e) => setPortfolio(Number(e.target.value))} /></label>
-            </div>
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 14 }}>
-              <button className="fo-btn fo-btn-primary" onClick={() => setPlaybookGenerated(true)}>
-                ▶ GENERATE COMPREHENSIVE AI PLAYBOOK
-              </button>
-              <button className="fo-btn" onClick={() => setShowAssumptions((v) => !v)}>
-                {showAssumptions ? "Hide" : "Show"} What This Model Assumes
-              </button>
-            </div>
-
-            {showAssumptions && (
-              <div className="fo-assumptions">
-                <strong>What this model assumes (Illustrative · Educational)</strong>
-                <ul>
-                  <li>Base target allocation starts at <strong>70/30 equity/bond</strong> when horizon ≥ 10 years, shifting <strong>5% annually toward fixed income</strong> starting 10 years pre-retirement.</li>
-                  <li>Long-term care coverage review triggers prominently at age <strong>55+</strong> (current age: {age}).</li>
-                  <li>Tax efficiency prioritizes max 401(k)/HSA contributions, December tax-loss harvesting, and a 5-year Roth conversion ladder inside current marginal brackets.</li>
-                </ul>
-              </div>
-            )}
-          </div>
-
-          {playbookGenerated && (
-            <div className="fo-chrome-card">
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
-                <h3 style={{ margin: 0 }}>Your Fiduciary Symphony Playbook</h3>
-                <span className="td-badge">Glidepath: {equityPct}% Equity / {bondPct}% Fixed Income</span>
-              </div>
-              <div className="fo-alloc-bar" aria-label="Recommended equity and bond allocation">
-                <div style={{ width: `${equityPct}%`, background: "var(--fo-accent)" }}>Equity {equityPct}%</div>
-                <div style={{ width: `${bondPct}%`, background: "var(--fo-brass)", color: "#140D02" }}>Bonds {bondPct}%</div>
-              </div>
-              <ol className="fo-playbook-list">
-                <li><strong>Income Optimization:</strong> Maximize contributions to tax-advantaged accounts. Your {usd(income)} income trajectory supports aggressive savings through peak earning years.</li>
-                <li><strong>Investment Strategy:</strong> With {horizon} years to retirement, maintain a {equityPct}/{bondPct} equity/bond split. Shift 5% annually toward fixed income starting 10 years pre-retirement.</li>
-                <li><strong>Protection Planning:</strong> Life insurance gap analysis suggests reviewing term coverage for income replacement. Long-term care insurance becomes critical at age 55{age >= 55 ? " (active review window now)" : ` (${55 - age} yrs away)`}.</li>
-                <li><strong>Tax Efficiency:</strong> Execute a Roth conversion ladder over the next 5 years at current brackets. Harvest tax losses in December and maximize HSA contributions.</li>
-                <li><strong>Legacy Blueprint:</strong> Establish a revocable living trust, review beneficiary designations annually, and begin an annual gifting strategy ($19,000/donee 2026 exclusion).</li>
-              </ol>
-            </div>
-          )}
-        </div>
+        <SymphonyComposerPanel
+          onSendToProposed={(topic, answer) => {
+            setAnswers((list) => [...list, { q: topic, a: answer }]);
+          }}
+          onOpenProposed={() => {
+            window.dispatchEvent(new CustomEvent("fiduciary:open-studio", { detail: { view: "proposed" } }));
+          }}
+        />
       )}
 
       {/* 2. PROPOSED SYMPHONY */}
