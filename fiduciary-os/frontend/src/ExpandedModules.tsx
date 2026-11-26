@@ -138,6 +138,7 @@ export default function ExpandedModules({
   const [newAnsA, setNewAnsA] = useState("");
 
   // Will & Trust Formation state
+  const [savedClients, setSavedClients] = useState<HouseholdIntake[]>([FAMILY_EXAMPLE, FOUNDER_EXAMPLE]);
   const [intake, setIntake] = useState<HouseholdIntake>(FAMILY_EXAMPLE);
   const [docScope, setDocScope] = useState<"TRUST" | "WILL" | "BOTH">("BOTH");
   const [intakeStep, setIntakeStep] = useState(1);
@@ -146,6 +147,74 @@ export default function ExpandedModules({
   const [fundedIds, setFundedIds] = useState<Record<string, boolean>>({});
   const [checkedIds, setCheckedIds] = useState<Record<string, boolean>>({});
   const [copyToast, setCopyToast] = useState("");
+
+  // Step 2: What matters
+  const [priorities, setPriorities] = useState({
+    avoidProbate: true,
+    stagedDistributions: true,
+    disclaimerBypass: true,
+    ilitShield: true,
+    charitableGift: false,
+    counselNote: "Primary home is the Burleson homestead. Do not disturb the property-tax exemption.",
+  });
+
+  // Step 3: People & Fiduciaries
+  const [successorTrustee, setSuccessorTrustee] = useState("Priya Shah");
+  const [guardianName, setGuardianName] = useState("Priya Shah");
+  const [beneficiaries, setBeneficiaries] = useState([
+    { id: "b1", name: "Adele Harlow", relation: "Child", minor: true, share: "50% (staged 25/30/35)" },
+    { id: "b2", name: "Noah Harlow", relation: "Child", minor: false, share: "50% (staged 25/30/35)" },
+  ]);
+  const [newBenName, setNewBenName] = useState("");
+  const [newBenMinor, setNewBenMinor] = useState(false);
+
+  // Step 4: Assets Schedule
+  const [assets, setAssets] = useState(FUNDING_ITEMS);
+  const [newAssetLabel, setNewAssetLabel] = useState("");
+  const [newAssetAmt, setNewAssetAmt] = useState("");
+  const [newAssetType, setNewAssetType] = useState<"RETITLE" | "BENEFICIARY">("RETITLE");
+
+  // Step 5: Will & Companions
+  const [companions, setCompanions] = useState({
+    selfProving: true,
+    digitalRufadaa: true,
+    financialPoa: true,
+    medicalPoa: true,
+    directivePhysicians: true,
+    hipaaRelease: true,
+  });
+
+  function startNewClient() {
+    const blank: HouseholdIntake = {
+      name: "New Client",
+      spouse: "",
+      marital: "Married",
+      state: "Texas",
+      minorChildren: false,
+      specialNeeds: false,
+      blended: false,
+      netWorth: 1500000,
+      retirement: 450000,
+      lifeFace: 500000,
+      homestead: true,
+      business: false,
+    };
+    setIntake(blank);
+    setIntakeStep(1);
+    setFundedIds({});
+    setCheckedIds({});
+    setCopyToast("New client intake initialized — edit fields and click Save Client.");
+    setTimeout(() => setCopyToast(""), 3000);
+  }
+
+  function saveCurrentClient() {
+    setSavedClients((prev) => {
+      const exists = prev.some((c) => c.name === intake.name);
+      return exists ? prev.map((c) => (c.name === intake.name ? intake : c)) : [intake, ...prev];
+    });
+    setCopyToast(`Saved "${intake.name}" to client roster.`);
+    setTimeout(() => setCopyToast(""), 2500);
+  }
 
   const equityPct = useMemo(() => Math.min(90, Math.max(30, horizon >= 10 ? 70 : 70 - (10 - horizon) * 5)), [horizon]);
   const bondPct = 100 - equityPct;
@@ -158,8 +227,8 @@ export default function ExpandedModules({
   );
   const fitScore = Math.min(98, 92 - (intake.business ? 8 : 0) - (intake.specialNeeds ? 6 : 0));
 
-  const retitledTotal = FUNDING_ITEMS.filter((f) => f.type === "RETITLE").reduce((s, f) => s + f.amount, 0);
-  const fundedRetitled = FUNDING_ITEMS.filter((f) => f.type === "RETITLE" && fundedIds[f.id]).reduce((s, f) => s + f.amount, 0);
+  const retitledTotal = assets.filter((f) => f.type === "RETITLE").reduce((s, f) => s + f.amount, 0);
+  const fundedRetitled = assets.filter((f) => f.type === "RETITLE" && fundedIds[f.id]).reduce((s, f) => s + f.amount, 0);
   const fundedPct = Math.round((fundedRetitled / Math.max(1, retitledTotal)) * 100);
   const totalChecks = CHECKLIST_GROUPS.reduce((s, g) => s + g.items.length, 0);
   const doneChecks = Object.values(checkedIds).filter(Boolean).length;
@@ -359,15 +428,34 @@ export default function ExpandedModules({
                 <span className="fo-ns-label">WILL &amp; TRUST FORMATION · STRUCTURE FINDER · WILL GATE · DISCUSSION DRAFTS · CHECKLIST</span>
                 <h2 style={{ margin: "4px 0 0" }}>Estate &amp; Trust Atelier</h2>
               </div>
-              <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
                 <div className="fo-seg">
                   {(["TRUST", "WILL", "BOTH"] as const).map((m) => (
                     <button key={m} aria-pressed={docScope === m} onClick={() => setDocScope(m)}>{m}</button>
                   ))}
                 </div>
-                <button className="fo-btn" onClick={() => setIntake(FAMILY_EXAMPLE)}>LOAD FAMILY EXAMPLE</button>
-                <button className="fo-btn" onClick={() => setIntake(FOUNDER_EXAMPLE)}>LOAD FOUNDER EXAMPLE</button>
-                <button className="fo-btn" onClick={() => { setFundedIds({}); setCheckedIds({}); setIntake(FAMILY_EXAMPLE); }}>RESET</button>
+                <select
+                  className="fo-field"
+                  style={{ width: "auto", marginTop: 0, padding: "6px 10px", fontSize: 12 }}
+                  aria-label="Switch active client"
+                  value={intake.name}
+                  onChange={(e) => {
+                    const found = savedClients.find((c) => c.name === e.target.value);
+                    if (found) setIntake(found);
+                  }}
+                >
+                  {savedClients.map((c) => (
+                    <option key={c.name} value={c.name}>{c.name} ({c.state})</option>
+                  ))}
+                  {!savedClients.some((c) => c.name === intake.name) && (
+                    <option value={intake.name}>{intake.name} (unsaved)</option>
+                  )}
+                </select>
+                <button className="fo-btn fo-btn-primary" onClick={startNewClient}>+ NEW CLIENT</button>
+                <button className="fo-btn" onClick={saveCurrentClient}>SAVE CLIENT</button>
+                <button className="fo-btn" onClick={() => setIntake(FAMILY_EXAMPLE)}>LOAD FAMILY</button>
+                <button className="fo-btn" onClick={() => setIntake(FOUNDER_EXAMPLE)}>LOAD FOUNDER</button>
+                <button className="fo-btn" onClick={() => { setFundedIds({}); setCheckedIds({}); setAssets(FUNDING_ITEMS); setIntake(FAMILY_EXAMPLE); }}>RESET</button>
               </div>
             </div>
 
@@ -381,33 +469,143 @@ export default function ExpandedModules({
             </div>
 
             <div className="fo-wt-two">
-              {/* Left: Intake Controls */}
+              {/* Left: Dynamic 5-Step Interactive Intake Panel */}
               <div className="td-item" style={{ gap: 10 }}>
-                <label style={{ fontSize: 12 }}>Your name<input className="fo-field" value={intake.name} onChange={(e) => setIntake({ ...intake, name: e.target.value })} /></label>
-                <label style={{ fontSize: 12 }}>Spouse name<input className="fo-field" value={intake.spouse} onChange={(e) => setIntake({ ...intake, spouse: e.target.value })} /></label>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-                  <label style={{ fontSize: 12 }}>Marital status
-                    <select className="fo-field" value={intake.marital} onChange={(e) => setIntake({ ...intake, marital: e.target.value as "Married" | "Single" })}>
-                      <option>Married</option><option>Single</option>
-                    </select>
-                  </label>
-                  <label style={{ fontSize: 12 }}>State of residence
-                    <select className="fo-field" value={intake.state} onChange={(e) => setIntake({ ...intake, state: e.target.value as HouseholdIntake["state"] })}>
-                      <option>Texas</option><option>California</option><option>Delaware</option><option>Florida</option><option>New York</option>
-                    </select>
-                  </label>
-                </div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
-                  <label style={{ fontSize: 11.5 }}>Net worth ($)<input className="fo-field" type="number" value={intake.netWorth} onChange={(e) => setIntake({ ...intake, netWorth: Number(e.target.value) })} /></label>
-                  <label style={{ fontSize: 11.5 }}>Retirement ($)<input className="fo-field" type="number" value={intake.retirement} onChange={(e) => setIntake({ ...intake, retirement: Number(e.target.value) })} /></label>
-                  <label style={{ fontSize: 11.5 }}>Life face ($)<input className="fo-field" type="number" value={intake.lifeFace} onChange={(e) => setIntake({ ...intake, lifeFace: Number(e.target.value) })} /></label>
-                </div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, fontSize: 12 }}>
-                  <label><input type="checkbox" checked={intake.minorChildren} onChange={(e) => setIntake({ ...intake, minorChildren: e.target.checked })} /> Minor children</label>
-                  <label><input type="checkbox" checked={intake.specialNeeds} onChange={(e) => setIntake({ ...intake, specialNeeds: e.target.checked })} /> Special needs</label>
-                  <label><input type="checkbox" checked={intake.blended} onChange={(e) => setIntake({ ...intake, blended: e.target.checked })} /> Blended family</label>
-                  <label><input type="checkbox" checked={intake.homestead} onChange={(e) => setIntake({ ...intake, homestead: e.target.checked })} /> Own a homestead</label>
-                  <label><input type="checkbox" checked={intake.business} onChange={(e) => setIntake({ ...intake, business: e.target.checked })} /> Closely held business</label>
+                {intakeStep === 1 && (
+                  <>
+                    <span className="fo-ns-label">STEP 1 · HOUSEHOLD &amp; DOMICILE</span>
+                    <label style={{ fontSize: 12 }}>Your name<input className="fo-field" value={intake.name} onChange={(e) => setIntake({ ...intake, name: e.target.value })} /></label>
+                    <label style={{ fontSize: 12 }}>Spouse name<input className="fo-field" value={intake.spouse} onChange={(e) => setIntake({ ...intake, spouse: e.target.value })} placeholder="Leave blank if single" /></label>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                      <label style={{ fontSize: 12 }}>Marital status
+                        <select className="fo-field" value={intake.marital} onChange={(e) => setIntake({ ...intake, marital: e.target.value as "Married" | "Single" })}>
+                          <option>Married</option><option>Single</option>
+                        </select>
+                      </label>
+                      <label style={{ fontSize: 12 }}>State of residence
+                        <select className="fo-field" value={intake.state} onChange={(e) => setIntake({ ...intake, state: e.target.value as HouseholdIntake["state"] })}>
+                          <option>Texas</option><option>California</option><option>Delaware</option><option>Florida</option><option>New York</option>
+                        </select>
+                      </label>
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+                      <label style={{ fontSize: 11.5 }}>Net worth ($)<input className="fo-field" type="number" value={intake.netWorth} onChange={(e) => setIntake({ ...intake, netWorth: Number(e.target.value) })} /></label>
+                      <label style={{ fontSize: 11.5 }}>Retirement ($)<input className="fo-field" type="number" value={intake.retirement} onChange={(e) => setIntake({ ...intake, retirement: Number(e.target.value) })} /></label>
+                      <label style={{ fontSize: 11.5 }}>Life face ($)<input className="fo-field" type="number" value={intake.lifeFace} onChange={(e) => setIntake({ ...intake, lifeFace: Number(e.target.value) })} /></label>
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+                      <label className="fo-check-inline"><input type="checkbox" checked={intake.minorChildren} onChange={(e) => setIntake({ ...intake, minorChildren: e.target.checked })} /><span>Minor children</span></label>
+                      <label className="fo-check-inline"><input type="checkbox" checked={intake.specialNeeds} onChange={(e) => setIntake({ ...intake, specialNeeds: e.target.checked })} /><span>Special needs beneficiary</span></label>
+                      <label className="fo-check-inline"><input type="checkbox" checked={intake.blended} onChange={(e) => setIntake({ ...intake, blended: e.target.checked })} /><span>Blended family</span></label>
+                      <label className="fo-check-inline"><input type="checkbox" checked={intake.homestead} onChange={(e) => setIntake({ ...intake, homestead: e.target.checked })} /><span>Own a homestead</span></label>
+                      <label className="fo-check-inline"><input type="checkbox" checked={intake.business} onChange={(e) => setIntake({ ...intake, business: e.target.checked })} /><span>Closely held business</span></label>
+                    </div>
+                  </>
+                )}
+
+                {intakeStep === 2 && (
+                  <>
+                    <span className="fo-ns-label">STEP 2 · WHAT MATTERS &amp; TRUST GOALS</span>
+                    <label className="fo-check-inline"><input type="checkbox" checked={priorities.avoidProbate} onChange={(e) => setPriorities({ ...priorities, avoidProbate: e.target.checked })} /><span>Avoid probate &amp; keep family affairs private</span></label>
+                    <label className="fo-check-inline"><input type="checkbox" checked={priorities.stagedDistributions} onChange={(e) => setPriorities({ ...priorities, stagedDistributions: e.target.checked })} /><span>Stage descendant distributions (ages 25 / 30 / 35)</span></label>
+                    <label className="fo-check-inline"><input type="checkbox" checked={priorities.disclaimerBypass} onChange={(e) => setPriorities({ ...priorities, disclaimerBypass: e.target.checked })} /><span>Include IRC § 2518 disclaimer credit-shelter option</span></label>
+                    <label className="fo-check-inline"><input type="checkbox" checked={priorities.ilitShield} onChange={(e) => setPriorities({ ...priorities, ilitShield: e.target.checked })} /><span>Evaluate ILIT to keep life insurance outside taxable estate</span></label>
+                    <label className="fo-check-inline"><input type="checkbox" checked={priorities.charitableGift} onChange={(e) => setPriorities({ ...priorities, charitableGift: e.target.checked })} /><span>Include charitable legacy / CRUT provision</span></label>
+                    <label style={{ fontSize: 12 }}>Precatory note for estate counsel
+                      <textarea className="fo-field" rows={3} value={priorities.counselNote} onChange={(e) => setPriorities({ ...priorities, counselNote: e.target.value })} />
+                    </label>
+                  </>
+                )}
+
+                {intakeStep === 3 && (
+                  <>
+                    <span className="fo-ns-label">STEP 3 · PEOPLE, FIDUCIARIES &amp; BENEFICIARIES</span>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                      <label style={{ fontSize: 12 }}>Successor Trustee<input className="fo-field" value={successorTrustee} onChange={(e) => setSuccessorTrustee(e.target.value)} /></label>
+                      <label style={{ fontSize: 12 }}>Minor Guardian<input className="fo-field" value={guardianName} onChange={(e) => setGuardianName(e.target.value)} /></label>
+                    </div>
+                    <div style={{ display: "grid", gap: 6 }}>
+                      {beneficiaries.map((b) => (
+                        <div key={b.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "7px 9px", borderRadius: 6, background: "rgba(255,255,255,0.03)", border: "1px solid var(--fo-line)", fontSize: 12 }}>
+                          <span><strong>{b.name}</strong> · {b.relation} {b.minor ? "(Minor)" : ""} · <span style={{ color: "var(--fo-muted)" }}>{b.share}</span></span>
+                          <button type="button" className="fo-btn" style={{ padding: "2px 7px", minHeight: 24 }} onClick={() => setBeneficiaries((l) => l.filter((x) => x.id !== b.id))}>✕</button>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
+                      <input className="fo-field" style={{ flex: 1, marginTop: 0 }} placeholder="Add child / beneficiary name…" value={newBenName} onChange={(e) => setNewBenName(e.target.value)} />
+                      <label className="fo-check-inline" style={{ padding: "5px 8px" }}><input type="checkbox" checked={newBenMinor} onChange={(e) => setNewBenMinor(e.target.checked)} /><span>Minor</span></label>
+                      <button
+                        type="button"
+                        className="fo-btn fo-btn-primary"
+                        onClick={() => {
+                          if (!newBenName.trim()) return;
+                          setBeneficiaries((l) => [...l, { id: `b-${Date.now()}`, name: newBenName.trim(), relation: "Child", minor: newBenMinor, share: "Equal share" }]);
+                          setNewBenName("");
+                          setNewBenMinor(false);
+                        }}
+                      >
+                        + Add
+                      </button>
+                    </div>
+                  </>
+                )}
+
+                {intakeStep === 4 && (
+                  <>
+                    <span className="fo-ns-label">STEP 4 · ASSET SCHEDULE &amp; TITLING ({assets.length} ITEMS)</span>
+                    <div style={{ display: "grid", gap: 6, maxHeight: 260, overflowY: "auto" }}>
+                      {assets.map((a) => (
+                        <div key={a.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, padding: "7px 9px", borderRadius: 6, background: "rgba(255,255,255,0.03)", border: "1px solid var(--fo-line)", fontSize: 12 }}>
+                          <span><strong>{a.label}</strong> <span style={{ color: "var(--fo-brass)", fontSize: 10 }}>[{a.type}]</span></span>
+                          <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                            <strong style={{ fontFamily: "ui-monospace, monospace" }}>{usd(a.amount)}</strong>
+                            <button type="button" className="fo-btn" style={{ padding: "2px 7px", minHeight: 24 }} onClick={() => setAssets((l) => l.filter((x) => x.id !== a.id))}>✕</button>
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                      <input className="fo-field" style={{ flex: "2 1 130px", marginTop: 0 }} placeholder="Asset name (e.g. Rental duplex)" value={newAssetLabel} onChange={(e) => setNewAssetLabel(e.target.value)} />
+                      <input className="fo-field" style={{ flex: "1 1 90px", marginTop: 0 }} type="number" placeholder="Value ($)" value={newAssetAmt} onChange={(e) => setNewAssetAmt(e.target.value)} />
+                      <select className="fo-field" style={{ flex: "1 1 100px", marginTop: 0 }} value={newAssetType} onChange={(e) => setNewAssetType(e.target.value as "RETITLE" | "BENEFICIARY")}>
+                        <option value="RETITLE">RETITLE</option>
+                        <option value="BENEFICIARY">BENEFICIARY</option>
+                      </select>
+                      <button
+                        type="button"
+                        className="fo-btn fo-btn-primary"
+                        onClick={() => {
+                          const amt = Number(newAssetAmt);
+                          if (!newAssetLabel.trim() || !amt) return;
+                          setAssets((l) => [...l, { id: `a-${Date.now()}`, label: newAssetLabel.trim(), amount: amt, type: newAssetType, note: newAssetType === "RETITLE" ? "Retitle into trustee name." : "Confirm custodian beneficiary form." }]);
+                          setIntake((prev) => ({ ...prev, netWorth: prev.netWorth + amt }));
+                          setNewAssetLabel("");
+                          setNewAssetAmt("");
+                        }}
+                      >
+                        + Add Asset
+                      </button>
+                    </div>
+                  </>
+                )}
+
+                {intakeStep === 5 && (
+                  <>
+                    <span className="fo-ns-label">STEP 5 · WILL GATE &amp; COMPANION INCAPACITY SUITE</span>
+                    <label className="fo-check-inline"><input type="checkbox" checked={companions.selfProving} onChange={(e) => setCompanions({ ...companions, selfProving: e.target.checked })} /><span>Attach Self-Proving Affidavit ({intake.state === "Texas" ? "Estates Code § 251.104" : "State Statutory Form"})</span></label>
+                    <label className="fo-check-inline"><input type="checkbox" checked={companions.digitalRufadaa} onChange={(e) => setCompanions({ ...companions, digitalRufadaa: e.target.checked })} /><span>Include Digital Assets Access Authority (RUFADAA)</span></label>
+                    <label className="fo-check-inline"><input type="checkbox" checked={companions.financialPoa} onChange={(e) => setCompanions({ ...companions, financialPoa: e.target.checked })} /><span>Durable Financial Power of Attorney</span></label>
+                    <label className="fo-check-inline"><input type="checkbox" checked={companions.medicalPoa} onChange={(e) => setCompanions({ ...companions, medicalPoa: e.target.checked })} /><span>Medical Power of Attorney / Healthcare Proxy</span></label>
+                    <label className="fo-check-inline"><input type="checkbox" checked={companions.directivePhysicians} onChange={(e) => setCompanions({ ...companions, directivePhysicians: e.target.checked })} /><span>Directive to Physicians (Living Will)</span></label>
+                    <label className="fo-check-inline"><input type="checkbox" checked={companions.hipaaRelease} onChange={(e) => setCompanions({ ...companions, hipaaRelease: e.target.checked })} /><span>HIPAA Medical Information Release</span></label>
+                  </>
+                )}
+
+                <div style={{ display: "flex", justifyContent: "space-between", paddingTop: 6, borderTop: "1px solid var(--fo-line)" }}>
+                  <button type="button" className="fo-btn" disabled={intakeStep === 1} onClick={() => setIntakeStep((s) => Math.max(1, s - 1))}>← Previous</button>
+                  <span style={{ fontSize: 11.5, color: "var(--fo-muted)", alignSelf: "center" }}>Step {intakeStep} of 5</span>
+                  <button type="button" className="fo-btn fo-btn-primary" disabled={intakeStep === 5} onClick={() => setIntakeStep((s) => Math.min(5, s + 1))}>Next Step →</button>
                 </div>
               </div>
 
@@ -537,10 +735,10 @@ export default function ExpandedModules({
                 <div style={{ height: 8, borderRadius: 99, background: "rgba(255,255,255,0.08)", overflow: "hidden", margin: "6px 0" }}>
                   <div style={{ width: `${fundedPct}%`, height: "100%", background: "var(--fo-proof)", transition: "width 0.2s" }} />
                 </div>
-                {FUNDING_ITEMS.map((f) => (
-                  <label key={f.id} style={{ display: "flex", gap: 8, alignItems: "flex-start", fontSize: 12, padding: "5px 0", borderBottom: "1px solid var(--fo-line)" }}>
+                {assets.map((f) => (
+                  <label key={f.id} className="fo-check-row">
                     <input type="checkbox" checked={!!fundedIds[f.id]} onChange={(e) => setFundedIds({ ...fundedIds, [f.id]: e.target.checked })} />
-                    <span>
+                    <span style={{ flex: 1 }}>
                       <strong>{f.label} · {usd(f.amount)}</strong> <span style={{ color: "var(--fo-brass)", fontSize: 10 }}>[{f.type}]</span>
                       <div style={{ color: "var(--fo-muted)", fontSize: 11.5 }}>{f.note}</div>
                     </span>
@@ -557,9 +755,9 @@ export default function ExpandedModules({
                   <div key={g.phase} style={{ marginTop: 6 }}>
                     <div className="fo-tool-group">{g.phase}</div>
                     {g.items.map((item) => (
-                      <label key={item.id} style={{ display: "flex", gap: 8, alignItems: "flex-start", fontSize: 12, padding: "4px 0" }}>
+                      <label key={item.id} className="fo-check-row">
                         <input type="checkbox" checked={!!checkedIds[item.id]} onChange={(e) => setCheckedIds({ ...checkedIds, [item.id]: e.target.checked })} />
-                        <span>
+                        <span style={{ flex: 1 }}>
                           <strong>{item.title}</strong> <span style={{ color: "var(--fo-muted)" }}>({item.owner})</span>
                           <div style={{ color: "var(--fo-muted)", fontSize: 11.5 }}>{item.detail}</div>
                         </span>

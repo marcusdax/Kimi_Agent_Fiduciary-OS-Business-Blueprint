@@ -526,3 +526,42 @@ dialog.tools-dialog::backdrop {
   border: 1px solid var(--fo-line);
 }
 .fo-chat-msg.user { border-color: var(--fo-accent); background: rgba(56, 189, 248, 0.12); }
+
+/* Fix global input width:100% leaking onto checkboxes in ExpandedModules */
+.fo-exp-wrap input[type="checkbox"] {
+  width: 16px !important;
+  min-width: 16px !important;
+  max-width: 16px !important;
+  height: 16px !important;
+  flex: 0 0 16px !important;
+  margin: 2px 0 0 0 !important;
+  padding: 0 !important;
+  accent-color: var(--fo-accent);
+  cursor: pointer;
+}
+.fo-check-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  padding: 8px 6px !important;
+  border-bottom: 1px solid var(--fo-line);
+  cursor: pointer;
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+.fo-check-row:last-child { border-bottom: 0; }
+.fo-check-row:hover { background: rgba(56, 189, 248, 0.06); border-radius: 6px; }
+.fo-check-inline {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--fo-line);
+  font-size: 12px;
+  cursor: pointer;
+}
+.fo-check-inline:hover { border-color: var(--fo-accent); }
