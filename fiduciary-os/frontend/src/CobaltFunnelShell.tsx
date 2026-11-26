@@ -215,10 +215,30 @@ export default function CobaltFunnelShell({ children }: { children: ReactNode })
                   onClick={() => {
                     setActiveTool(it.label);
                     setMenuOpen(false);
-                    if (it.id === "proof") setProofOpen(true);
-                    else {
-                      window.location.hash = it.hash;
-                      setStage(it.tier === "advisor" ? "advisor" : it.tier === "premium" ? "premium" : "free");
+                    if (it.id === "proof") {
+                      setProofOpen(true);
+                      return;
+                    }
+                    const toolKeyMap: Record<string, string> = {
+                      profile: "profile",
+                      annuity: "annuity",
+                      life: "life",
+                      xray: "investment",
+                      retirement: "retirement",
+                      tax: "tax",
+                      roth: "tax",
+                      digital: "crypto",
+                      risk: "risk",
+                      estate: "estate",
+                      will: "willtrust",
+                    };
+                    const mappedKey = toolKeyMap[it.id];
+                    window.location.hash = it.hash;
+                    setStage(it.tier === "advisor" ? "advisor" : it.tier === "premium" ? "premium" : "free");
+                    if (mappedKey) {
+                      setTimeout(() => {
+                        window.dispatchEvent(new CustomEvent("fiduciary:select-tool", { detail: { key: mappedKey } }));
+                      }, 30);
                     }
                   }}
                 >

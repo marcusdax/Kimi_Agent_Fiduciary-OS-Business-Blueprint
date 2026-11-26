@@ -1,5 +1,5 @@
 import ToolDiscovery from "./ToolDiscovery";
-import { useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import FinancialWorkspace from "./FinancialWorkspace";
 import ConnectedWorkspace from "./ConnectedWorkspace";
 import AdvisorCommandCenter from "./AdvisorCommandCenter";
@@ -103,9 +103,23 @@ export default function App({ initialPage = "Overview" }: { initialPage?: string
     structuredClone(sampleActions),
   );
   const [selected, setSelected] = useState("income");
+  const [categoryFilter, setCategoryFilter] = useState("All categories");
+  const [newActionTitle, setNewActionTitle] = useState("");
+  const [newActionCategory, setNewActionCategory] = useState<"INCOME" | "PROTECTION" | "LEGACY">("INCOME");
   const [notice, setNotice] = useState("");
   const [confirmed, setConfirmed] = useState(false);
   const [evidence, setEvidence] = useState("");
+  useEffect(() => {
+    const onSelectTool = (ev: Event) => {
+      const key = (ev as CustomEvent<{ key?: string }>).detail?.key;
+      if (!key) return;
+      setRequestedTool(key);
+      setToolRequestId((n) => n + 1);
+      setPage("Financial workspace");
+    };
+    window.addEventListener("fiduciary:select-tool", onSelectTool);
+    return () => window.removeEventListener("fiduciary:select-tool", onSelectTool);
+  }, []);
   const [goal, setGoal] = useState("Retirement income");
   const [assets, setAssets] = useState("600000");
   const [spending, setSpending] = useState("48000");
@@ -678,6 +692,70 @@ export default function App({ initialPage = "Overview" }: { initialPage?: string
           {page === "Next steps" && savedMode && <ConnectedWorkspace />}
           {page === "Next steps" && !savedMode && (
             <>
+              <section className="fo-next-summary" aria-label="Financial picture summary">
+                <div className="fo-ns-card">
+                  <span className="fo-ns-label">WHAT MATTERS MOST</span>
+                  <strong>{active.title}</strong>
+                  <p>{active.outcome}</p>
+                </div>
+                <div className="fo-ns-card">
+                  <span className="fo-ns-label">WHAT IS KNOWN VS. OPEN</span>
+                  <strong>
+                    {actions.filter((a) => a.stage === "Verified complete").length} of {actions.length} verified complete
+                  </strong>
+                  <p>{open} open decisions still need confirmation or authorization.</p>
+                </div>
+                <form
+                  className="fo-ns-card fo-ns-form"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const title = newActionTitle.trim();
+                    if (!title) return;
+                    const id =
+                      newActionCategory === "INCOME"
+                        ? `income-${Date.now()}`
+                        : newActionCategory === "LEGACY"
+                          ? `legacy-${Date.now()}`
+                          : `protection-${Date.now()}`;
+                    const created: Action = {
+                      id,
+                      title,
+                      outcome: `Added under ${newActionCategory} to clarify next steps and confirm assumptions.`,
+                      owner: audience === "Household" ? "You" : "Advisor + Household",
+                      source: "User-entered planning note (needs verification)",
+                      assumptions: "Confirm balances, tax bracket, and timeline before authorizing.",
+                      alternatives: "Compare staying on current path vs. phased implementation.",
+                      costs: "Review fees, tax impact, and opportunity cost prior to action.",
+                      stage: "Proposed",
+                    };
+                    setActions((list) => [created, ...list]);
+                    setSelected(created.id);
+                    setNewActionTitle("");
+                    setNotice(`Added "${title}" to Proposed actions.`);
+                  }}
+                >
+                  <span className="fo-ns-label">ADD A NEXT STEP</span>
+                  <div className="fo-ns-inputs">
+                    <input
+                      type="text"
+                      value={newActionTitle}
+                      onChange={(e) => setNewActionTitle(e.target.value)}
+                      placeholder="e.g., Model 2026 Roth conversion…"
+                      aria-label="New planning action title"
+                    />
+                    <select
+                      value={newActionCategory}
+                      onChange={(e) => setNewActionCategory(e.target.value as "INCOME" | "PROTECTION" | "LEGACY")}
+                      aria-label="New action category"
+                    >
+                      <option value="INCOME">Income</option>
+                      <option value="PROTECTION">Protection</option>
+                      <option value="LEGACY">Legacy</option>
+                    </select>
+                    <button type="submit" className="fo-btn fo-btn-primary">Add</button>
+                  </div>
+                </form>
+              </section>
               <div className="board-toolbar">
                 <div>
                   <h2>
@@ -690,17 +768,31 @@ export default function App({ initialPage = "Overview" }: { initialPage?: string
                     approval or execution occurs.
                   </p>
                 </div>
-                <label>
-                  Show actions
-                  <select
-                    value={filter}
-                    onChange={(e) => setFilter(e.target.value)}
-                  >
-                    <option>All</option>
-                    <option>Open</option>
-                    <option>Completed</option>
-                  </select>
-                </label>
+                <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "end" }}>
+                  <label>
+                    Category
+                    <select
+                      value={categoryFilter}
+                      onChange={(e) => setCategoryFilter(e.target.value)}
+                    >
+                      <option>All categories</option>
+                      <option>Income</option>
+                      <option>Protection</option>
+                      <option>Legacy</option>
+                    </select>
+                  </label>
+                  <label>
+                    Show actions
+                    <select
+                      value={filter}
+                      onChange={(e) => setFilter(e.target.value)}
+                    >
+                      <option>All</option>
+                      <option>Open</option>
+                      <option>Completed</option>
+                    </select>
+                  </label>
+                </div>
               </div>
               <div className="board" aria-label="Planning actions by status">
                 {stages.map((stage) => (
@@ -712,14 +804,21 @@ export default function App({ initialPage = "Overview" }: { initialPage?: string
                       </span>
                     </h3>
                     {actions
-                      .filter(
-                        (a) =>
-                          a.stage === stage &&
-                          (filter === "All" ||
-                            (filter === "Completed"
-                              ? a.stage === "Verified complete"
-                              : a.stage !== "Verified complete")),
-                      )
+                      .filter((a) => {
+                        const cat =
+                          a.id.startsWith("income") || a.comparisonSnapshot
+                            ? "Income"
+                            : a.id.startsWith("legacy")
+                              ? "Legacy"
+                              : "Protection";
+                        const catOk = categoryFilter === "All categories" || categoryFilter === cat;
+                        const statusOk =
+                          filter === "All" ||
+                          (filter === "Completed"
+                            ? a.stage === "Verified complete"
+                            : a.stage !== "Verified complete");
+                        return a.stage === stage && catOk && statusOk;
+                      })
                       .map((a) => (
                         <button
                           className={`board-card ${a.id === selected ? "selected" : ""}`}
@@ -731,9 +830,9 @@ export default function App({ initialPage = "Overview" }: { initialPage?: string
                           }
                         >
                           <span className="card-tag">
-                            {a.id === "income" || a.comparisonSnapshot
+                            {a.id.startsWith("income") || a.comparisonSnapshot
                               ? "INCOME"
-                              : a.id === "legacy"
+                              : a.id.startsWith("legacy")
                                 ? "LEGACY"
                                 : "PROTECTION"}
                           </span>
@@ -763,7 +862,26 @@ export default function App({ initialPage = "Overview" }: { initialPage?: string
                       {active.title}
                     </h2>
                   </div>
-                  <span className="badge">{active.stage}</span>
+                  <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                    <button
+                      type="button"
+                      className="fo-btn fo-btn-primary"
+                      onClick={() => {
+                        const toolKey =
+                          active.id.startsWith("income") || active.comparisonSnapshot
+                            ? "retirement"
+                            : active.id.startsWith("legacy")
+                              ? "estate"
+                              : "life";
+                        setRequestedTool(toolKey);
+                        setToolRequestId((n) => n + 1);
+                        navigate("Financial workspace");
+                      }}
+                    >
+                      Open matching calculator →
+                    </button>
+                    <span className="badge">{active.stage}</span>
+                  </div>
                 </div>
                 <dl className="record-grid">
                   {[

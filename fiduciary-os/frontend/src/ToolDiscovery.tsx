@@ -108,15 +108,19 @@ export default function ToolDiscovery({
     trigger = useRef<HTMLButtonElement>(null),
     search = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState(""),
+    [category, setCategory] = useState("All"),
     [includeResearch, setIncludeResearch] = useState(false),
     [notice, setNotice] = useState("");
+  const categories = ["All", ...new Set(Object.values(toolInfo).map((t) => t.group))];
   const q = query.trim().toLowerCase();
-  const matches = Object.entries(toolInfo).filter(([, t]) =>
-    `${t.title} ${t.group} ${t.synonyms}`.toLowerCase().includes(q),
-  );
+  const matches = Object.entries(toolInfo).filter(([, t]) => {
+    const matchesCat = category === "All" || t.group === category;
+    const matchesQuery = `${t.title} ${t.group} ${t.synonyms} ${t.method}`.toLowerCase().includes(q);
+    return matchesCat && matchesQuery;
+  });
   const extra = includeResearch
     ? research.filter((t) =>
-        `${t.title} ${t.synonyms}`.toLowerCase().includes(q),
+        `${t.title} ${t.synonyms} ${t.reason}`.toLowerCase().includes(q),
       )
     : [];
   function close() {
@@ -160,77 +164,128 @@ export default function ToolDiscovery({
           }
         }}
       >
-        <h2 id={`${id}-title`}>Find a tool</h2>
-        <button type="button" onClick={close}>
-          Close tools
-        </button>
-        <label htmlFor={`${id}-search`}>
-          Search tools or a specific feature
-        </label>
-        <input
-          ref={search}
-          id={`${id}-search`}
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Roth conversion, fees, Bitcoin…"
-        />
-        <label>
-          <input
-            type="checkbox"
-            checked={includeResearch}
-            onChange={(e) => setIncludeResearch(e.target.checked)}
-          />{" "}
-          Include research tools
-        </label>
-        <p role="status">
-          {matches.length} available tools; {extra.length} research or
-          disconnected entries. {notice}
-        </p>
-        <p>
+        <div className="td-header">
+          <div>
+            <h2 id={`${id}-title`}>Find a tool</h2>
+            <p className="td-sub">
+              Search any planning calculator, formula, or financial topic.
+            </p>
+          </div>
+          <button type="button" className="td-close" onClick={close}>
+            Close tools
+          </button>
+        </div>
+
+        <div className="td-search-row">
+          <label htmlFor={`${id}-search`}>
+            Search tools or a specific feature
+          </label>
+          <div className="td-input-wrap">
+            <input
+              ref={search}
+              id={`${id}-search`}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Roth conversion, fees, Bitcoin…"
+            />
+            {query && (
+              <button
+                type="button"
+                className="td-clear"
+                onClick={() => {
+                  setQuery("");
+                  search.current?.focus();
+                }}
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="td-cats" role="group" aria-label="Filter tools by category">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              type="button"
+              className="td-cat-pill"
+              aria-pressed={category === cat}
+              onClick={() => setCategory(cat)}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        <div className="td-meta-row">
+          <label className="td-checkbox">
+            <input
+              type="checkbox"
+              checked={includeResearch}
+              onChange={(e) => setIncludeResearch(e.target.checked)}
+            />{" "}
+            Include research tools
+          </label>
+          <p role="status" className="td-status">
+            {matches.length} available tools; {extra.length} research or
+            disconnected entries. {notice}
+          </p>
+        </div>
+
+        <p className="td-disclaimer">
           Saved user inputs and calculated scenarios require sign-in. Public
           observations are separate from personal account balances. A menu is
           not an authorization boundary.
         </p>
-        {[...new Set(matches.map(([, t]) => t.group))].map((group) => (
-          <section key={group}>
-            <h3>{group}</h3>
-            <ul>
-              {matches
-                .filter(([, t]) => t.group === group)
-                .map(([key, t]) => (
-                  <li key={key}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (onSelect(key)) close();
-                        else
-                          setNotice(
-                            "Resolve unsaved or uncertain changes before switching tools.",
-                          );
-                      }}
-                    >
-                      {t.title}
-                    </button>
-                    <span>Calculated scenario / saved user inputs</span>
-                  </li>
-                ))}
-            </ul>
-          </section>
-        ))}
+
+        <div className="td-groups">
+          {[...new Set(matches.map(([, t]) => t.group))].map((group) => (
+            <section key={group} className="td-group">
+              <h3>{group}</h3>
+              <ul className="td-list">
+                {matches
+                  .filter(([, t]) => t.group === group)
+                  .map(([key, t]) => (
+                    <li key={key} className="td-item">
+                      <div className="td-item-top">
+                        <button
+                          type="button"
+                          className="td-launch"
+                          onClick={() => {
+                            if (onSelect(key)) close();
+                            else
+                              setNotice(
+                                "Resolve unsaved or uncertain changes before switching tools.",
+                              );
+                          }}
+                        >
+                          {t.title}
+                        </button>
+                        <span className="td-badge">Calculated scenario / saved user inputs</span>
+                      </div>
+                      <p className="td-method">{t.method}</p>
+                    </li>
+                  ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+
         {matches.length === 0 && (
-          <p>
+          <p className="td-empty">
             No available tool matches. Try a category or enable research
             entries; no substitute forecast is invented.
           </p>
         )}
+
         {extra.length > 0 && (
-          <section>
+          <section className="td-research">
             <h3>Research / disconnected — not operational tools</h3>
-            <ul>
+            <ul className="td-list">
               {extra.map((t) => (
-                <li key={t.title}>
+                <li key={t.title} className="td-item td-item-research">
                   <strong>{t.title}</strong>
-                  <p>{t.reason}</p>
+                  <p className="td-method">{t.reason}</p>
                 </li>
               ))}
             </ul>
