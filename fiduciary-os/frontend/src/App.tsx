@@ -92,10 +92,10 @@ const money = (n: number) =>
     currency: "USD",
     maximumFractionDigits: 0,
   }).format(n);
-export default function App() {
+export default function App({ initialPage = "Overview" }: { initialPage?: string } = {}) {
   const offline = location.protocol === "file:";
   const [savedMode, setSavedMode] = useState(false);
-  const [page, setPage] = useState("Overview");
+  const [page, setPage] = useState(initialPage);
   const [requestedTool, setRequestedTool] = useState<string | undefined>();
   const [toolRequestId, setToolRequestId] = useState(0);
   const [audience, setAudience] = useState("Household");

@@ -6,19 +6,103 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Seeding database...');
 
-  // Create admin user
+  // Create primary admin user with full profile, portfolio, and advisor capabilities
   const adminPassword = await bcrypt.hash('admin123', 12);
   const admin = await prisma.user.upsert({
     where: { email: 'wylder.mccarty@gmail.com' },
-    update: {},
+    update: {
+      role: 'admin',
+      advisorCode: 'ADMIN-001',
+    },
     create: {
       email: 'wylder.mccarty@gmail.com',
       password: adminPassword,
-      name: 'Admin User',
+      name: 'Marcus Admin',
       role: 'admin',
+      advisorCode: 'ADMIN-001',
+      profile: {
+        create: {
+          age: 42,
+          retirementAge: 60,
+          filingStatus: 'married',
+          stateTaxRate: 5.0,
+          employmentStatus: 'self-employed',
+          annualIncome: 385000,
+          investableAssets: 2450000,
+          monthlyExpenses: 11500,
+          retirementSavings: 1450000,
+          primaryGoal: 'wealth_preservation',
+          riskTolerance: 4,
+          investmentStyle: 'active',
+          cryptoAllocation: 8,
+        },
+      },
+      portfolio: {
+        create: {
+          totalValue: 2450000,
+          holdings: {
+            create: [
+              { symbol: 'VTI', quantity: 3200, avgCost: 245 },
+              { symbol: 'VXUS', quantity: 2400, avgCost: 58 },
+              { symbol: 'QQQ', quantity: 1100, avgCost: 410 },
+              { symbol: 'BND', quantity: 3500, avgCost: 73 },
+              { symbol: 'SGOV', quantity: 2200, avgCost: 100.2 },
+            ],
+          },
+        },
+      },
     },
   });
-  console.log('Created admin user:', admin.email);
+  console.log('Created/updated admin user:', admin.email);
+
+  // Create platform super-admin account (admin@fiduciaryos.com)
+  const superAdminPassword = await bcrypt.hash('Admin!2026', 12);
+  const superAdmin = await prisma.user.upsert({
+    where: { email: 'admin@fiduciaryos.com' },
+    update: {
+      role: 'admin',
+      advisorCode: 'ADMIN-SUPER',
+    },
+    create: {
+      email: 'admin@fiduciaryos.com',
+      password: superAdminPassword,
+      name: 'Fiduciary OS Super Admin',
+      role: 'admin',
+      advisorCode: 'ADMIN-SUPER',
+      profile: {
+        create: {
+          age: 42,
+          retirementAge: 60,
+          filingStatus: 'married',
+          stateTaxRate: 5.0,
+          employmentStatus: 'self-employed',
+          annualIncome: 385000,
+          investableAssets: 2450000,
+          monthlyExpenses: 11500,
+          retirementSavings: 1450000,
+          primaryGoal: 'wealth_preservation',
+          riskTolerance: 4,
+          investmentStyle: 'active',
+          cryptoAllocation: 8,
+        },
+      },
+      portfolio: {
+        create: {
+          totalValue: 2450000,
+          holdings: {
+            create: [
+              { symbol: 'VTI', quantity: 3200, avgCost: 245 },
+              { symbol: 'VXUS', quantity: 2400, avgCost: 58 },
+              { symbol: 'QQQ', quantity: 1100, avgCost: 410 },
+              { symbol: 'BND', quantity: 3500, avgCost: 73 },
+              { symbol: 'SGOV', quantity: 2200, avgCost: 100.2 },
+            ],
+          },
+        },
+      },
+    },
+  });
+  console.log('Created/updated super-admin user:', superAdmin.email);
 
   // Create demo client user
   const clientPassword = await bcrypt.hash('demo123', 12);

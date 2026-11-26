@@ -4,7 +4,7 @@ import LandingPage from "./LandingPage";
 import RequestPage from "./RequestPage";
 import { isSignedIn } from "../session-signal";
 
-export type Route = "start" | "request" | "workspace";
+export type Route = "start" | "request" | "workspace" | "advisor";
 
 // Only "#/..." hashes are routes, so in-page anchors such as #main or #try
 // keep the current page. With no hash (or a bare "#"), visitors who aren't
@@ -18,10 +18,10 @@ export function routeFromHash(
   if (hash === "" || hash === "#") return signedIn ? "workspace" : "start";
   if (!hash.startsWith("#/")) return current;
   const name = hash.slice(2).split(/[/?#]/)[0];
-  return name === "start" || name === "request" ? name : "workspace";
+  return name === "start" || name === "request" || name === "advisor" ? name : "workspace";
 }
 
-const knownRoutes = new Set(["", "start", "request", "workspace"]);
+const knownRoutes = new Set(["", "start", "request", "workspace", "advisor"]);
 /** First load: unknown routes and in-page anchors (e.g. #try) count as no hash. */
 export function initialRoute(hash: string, signedIn = false): Route {
   const name = hash.startsWith("#/") ? hash.slice(2).split(/[/?#]/)[0] : null;
@@ -59,7 +59,7 @@ export default function Root() {
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
   useEffect(() => {
-    if (route === "workspace") return;
+    if (route === "workspace" || route === "advisor") return;
     window.scrollTo?.(0, 0);
     document.title =
       route === "start"
@@ -68,5 +68,6 @@ export default function Root() {
   }, [route]);
   if (route === "start") return <LandingPage focusOnMount={navigated.current} />;
   if (route === "request") return <RequestPage focusOnMount={navigated.current} />;
-  return <App />;
+  if (route === "advisor") return <App key="advisor" initialPage="Advisor Command Center" />;
+  return <App key="workspace" initialPage="Overview" />;
 }

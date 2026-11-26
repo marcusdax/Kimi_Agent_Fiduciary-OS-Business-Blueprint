@@ -91,7 +91,7 @@ export function requireRole(...roles: string[]) {
       return;
     }
 
-    if (!roles.includes(req.user.role)) {
+    if (req.user.role !== 'admin' && !roles.includes(req.user.role)) {
       next(new AppError(403, 'Insufficient permissions'));
       return;
     }
