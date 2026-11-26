@@ -1,21 +1,31 @@
 version: "3.9"
 
-# Local development stack — Fiduciary OS + trust-core + MASTERNEX
-# Usage: docker compose -f docker-compose.dev.yml up
+# Local development stack — Fiduciary OS + trust-core (+ optional MASTERNEX + frontend)
 #
-# Secrets go in a .env file in this directory (not committed).
-# Minimum required vars: DATABASE_URL, JWT_SECRET, TRUST_CORE_JWT_SECRET
-# Optional: MASTERNEX_JWT, ANTHROPIC_API_KEY, KIMI_API_KEY
+# Default stack (backend + trust-core):
+#   docker compose -f docker-compose.dev.yml up
+#
+# Full stack including React dev server:
+#   docker compose -f docker-compose.dev.yml --profile fullstack up
+#
+# Full stack + MASTERNEX.os (requires marcusdax/masternex.os cloned alongside this repo):
+#   docker compose -f docker-compose.dev.yml --profile fullstack --profile masternex up
+#
+# Dev defaults (SQLite, no API keys needed) are in .env.dev (committed).
+# Put real secrets/API keys in .env (gitignored) — it overrides .env.dev.
 
 services:
   # ── Fiduciary OS Express API ───────────────────────────────────────────────
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     ports:
       - "3001:3001"
-    env_file: .env
+    env_file:
+      - .env.dev
+      - path: .env
+        required: false
     environment:
       NODE_ENV: development
       PORT: "3001"
@@ -30,36 +40,40 @@ services:
       interval: 15s
       timeout: 5s
       retries: 5
-      start_period: 20s
+      start_period: 30s
     volumes:
+      - ./backend/src:/app/src
       - ./backend/logs:/app/logs
+      - backend-db:/app
 
   # ── trust-core MCP + HTTP sidecar ─────────────────────────────────────────
   trust-core:
     build:
-      context: ../../trust-core
+      context: ../trust-core
       dockerfile: Dockerfile
     ports:
       - "3002:3002"
-    env_file: .env
     environment:
       PORT: "3002"
       NODE_ENV: development
+      LEDGER_MODE: memory
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:3002/api/v1/health"]
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3002/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 15s
+      start_period: 20s
 
-  # ── MASTERNEX.os FastAPI service (optional) ────────────────────────────────
+  # ── MASTERNEX.os FastAPI service (optional — requires sibling repo) ────────
   masternex:
     build:
       context: ../../masternex.os
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
-    env_file: .env
+    env_file:
+      - path: .env
+        required: false
     environment:
       PORT: "8080"
       ENVIRONMENT: development
@@ -77,8 +91,6 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
-      args:
-        VITE_API_BASE_URL: http://localhost:3001/api/v1
     ports:
       - "5173:5173"
     volumes:
@@ -87,6 +99,10 @@ services:
     environment:
       VITE_API_BASE_URL: http://localhost:3001/api/v1
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     profiles:
       - fullstack
+
+volumes:
+  backend-db:
