@@ -726,12 +726,12 @@ export default function App({ initialPage = "Overview" }: { initialPage?: string
                       assumptions: "Confirm balances, tax bracket, and timeline before authorizing.",
                       alternatives: "Compare staying on current path vs. phased implementation.",
                       costs: "Review fees, tax impact, and opportunity cost prior to action.",
-                      stage: "Proposed",
+                      stage: "Gather information",
                     };
                     setActions((list) => [created, ...list]);
                     setSelected(created.id);
                     setNewActionTitle("");
-                    setNotice(`Added "${title}" to Proposed actions.`);
+                    setNotice(`Added "${title}" to Gather information.`);
                   }}
                 >
                   <span className="fo-ns-label">ADD A NEXT STEP</span>
