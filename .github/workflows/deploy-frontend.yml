@@ -46,15 +46,29 @@ jobs:
         run: npm install --global vercel@latest
 
       - name: Pull Vercel environment
-        run: vercel pull --yes --environment=${{ github.ref_name == 'main' && 'production' || 'preview' }} --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "::notice::VERCEL_TOKEN not set — skipping Vercel deployment."
+            exit 0
+          fi
+          ENV=$([[ "${{ github.ref_name }}" == "main" ]] && echo "production" || echo "preview")
+          vercel pull --yes --environment="$ENV" --token="$VERCEL_TOKEN"
 
       - name: Deploy to Vercel
         id: deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "url=skipped" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           if [ "${{ github.ref_name }}" = "main" ]; then
-            URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
+            URL=$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN")
           else
-            URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+            URL=$(vercel deploy --prebuilt --token="$VERCEL_TOKEN")
           fi
           echo "url=$URL" >> "$GITHUB_OUTPUT"
 
