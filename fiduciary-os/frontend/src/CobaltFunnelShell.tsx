@@ -456,6 +456,8 @@ export default function CobaltFunnelShell({ children }: { children: ReactNode })
               { label: "♦ Symphony Composer (500-Path Live Engine)", run: () => setStudioView("symphony") },
               { label: "♬ Proposed Symphony (5-Stage Workflow)", run: () => setStudioView("proposed") },
               { label: "⚖ Will & Trust Atelier (5-Step Intake + 7 Drafts)", run: () => setStudioView("willtrust") },
+              { label: "↗ 3D Growth & Marketing Studio (3D Canvas + Rocker Toggles)", run: () => setStudioView("growth3d") },
+              { label: "⌂ Property & Renovation ROI Studio (Census + Incentives)", run: () => setStudioView("property") },
               { label: "4. Advisor Full Stack (CRM, Campaigns & Research Hub)", run: () => { setStudioView(null); navigateStage("advisor"); } },
               { label: "1. Landing Hub", run: () => { setStudioView(null); navigateStage("landing"); } },
               { label: "2. Consumer Free Workspace", run: () => { setStudioView(null); navigateStage("free"); } },

@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import SymphonyComposerPanel from "./SymphonyComposerPanel";
 import GrowthStudio3D from "./GrowthStudio3D";
+import RealEstateRoiPanel from "./RealEstateRoiPanel";
 
-export type ExpandedView = "symphony" | "proposed" | "willtrust" | "growth3d" | null;
+export type ExpandedView = "symphony" | "proposed" | "willtrust" | "growth3d" | "property" | null;
 
 interface HouseholdIntake {
   name: string;
@@ -343,9 +344,15 @@ export default function ExpandedModules({
           <button aria-pressed={view === "growth3d"} onClick={() => window.dispatchEvent(new CustomEvent("fiduciary:open-studio", { detail: { view: "growth3d" } }))}>
             ↗ 3D Growth Studio
           </button>
+          <button aria-pressed={view === "property"} onClick={() => window.dispatchEvent(new CustomEvent("fiduciary:open-studio", { detail: { view: "property" } }))}>
+            ⌂ Property &amp; ROI
+          </button>
         </div>
         <button className="fo-btn" onClick={onClose}>✕ Back to Workspace</button>
       </div>
+
+      {/* 5. PROPERTY & RENOVATION ROI STUDIO */}
+      {view === "property" && <RealEstateRoiPanel />}
 
       {/* 4. 3D GROWTH & MARKETING STUDIO */}
       {view === "growth3d" && <GrowthStudio3D />}
