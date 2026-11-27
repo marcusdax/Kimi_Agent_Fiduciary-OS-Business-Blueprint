@@ -1,15 +1,14 @@
 /**
  * services/kdenseService.ts — Phase 3 K-Dense Kady MCP Registration.
  *
- * Registers trust-core (5 calculators + fidos_compliance_audit) and MASTERNEX.os
- * as global MCP servers in a running K-Dense Kady instance via its REST API:
+ * Registers trust-core (5 calculators + fidos_compliance_audit) as a global
+ * MCP server in a running K-Dense Kady instance via its REST API:
  *   PUT http://127.0.0.1:8000/mcp?scope=global
  *
  * Env vars:
  *   KDENSE_URL          — K-Dense backend URL (default: not set, skips registration)
  *   KDENSE_AUTH_TOKEN   — K-Dense auth token (matches KADY_AUTH_TOKEN in k-dense .env)
- *   TRUST_CORE_MCP_URL  — trust-core HTTP streamable MCP URL (default: http://127.0.0.1:3001/mcp)
- *   MASTERNEX_MCP_URL   — MASTERNEX HTTP streamable MCP URL (default: http://127.0.0.1:8080/mcp)
+ *   TRUST_CORE_MCP_URL  — trust-core HTTP streamable MCP URL (default: http://127.0.0.1:3002/mcp)
  *
  * When KDENSE_URL is unset, registration is silently skipped — safe to leave
  * unconfigured in development or when K-Dense is not part of the deployment.
@@ -17,8 +16,7 @@
 
 const KDENSE_URL = process.env.KDENSE_URL ?? null;
 const KDENSE_AUTH_TOKEN = process.env.KDENSE_AUTH_TOKEN ?? null;
-const TRUST_CORE_MCP_URL = process.env.TRUST_CORE_MCP_URL ?? 'http://127.0.0.1:3001/mcp';
-const MASTERNEX_MCP_URL = process.env.MASTERNEX_MCP_URL ?? 'http://127.0.0.1:8080/mcp';
+const TRUST_CORE_MCP_URL = process.env.TRUST_CORE_MCP_URL ?? 'http://127.0.0.1:3002/mcp';
 
 export interface KdenseMcpRegistrationResult {
   status: 'registered' | 'skipped' | 'failed';
@@ -28,7 +26,7 @@ export interface KdenseMcpRegistrationResult {
 }
 
 /**
- * Registers trust-core and MASTERNEX MCP servers into K-Dense Kady globally.
+ * Registers the trust-core MCP server into K-Dense Kady globally.
  * Non-blocking — callers should fire-and-forget or log the result.
  */
 export async function registerMcpServers(): Promise<KdenseMcpRegistrationResult> {
@@ -43,12 +41,6 @@ export async function registerMcpServers(): Promise<KdenseMcpRegistrationResult>
         exposure: 'codemode',
         description:
           'FiduciaryOS trust-core: 5 calculators + fidos_compliance_audit (SR 11-7 / EU AI Act Art. 12)',
-      },
-      masternex: {
-        url: MASTERNEX_MCP_URL,
-        exposure: 'deferred',
-        description:
-          'MASTERNEX.os: ZK Shapley proofs, ACPLedger, PRINCE federated benchmarks, 16 MCP tools',
       },
     },
   };

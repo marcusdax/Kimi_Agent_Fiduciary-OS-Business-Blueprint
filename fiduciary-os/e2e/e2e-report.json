@@ -1,0 +1,1511 @@
+{
+  "timestamp": "2026-11-27T00:50:44.340Z",
+  "tierFilter": "all",
+  "specFilesCount": 35,
+  "totals": {
+    "passed": 4,
+    "failed": 57,
+    "total": 61,
+    "durationMs": 9477
+  },
+  "tiers": {
+    "tier1": {
+      "specs": 18,
+      "passed": 4,
+      "failed": 32,
+      "total": 36,
+      "durationMs": 1607.501779
+    },
+    "tier2": {
+      "specs": 4,
+      "passed": 0,
+      "failed": 12,
+      "total": 12,
+      "durationMs": 494.01031300000005
+    },
+    "tier3": {
+      "specs": 7,
+      "passed": 0,
+      "failed": 7,
+      "total": 7,
+      "durationMs": 496.77985700000005
+    },
+    "tier4": {
+      "specs": 6,
+      "passed": 0,
+      "failed": 6,
+      "total": 6,
+      "durationMs": 535.468199
+    }
+  },
+  "features": {
+    "F1": {
+      "passed": 1,
+      "failed": 6,
+      "total": 7
+    },
+    "F2": {
+      "passed": 0,
+      "failed": 5,
+      "total": 5
+    },
+    "F3": {
+      "passed": 0,
+      "failed": 6,
+      "total": 6
+    },
+    "F4": {
+      "passed": 0,
+      "failed": 5,
+      "total": 5
+    },
+    "F5": {
+      "passed": 0,
+      "failed": 3,
+      "total": 3
+    },
+    "F6": {
+      "passed": 0,
+      "failed": 5,
+      "total": 5
+    },
+    "F7": {
+      "passed": 0,
+      "failed": 8,
+      "total": 8
+    },
+    "F8": {
+      "passed": 0,
+      "failed": 8,
+      "total": 8
+    },
+    "F9": {
+      "passed": 0,
+      "failed": 3,
+      "total": 3
+    },
+    "F10": {
+      "passed": 0,
+      "failed": 5,
+      "total": 5
+    },
+    "F11": {
+      "passed": 0,
+      "failed": 11,
+      "total": 11
+    },
+    "F12": {
+      "passed": 0,
+      "failed": 4,
+      "total": 4
+    },
+    "F13": {
+      "passed": 0,
+      "failed": 2,
+      "total": 2
+    },
+    "F14": {
+      "passed": 0,
+      "failed": 5,
+      "total": 5
+    },
+    "F15": {
+      "passed": 0,
+      "failed": 7,
+      "total": 7
+    },
+    "F16": {
+      "passed": 0,
+      "failed": 5,
+      "total": 5
+    },
+    "F17": {
+      "passed": 0,
+      "failed": 9,
+      "total": 9
+    },
+    "F18": {
+      "passed": 3,
+      "failed": 0,
+      "total": 3
+    }
+  },
+  "failures": [
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f01-lexicon.test.mjs",
+      "name": "[F1] Live frontend serves AUCTUM.ATLAS lexicon contract with all 10 consumer & advisor mappings",
+      "features": [
+        "F1"
+      ],
+      "durationMs": 82,
+      "error": "[F1/M2] Expected live frontend module at http://localhost:5173/src/lib/lexicon.ts (Shared lexicon module /src/lib/lexicon.ts must be served by live frontend), but Vite returned HTML SPA fallback (module does not exist yet)  true !== false"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f02-copy-linter.test.mjs",
+      "name": "[F2] npm --prefix fiduciary-os/frontend run lint:copy is defined and passes on clean repo",
+      "features": [
+        "F2"
+      ],
+      "durationMs": 4,
+      "error": "[F2/M2] Missing \"lint:copy\" script in fiduciary-os/frontend/package.json (Script \"lint:copy\" is not defined in fiduciary-os/frontend/package.json)  false !== true"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f02-copy-linter.test.mjs",
+      "name": "[F2] lint:copy exits non-zero on isolated /tmp fixture containing all 6 banned promotional phrases",
+      "features": [
+        "F2"
+      ],
+      "durationMs": 4,
+      "error": "[F2/M2] Missing \"lint:copy\" script in fiduciary-os/frontend/package.json  false !== true"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f03-disclosures-risk-drawer.test.mjs",
+      "name": "[F3] Live frontend serves RiskDrawer component with SEC 206(4)-1 / FINRA 2210 disclosures and aria-expanded",
+      "features": [
+        "F3"
+      ],
+      "durationMs": 109,
+      "error": "[F3/M2] Expected live frontend module at http://localhost:5173/src/components/RiskDrawer.tsx (Shared RiskDrawer component /src/components/RiskDrawer.tsx must be served by live frontend), but Vite returned HTML SPA fallback (module does not exist yet)  true !== false"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f03-disclosures-risk-drawer.test.mjs",
+      "name": "[F3] Live consumer shell includes persistent educational disclaimer landmark",
+      "features": [
+        "F3"
+      ],
+      "durationMs": 18,
+      "error": "[F3/M2] Consumer App shell must mount persistent educational disclaimer landmark or RiskDrawer"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f04-consent-ledger.test.mjs",
+      "name": "[F4] POST/GET /api/v1/consent records and retrieves double-opt-in proofs for email, sms, and voice",
+      "features": [
+        "F4"
+      ],
+      "durationMs": 115,
+      "error": "[F4/M1] Expected HTTP 200 or 201 from http://localhost:3001/api/v1/consent (POST /api/v1/consent (email)), got HTTP 401. Body: {\"error\":\"Access token required\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f05-lifecycle-xstate-wizard.test.mjs",
+      "name": "[F5] Live frontend serves 6-step XState onboardingMachine and OnboardingWizard",
+      "features": [
+        "F5"
+      ],
+      "durationMs": 71,
+      "error": "[F5/M2] Expected live frontend module at http://localhost:5173/src/lib/onboardingMachine.ts (XState onboarding machine /src/lib/onboardingMachine.ts), but Vite returned HTML SPA fallback (module does not exist yet)  true !== false"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f05-lifecycle-xstate-wizard.test.mjs",
+      "name": "[F5] Live frontend serves 3-Slider HouseholdCheckup and all 5 lifecycle stages",
+      "features": [
+        "F5"
+      ],
+      "durationMs": 11,
+      "error": "[F5/M2] Expected live frontend module at http://localhost:5173/src/components/HouseholdCheckup.tsx (Homepage 3-Slider HouseholdCheckup /src/components/HouseholdCheckup.tsx), but Vite returned HTML SPA fallback (module does not exist yet)  true !== false"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f06-coupled-studios.test.mjs",
+      "name": "[F6] Property Studio #11 underwriting output includes net cash-flow coupling fields for Unified Cash-Flow Router",
+      "features": [
+        "F6"
+      ],
+      "durationMs": 78,
+      "error": "[F6/M3] Expected HTTP 200 from http://localhost:3001/api/v1/property/underwrite (POST /api/v1/property/underwrite), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/property/underwrite\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f06-coupled-studios.test.mjs",
+      "name": "[F6] Live frontend Wealth Canvas references all 11 studios including Real Property & Tangible Asset Studio",
+      "features": [
+        "F6"
+      ],
+      "durationMs": 19,
+      "error": "[F6/M2] Live frontend must expose Studio #11 (Real Property & Tangible Asset Studio) alongside the 10 financial Navigators"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f07-real-property-studio.test.mjs",
+      "name": "[F7] POST /api/v1/property/underwrite computes deterministic HOLD KPIs, 30-yr amortization, 10-yr curves, 2^3 DOE, and Committee Memo",
+      "features": [
+        "F7"
+      ],
+      "durationMs": 77,
+      "error": "[F7/M3] Expected HTTP 200 from http://localhost:3001/api/v1/property/underwrite (POST /api/v1/property/underwrite (hold)), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/property/underwrite\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f07-real-property-studio.test.mjs",
+      "name": "[F7] POST /api/v1/property/underwrite computes deterministic BRRRR KPIs, 30-yr amortization, 10-yr curves, 2^3 DOE, and Committee Memo",
+      "features": [
+        "F7"
+      ],
+      "durationMs": 11,
+      "error": "[F7/M3] Expected HTTP 200 from http://localhost:3001/api/v1/property/underwrite (POST /api/v1/property/underwrite (brrrr)), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/property/underwrite\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f07-real-property-studio.test.mjs",
+      "name": "[F7] POST /api/v1/property/underwrite computes deterministic STR KPIs, 30-yr amortization, 10-yr curves, 2^3 DOE, and Committee Memo",
+      "features": [
+        "F7"
+      ],
+      "durationMs": 15,
+      "error": "[F7/M3] Expected HTTP 200 from http://localhost:3001/api/v1/property/underwrite (POST /api/v1/property/underwrite (str)), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/property/underwrite\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f08-crm-pgcrypto-no-masternex.test.mjs",
+      "name": "[F8] Full CRM CRUD on households, people (encrypted SSN), accounts, appointments, life-events + privacy export & soft-delete",
+      "features": [
+        "F8"
+      ],
+      "durationMs": 86,
+      "error": "[F8/M1] Expected HTTP 200 or 201 from http://localhost:3001/api/v1/crm/households (POST /api/v1/crm/households), got HTTP 401. Body: {\"error\":\"Access token required\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f08-crm-pgcrypto-no-masternex.test.mjs",
+      "name": "[F8] Docker Compose files contain zero masternex service definitions",
+      "features": [
+        "F8"
+      ],
+      "durationMs": 2,
+      "error": "[F8/M1] Found 20 active masternex reference(s) in docker-compose files: fiduciary-os/docker-compose.dev.yml:3, fiduciary-os/docker-compose.dev.yml:11, fiduciary-os/docker-compose.dev.yml:12, fiduciary-os/docker-compose.dev.yml:66, fiduciary-os/docker-compose.dev.yml:104  20 !== 0"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f09-surfaces-mobile-tracker.test.mjs",
+      "name": "[F9] Live frontend serves StewardPortal / Mobile Policy Tracker and Advisor Command Center wired to live CRM",
+      "features": [
+        "F9"
+      ],
+      "durationMs": 83,
+      "error": "[F9/M2] Expected live frontend module at http://localhost:5173/src/components/StewardPortal.tsx (StewardPortal / Mobile Policy Tracker /src/components/StewardPortal.tsx), but Vite returned HTML SPA fallback (module does not exist yet)  true !== false"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f10-wcag-viz-system.test.mjs",
+      "name": "[F10] AccessibleChartFrame provides ARIA landmarks, paired Accessible Data Table, RiskDrawer, Albers/Itten palette, and 220ms transition",
+      "features": [
+        "F10"
+      ],
+      "durationMs": 78,
+      "error": "[F10/M3] Expected live frontend module at http://localhost:5173/src/components/charts/AccessibleChartFrame.tsx (Shared AccessibleChartFrame /src/components/charts/AccessibleChartFrame.tsx), but Vite returned HTML SPA fallback (module does not exist yet)  true !== false"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f11-six-signature-charts.test.mjs",
+      "name": "[F11] POST /api/v1/calculations/retirement-simulation executes 10,000 paths with monotonic percentile bands and explicit assumptionSource",
+      "features": [
+        "F11"
+      ],
+      "durationMs": 86,
+      "error": "[F11/M3] Expected HTTP 200 from http://localhost:3001/api/v1/calculations/retirement-simulation (POST /api/v1/calculations/retirement-simulation (10,000 paths)), got HTTP 400. Body: {\"error\":\"Validation error: field: Invalid value, field: Invalid value, field: Invalid value\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f11-six-signature-charts.test.mjs",
+      "name": "[F11] Frontend exposes all 6 signature charts index without unsourced static ratios",
+      "features": [
+        "F11"
+      ],
+      "durationMs": 12,
+      "error": "[F11/M3] Expected live frontend module at http://localhost:5173/src/components/charts/index.ts (Signature charts barrel /src/components/charts/index.ts), but Vite returned HTML SPA fallback (module does not exist yet)  true !== false"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f12-kdense-provenance.test.mjs",
+      "name": "[F12] Living Lab Notebook, SHA-256 Frozen Analysis Plan hash chain, and RO-Crate 1.1 ZIP WORM export",
+      "features": [
+        "F12"
+      ],
+      "durationMs": 110,
+      "error": "[F12/M4] Expected HTTP 200 or 201 from http://localhost:3001/api/v1/provenance/notebook (POST /api/v1/provenance/notebook), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/provenance/notebook\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f13-skill-governance.test.mjs",
+      "name": "[F13] Skill registry returns only allowlisted skills scanned by cisco-ai-skill-scanner and rejects unvetted skills",
+      "features": [
+        "F13"
+      ],
+      "durationMs": 75,
+      "error": "[F13/M4] Expected HTTP 200 from http://localhost:3001/api/v1/governance/skills (GET /api/v1/governance/skills), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/governance/skills\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f13-skill-governance.test.mjs",
+      "name": "[F13] mimeo pedagogy checklists are exposed read-only and reject mutations",
+      "features": [
+        "F13"
+      ],
+      "durationMs": 16,
+      "error": "[F13/M4] Expected HTTP 200 from http://localhost:3001/api/v1/governance/mimeo/checklists (GET /api/v1/governance/mimeo/checklists), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/governance/mimeo/checklists\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f14-biomimicry-honeybee.test.mjs",
+      "name": "[F14] POST /api/v1/governance/honeybee/align computes weighted household consensus and Biomimicry cash-flow allocation",
+      "features": [
+        "F14"
+      ],
+      "durationMs": 71,
+      "error": "[F14/M4] Expected HTTP 200 from http://localhost:3001/api/v1/governance/honeybee/align (POST /api/v1/governance/honeybee/align), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/governance/honeybee/align\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f14-biomimicry-honeybee.test.mjs",
+      "name": "[F14] POST /api/v1/governance/swarm-critic executes 4 independent scouts and returns quorum convergence",
+      "features": [
+        "F14"
+      ],
+      "durationMs": 16,
+      "error": "[F14/M4] Expected HTTP 200 from http://localhost:3001/api/v1/governance/swarm-critic (POST /api/v1/governance/swarm-critic), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/governance/swarm-critic\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f15-audited-connectors.test.mjs",
+      "name": "[F15] GET /api/v1/connectors/status reports all audited connectors including Gemini 4 Api-Revision 2026-05-20",
+      "features": [
+        "F15"
+      ],
+      "durationMs": 99,
+      "error": "[F15/M4] Expected HTTP 200 from http://localhost:3001/api/v1/connectors/status (GET /api/v1/connectors/status), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/connectors/status\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f15-audited-connectors.test.mjs",
+      "name": "[F15] POST /api/v1/connectors/plaid/sync returns cursor-based incremental sync payload",
+      "features": [
+        "F15"
+      ],
+      "durationMs": 28,
+      "error": "[F15/M4] Expected HTTP 200 from http://localhost:3001/api/v1/connectors/plaid/sync (POST /api/v1/connectors/plaid/sync), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/connectors/plaid/sync\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f15-audited-connectors.test.mjs",
+      "name": "[F15] POST /api/v1/connectors/quotes/compare with valid REMOTE_IP returns timestamped multi-carrier quotes",
+      "features": [
+        "F15"
+      ],
+      "durationMs": 12,
+      "error": "[F15/M4] Expected HTTP 200 from http://localhost:3001/api/v1/connectors/quotes/compare (POST /api/v1/connectors/quotes/compare), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/connectors/quotes/compare\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f16-orchestration-spine.test.mjs",
+      "name": "[F16] Temporal + LangGraph workflow execution returns durable workflowId and bounded state transitions",
+      "features": [
+        "F16"
+      ],
+      "durationMs": 77,
+      "error": "[F16/M4] Expected HTTP 200 or 201 or 202 from http://localhost:3001/api/v1/orchestration/workflows (POST /api/v1/orchestration/workflows), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/orchestration/workflows\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f16-orchestration-spine.test.mjs",
+      "name": "[F16] Camunda DMN regulatory decision table returns deterministic decision for identical inputs",
+      "features": [
+        "F16"
+      ],
+      "durationMs": 18,
+      "error": "[F16/M4] Expected HTTP 200 from http://localhost:3001/api/v1/orchestration/dmn/evaluate (POST /api/v1/orchestration/dmn/evaluate (1)), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/orchestration/dmn/evaluate\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f16-orchestration-spine.test.mjs",
+      "name": "[F16] MCP/A2A discovery endpoint returns valid tool and agent capability schema",
+      "features": [
+        "F16"
+      ],
+      "durationMs": 12,
+      "error": "[F16/M4] Expected HTTP 200 from http://localhost:3001/api/v1/orchestration/capabilities (GET /api/v1/orchestration/capabilities), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/orchestration/capabilities\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f17-compliance-gates-worm.test.mjs",
+      "name": "[F17] POST /api/v1/compliance/evaluate passes educational copy and emits chained 64-hex WORM receipt hashes",
+      "features": [
+        "F17"
+      ],
+      "durationMs": 78,
+      "error": "[F17/M2] Expected HTTP 200 from http://localhost:3001/api/v1/compliance/evaluate (POST /api/v1/compliance/evaluate (1)), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/compliance/evaluate\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f17-compliance-gates-worm.test.mjs",
+      "name": "[F17] trust-core (:3002) confirms durable cryptographic ledger mode (NOT LEDGER_MODE=memory)",
+      "features": [
+        "F17"
+      ],
+      "durationMs": 9,
+      "error": "[F17/M1] trust-core must report durable ledger persistence (NOT memory), got ledgerMode=\"undefined\""
+    },
+    {
+      "status": "fail",
+      "tier": "tier2",
+      "file": "tests/tier2/compliance-pii-and-copy-boundaries.test.mjs",
+      "name": "[F17] Gate 1 redacts all SSN, email, phone, and bank account PII variants from redactedText",
+      "features": [
+        "F17"
+      ],
+      "durationMs": 91,
+      "error": "[F17/M2] Expected HTTP 200 from http://localhost:3001/api/v1/compliance/evaluate (POST /api/v1/compliance/evaluate (PII vectors)), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/compliance/evaluate\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier2",
+      "file": "tests/tier2/compliance-pii-and-copy-boundaries.test.mjs",
+      "name": "[F17] Gate 2 blocks prompt-injection promotional claim and populates violations[]",
+      "features": [
+        "F17"
+      ],
+      "durationMs": 10,
+      "error": "[F17/M2] Expected HTTP 200 from http://localhost:3001/api/v1/compliance/evaluate (POST /api/v1/compliance/evaluate (prompt injection)), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/compliance/evaluate\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier2",
+      "file": "tests/tier2/compliance-pii-and-copy-boundaries.test.mjs",
+      "name": "[F1][F2] lint:copy catches uppercase, mixed-case, punctuation, and whitespace variants of banned phrases",
+      "features": [
+        "F1",
+        "F2"
+      ],
+      "durationMs": 3,
+      "error": "[F2/M2] Missing \"lint:copy\" script in fiduciary-os/frontend/package.json  false !== true"
+    },
+    {
+      "status": "fail",
+      "tier": "tier2",
+      "file": "tests/tier2/crm-and-property-boundaries.test.mjs",
+      "name": "[F8] CRM rejects empty JSON {}, oversized strings (>10KB), and invalid member role enum with 400/422 (never 500)",
+      "features": [
+        "F8"
+      ],
+      "durationMs": 81,
+      "error": "[F8/M1] Expected HTTP 400 or 422 from http://localhost:3001/api/v1/crm/households (POST /api/v1/crm/households with empty {}), got HTTP 401. Body: {\"error\":\"Access token required\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier2",
+      "file": "tests/tier2/crm-and-property-boundaries.test.mjs",
+      "name": "[F7] Property underwriting rejects zero/negative prices, invalid rates, >100% down payment, zero loan term, and unknown strategy with 400/422",
+      "features": [
+        "F7"
+      ],
+      "durationMs": 13,
+      "error": "[F7/M3] Expected HTTP 400 or 422 from http://localhost:3001/api/v1/property/underwrite (Invalid underwriting boundary (purchasePrice=0)), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/property/underwrite\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier2",
+      "file": "tests/tier2/crm-and-property-boundaries.test.mjs",
+      "name": "[F7] Property underwriting handles extreme $100,000,000 purchasePrice with finite numbers and balanced 30-yr amortization",
+      "features": [
+        "F7"
+      ],
+      "durationMs": 10,
+      "error": "[F7/M3] Expected HTTP 200 from http://localhost:3001/api/v1/property/underwrite (Extreme $100M property underwriting), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/property/underwrite\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier2",
+      "file": "tests/tier2/monte-carlo-boundaries.test.mjs",
+      "name": "[F11] Monte Carlo enforces path bounds: rejects 0, -1, 10001, and string paths; accepts 1 and 10000",
+      "features": [
+        "F11"
+      ],
+      "durationMs": 114,
+      "error": "[F11/M3] Expected HTTP 200 from http://localhost:3001/api/v1/calculations/retirement-simulation (Monte Carlo paths=1 degenerate boundary), got HTTP 400. Body: {\"error\":\"Validation error: field: Invalid value, field: Invalid value, field: Invalid value\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier2",
+      "file": "tests/tier2/monte-carlo-boundaries.test.mjs",
+      "name": "[F11] Rejects unsourced static marketing ratios (1.25x leverage / 11.10% FIA payout) without valid assumptionSource",
+      "features": [
+        "F11"
+      ],
+      "durationMs": 16,
+      "error": "[F11/M3] Expected HTTP 200 from http://localhost:3001/api/v1/calculations/retirement-simulation (Valid baseline Monte Carlo payload (paths=100, user_declared_hypothetical) must succeed before testing unsourced static ratio rejection), got HTTP 400. Body: {\"error\":\"Validation error: field: Invalid value, field: Invalid value, field: Invalid value\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier2",
+      "file": "tests/tier2/orchestration-and-connectors-boundaries.test.mjs",
+      "name": "[F16] Temporal orchestration spine handles >2.1 MB payload via S3 UUID ref offload without gRPC limit crash",
+      "features": [
+        "F16"
+      ],
+      "durationMs": 120,
+      "error": "[F16/M4] Expected HTTP 200 or 201 or 202 or 413 from http://localhost:3001/api/v1/orchestration/workflows (Temporal >2 MB payload guard (offload to S3 UUID ref or explicit 413 offload contract)), got HTTP 500. Body: {\"error\":\"Internal server error\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier2",
+      "file": "tests/tier2/orchestration-and-connectors-boundaries.test.mjs",
+      "name": "[F15] Plaid FDX Free-tier allows 1 institution connection and blocks 2nd distinct institution with 402/403",
+      "features": [
+        "F15"
+      ],
+      "durationMs": 17,
+      "error": "[F15/M4] Expected HTTP 200 from http://localhost:3001/api/v1/connectors/plaid/sync (Plaid Free-tier 1st institution sync), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/connectors/plaid/sync\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier2",
+      "file": "tests/tier2/orchestration-and-connectors-boundaries.test.mjs",
+      "name": "[F15] Compulife quote compare rejects missing or invalid REMOTE_IP with 400/422",
+      "features": [
+        "F15"
+      ],
+      "durationMs": 9,
+      "error": "[F15/M4] Expected HTTP 400 or 422 from http://localhost:3001/api/v1/connectors/quotes/compare (Compulife quote compare without REMOTE_IP must be rejected), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/connectors/quotes/compare\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier2",
+      "file": "tests/tier2/orchestration-and-connectors-boundaries.test.mjs",
+      "name": "[F4] Consent endpoint rejects invalid channel and status enums with 400/422",
+      "features": [
+        "F4"
+      ],
+      "durationMs": 12,
+      "error": "[F4/M1] Expected HTTP 400 or 422 from http://localhost:3001/api/v1/consent (POST /api/v1/consent with invalid channel/status enums), got HTTP 401. Body: {\"error\":\"Access token required\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier3",
+      "file": "tests/tier3/01-consent-blocks-outbound.test.mjs",
+      "name": "[F4][F15] Opted-out user is strictly blocked from SMS/email outbound dispatch; flipping to double-opt-in permits dry-run dispatch",
+      "features": [
+        "F4",
+        "F15"
+      ],
+      "durationMs": 93,
+      "error": "[F4/M1] Expected HTTP 200 or 201 from http://localhost:3001/api/v1/consent (opt-out sms), got HTTP 401. Body: {\"error\":\"Access token required\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier3",
+      "file": "tests/tier3/02-charts-risk-drawer-a11y-palette.test.mjs",
+      "name": "[F3][F7][F10][F11] AccessibleChartFrame pairs RiskDrawer, ARIA region, Accessible Data Table, and Albers/Itten palette across all 6 signature charts",
+      "features": [
+        "F3",
+        "F7",
+        "F10",
+        "F11"
+      ],
+      "durationMs": 76,
+      "error": "[F3+F10+F11/M3] Expected live frontend module at http://localhost:5173/src/components/charts/AccessibleChartFrame.tsx (AccessibleChartFrame.tsx must be served by live frontend), but Vite returned HTML SPA fallback (module does not exist yet)  true !== false"
+    },
+    {
+      "status": "fail",
+      "tier": "tier3",
+      "file": "tests/tier3/03-honeybee-nonconvergence-hitl.test.mjs",
+      "name": "[F14][F17] Conflicted high-risk proposal fails 4-scout quorum and automatically triggers Gate 3 HITL Escalation Pause",
+      "features": [
+        "F14",
+        "F17"
+      ],
+      "durationMs": 75,
+      "error": "[F14+F17/M4] Expected HTTP 200 from http://localhost:3001/api/v1/governance/swarm-critic (POST /api/v1/governance/swarm-critic (conflicted high-risk)), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/governance/swarm-critic\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier3",
+      "file": "tests/tier3/04-crm-graph-to-constellation.test.mjs",
+      "name": "[F8][F11] 3-generation household seeded in CRM is retrievable as a hierarchical beneficiary constellation graph",
+      "features": [
+        "F8",
+        "F11"
+      ],
+      "durationMs": 75,
+      "error": "[F8+F11/M1] Expected HTTP 200 or 201 from http://localhost:3001/api/v1/crm/households (POST /api/v1/crm/households), got HTTP 401. Body: {\"error\":\"Access token required\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier3",
+      "file": "tests/tier3/05-masternex-zero-reference.test.mjs",
+      "name": "[F8] Zero active masternex/MASTERNEX references remain in docker-compose, .env.dev, backend/src, or frontend/src",
+      "features": [
+        "F8"
+      ],
+      "durationMs": 24,
+      "error": "[F8/M1] Found 7 active Masternex reference(s) across stack: fiduciary-os/.env.dev:47, fiduciary-os/.env.dev:48, fiduciary-os/.env.dev:49, fiduciary-os/frontend/src/AdvisorCommandCenter.tsx:34, fiduciary-os/frontend/src/AdvisorCommandCenter.tsx:654, fiduciary-os/frontend/src/AdvisorCommandCenter.tsx:655, fiduciary-os/frontend/src/AdvisorCommandCenter.tsx:668  7 !== 0"
+    },
+    {
+      "status": "fail",
+      "tier": "tier3",
+      "file": "tests/tier3/06-kdense-freeze-rocrate-worm.test.mjs",
+      "name": "[F12][F17] Frozen Analysis Plan hash and Gate 4 WORM receipt hash are both preserved inside exported RO-Crate 1.1 ZIP",
+      "features": [
+        "F12",
+        "F17"
+      ],
+      "durationMs": 83,
+      "error": "[F12+F17/M4] Expected HTTP 200 or 201 from http://localhost:3001/api/v1/provenance/notebook (POST /api/v1/provenance/notebook), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/provenance/notebook\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier3",
+      "file": "tests/tier3/07-lexicon-and-copy-linter-isolation.test.mjs",
+      "name": "[F1][F2] Consumer onboarding/checkup surfaces contain zero AUCTUM Command advisor-only terms and lint:copy flags B2C advisor-jargon leaks",
+      "features": [
+        "F1",
+        "F2"
+      ],
+      "durationMs": 72,
+      "error": "[F1+F2/M2] Expected live frontend module at http://localhost:5173/src/components/HouseholdCheckup.tsx (Consumer HouseholdCheckup.tsx must be served by live frontend), but Vite returned HTML SPA fallback (module does not exist yet)  true !== false"
+    },
+    {
+      "status": "fail",
+      "tier": "tier4",
+      "file": "tests/tier4/scenario-01-planner-parent-stewardship.test.mjs",
+      "name": "[F1][F3][F5][F6][F7][F9][F10][F11][F12][F14][F16] Full 5-stage consumer journey from AUCTUM.ATLAS checkup to 10k-path model, Property Studio, Swarm Critic HITL, and RO-Crate WORM export",
+      "features": [
+        "F1",
+        "F3",
+        "F5",
+        "F6",
+        "F7",
+        "F9",
+        "F10",
+        "F11",
+        "F12",
+        "F14",
+        "F16"
+      ],
+      "durationMs": 100,
+      "error": "[S1/F1] Expected live frontend module at http://localhost:5173/src/lib/lexicon.ts (AUCTUM.ATLAS lexicon), but Vite returned HTML SPA fallback (module does not exist yet)  true !== false"
+    },
+    {
+      "status": "fail",
+      "tier": "tier4",
+      "file": "tests/tier4/scenario-02-advisor-quote-suitability.test.mjs",
+      "name": "[F3][F8][F9][F11][F15][F17] Seeds CRM household & appointment, pulls timestamped carrier quotes with REMOTE_IP, and passes Gate 2 + Gate 4 WORM suitability review",
+      "features": [
+        "F3",
+        "F8",
+        "F9",
+        "F11",
+        "F15",
+        "F17"
+      ],
+      "durationMs": 100,
+      "error": "[S2/F8] Expected HTTP 200 or 201 from http://localhost:3001/api/v1/crm/households (Create CRM household), got HTTP 401. Body: {\"error\":\"Access token required\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier4",
+      "file": "tests/tier4/scenario-03-multigen-family-alignment.test.mjs",
+      "name": "[F1][F4][F6][F8][F10][F11][F14] Seeds 3-generation household, computes Honeybee alignment, and enforces per-member consent gating on notifications",
+      "features": [
+        "F1",
+        "F4",
+        "F6",
+        "F8",
+        "F10",
+        "F11",
+        "F14"
+      ],
+      "durationMs": 79,
+      "error": "[S3/F8] Expected HTTP 200 or 201 from http://localhost:3001/api/v1/crm/households (Create 3-gen household), got HTTP 401. Body: {\"error\":\"Access token required\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier4",
+      "file": "tests/tier4/scenario-04-real-property-committee.test.mjs",
+      "name": "[F6][F7][F10][F11] Underwrites hold/brrrr/str strategies, verifies 30-yr amortization + 2^3 DOE + Committee Memo consistency",
+      "features": [
+        "F6",
+        "F7",
+        "F10",
+        "F11"
+      ],
+      "durationMs": 102,
+      "error": "[S4/F7] Expected HTTP 200 from http://localhost:3001/api/v1/property/underwrite (Underwrite hold), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/property/underwrite\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier4",
+      "file": "tests/tier4/scenario-05-privacy-regulatory-audit.test.mjs",
+      "name": "[F4][F8][F12][F17] Encrypts SSN, records consent toggle + chained WORM receipts, exports user data, and soft-deletes user while preserving WORM immutability",
+      "features": [
+        "F4",
+        "F8",
+        "F12",
+        "F17"
+      ],
+      "durationMs": 76,
+      "error": "[S5/F8] Expected HTTP 200 or 201 from http://localhost:3001/api/v1/crm/households (Create household), got HTTP 401. Body: {\"error\":\"Access token required\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier4",
+      "file": "tests/tier4/scenario-06-high-volatility-guardrail.test.mjs",
+      "name": "[F1][F2][F3][F11][F17] Blocks unsourced 1.25x/11.10% promotional claims in Gate 2, rejects via lint:copy, and triggers Gate 3 HITL + Risk Drawer on high-volatility allocation",
+      "features": [
+        "F1",
+        "F2",
+        "F3",
+        "F11",
+        "F17"
+      ],
+      "durationMs": 78,
+      "error": "[S6/F17] Expected HTTP 200 from http://localhost:3001/api/v1/compliance/evaluate (POST /api/v1/compliance/evaluate), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/compliance/evaluate\"}"
+    }
+  ],
+  "results": [
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f01-lexicon.test.mjs",
+      "name": "[F1] Live frontend serves AUCTUM.ATLAS lexicon contract with all 10 consumer & advisor mappings",
+      "features": [
+        "F1"
+      ],
+      "durationMs": 82,
+      "error": "[F1/M2] Expected live frontend module at http://localhost:5173/src/lib/lexicon.ts (Shared lexicon module /src/lib/lexicon.ts must be served by live frontend), but Vite returned HTML SPA fallback (module does not exist yet)  true !== false"
+    },
+    {
+      "status": "pass",
+      "tier": "tier1",
+      "file": "tests/tier1/f01-lexicon.test.mjs",
+      "name": "[F1] Consumer homepage HTML and lexicon omit legacy institutional product jargon",
+      "features": [
+        "F1"
+      ],
+      "durationMs": 22
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f02-copy-linter.test.mjs",
+      "name": "[F2] npm --prefix fiduciary-os/frontend run lint:copy is defined and passes on clean repo",
+      "features": [
+        "F2"
+      ],
+      "durationMs": 4,
+      "error": "[F2/M2] Missing \"lint:copy\" script in fiduciary-os/frontend/package.json (Script \"lint:copy\" is not defined in fiduciary-os/frontend/package.json)  false !== true"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f02-copy-linter.test.mjs",
+      "name": "[F2] lint:copy exits non-zero on isolated /tmp fixture containing all 6 banned promotional phrases",
+      "features": [
+        "F2"
+      ],
+      "durationMs": 4,
+      "error": "[F2/M2] Missing \"lint:copy\" script in fiduciary-os/frontend/package.json  false !== true"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f03-disclosures-risk-drawer.test.mjs",
+      "name": "[F3] Live frontend serves RiskDrawer component with SEC 206(4)-1 / FINRA 2210 disclosures and aria-expanded",
+      "features": [
+        "F3"
+      ],
+      "durationMs": 109,
+      "error": "[F3/M2] Expected live frontend module at http://localhost:5173/src/components/RiskDrawer.tsx (Shared RiskDrawer component /src/components/RiskDrawer.tsx must be served by live frontend), but Vite returned HTML SPA fallback (module does not exist yet)  true !== false"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f03-disclosures-risk-drawer.test.mjs",
+      "name": "[F3] Live consumer shell includes persistent educational disclaimer landmark",
+      "features": [
+        "F3"
+      ],
+      "durationMs": 18,
+      "error": "[F3/M2] Consumer App shell must mount persistent educational disclaimer landmark or RiskDrawer"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f04-consent-ledger.test.mjs",
+      "name": "[F4] POST/GET /api/v1/consent records and retrieves double-opt-in proofs for email, sms, and voice",
+      "features": [
+        "F4"
+      ],
+      "durationMs": 115,
+      "error": "[F4/M1] Expected HTTP 200 or 201 from http://localhost:3001/api/v1/consent (POST /api/v1/consent (email)), got HTTP 401. Body: {\"error\":\"Access token required\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f05-lifecycle-xstate-wizard.test.mjs",
+      "name": "[F5] Live frontend serves 6-step XState onboardingMachine and OnboardingWizard",
+      "features": [
+        "F5"
+      ],
+      "durationMs": 71,
+      "error": "[F5/M2] Expected live frontend module at http://localhost:5173/src/lib/onboardingMachine.ts (XState onboarding machine /src/lib/onboardingMachine.ts), but Vite returned HTML SPA fallback (module does not exist yet)  true !== false"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f05-lifecycle-xstate-wizard.test.mjs",
+      "name": "[F5] Live frontend serves 3-Slider HouseholdCheckup and all 5 lifecycle stages",
+      "features": [
+        "F5"
+      ],
+      "durationMs": 11,
+      "error": "[F5/M2] Expected live frontend module at http://localhost:5173/src/components/HouseholdCheckup.tsx (Homepage 3-Slider HouseholdCheckup /src/components/HouseholdCheckup.tsx), but Vite returned HTML SPA fallback (module does not exist yet)  true !== false"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f06-coupled-studios.test.mjs",
+      "name": "[F6] Property Studio #11 underwriting output includes net cash-flow coupling fields for Unified Cash-Flow Router",
+      "features": [
+        "F6"
+      ],
+      "durationMs": 78,
+      "error": "[F6/M3] Expected HTTP 200 from http://localhost:3001/api/v1/property/underwrite (POST /api/v1/property/underwrite), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/property/underwrite\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f06-coupled-studios.test.mjs",
+      "name": "[F6] Live frontend Wealth Canvas references all 11 studios including Real Property & Tangible Asset Studio",
+      "features": [
+        "F6"
+      ],
+      "durationMs": 19,
+      "error": "[F6/M2] Live frontend must expose Studio #11 (Real Property & Tangible Asset Studio) alongside the 10 financial Navigators"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f07-real-property-studio.test.mjs",
+      "name": "[F7] POST /api/v1/property/underwrite computes deterministic HOLD KPIs, 30-yr amortization, 10-yr curves, 2^3 DOE, and Committee Memo",
+      "features": [
+        "F7"
+      ],
+      "durationMs": 77,
+      "error": "[F7/M3] Expected HTTP 200 from http://localhost:3001/api/v1/property/underwrite (POST /api/v1/property/underwrite (hold)), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/property/underwrite\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f07-real-property-studio.test.mjs",
+      "name": "[F7] POST /api/v1/property/underwrite computes deterministic BRRRR KPIs, 30-yr amortization, 10-yr curves, 2^3 DOE, and Committee Memo",
+      "features": [
+        "F7"
+      ],
+      "durationMs": 11,
+      "error": "[F7/M3] Expected HTTP 200 from http://localhost:3001/api/v1/property/underwrite (POST /api/v1/property/underwrite (brrrr)), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/property/underwrite\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f07-real-property-studio.test.mjs",
+      "name": "[F7] POST /api/v1/property/underwrite computes deterministic STR KPIs, 30-yr amortization, 10-yr curves, 2^3 DOE, and Committee Memo",
+      "features": [
+        "F7"
+      ],
+      "durationMs": 15,
+      "error": "[F7/M3] Expected HTTP 200 from http://localhost:3001/api/v1/property/underwrite (POST /api/v1/property/underwrite (str)), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/property/underwrite\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f08-crm-pgcrypto-no-masternex.test.mjs",
+      "name": "[F8] Full CRM CRUD on households, people (encrypted SSN), accounts, appointments, life-events + privacy export & soft-delete",
+      "features": [
+        "F8"
+      ],
+      "durationMs": 86,
+      "error": "[F8/M1] Expected HTTP 200 or 201 from http://localhost:3001/api/v1/crm/households (POST /api/v1/crm/households), got HTTP 401. Body: {\"error\":\"Access token required\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f08-crm-pgcrypto-no-masternex.test.mjs",
+      "name": "[F8] Docker Compose files contain zero masternex service definitions",
+      "features": [
+        "F8"
+      ],
+      "durationMs": 2,
+      "error": "[F8/M1] Found 20 active masternex reference(s) in docker-compose files: fiduciary-os/docker-compose.dev.yml:3, fiduciary-os/docker-compose.dev.yml:11, fiduciary-os/docker-compose.dev.yml:12, fiduciary-os/docker-compose.dev.yml:66, fiduciary-os/docker-compose.dev.yml:104  20 !== 0"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f09-surfaces-mobile-tracker.test.mjs",
+      "name": "[F9] Live frontend serves StewardPortal / Mobile Policy Tracker and Advisor Command Center wired to live CRM",
+      "features": [
+        "F9"
+      ],
+      "durationMs": 83,
+      "error": "[F9/M2] Expected live frontend module at http://localhost:5173/src/components/StewardPortal.tsx (StewardPortal / Mobile Policy Tracker /src/components/StewardPortal.tsx), but Vite returned HTML SPA fallback (module does not exist yet)  true !== false"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f10-wcag-viz-system.test.mjs",
+      "name": "[F10] AccessibleChartFrame provides ARIA landmarks, paired Accessible Data Table, RiskDrawer, Albers/Itten palette, and 220ms transition",
+      "features": [
+        "F10"
+      ],
+      "durationMs": 78,
+      "error": "[F10/M3] Expected live frontend module at http://localhost:5173/src/components/charts/AccessibleChartFrame.tsx (Shared AccessibleChartFrame /src/components/charts/AccessibleChartFrame.tsx), but Vite returned HTML SPA fallback (module does not exist yet)  true !== false"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f11-six-signature-charts.test.mjs",
+      "name": "[F11] POST /api/v1/calculations/retirement-simulation executes 10,000 paths with monotonic percentile bands and explicit assumptionSource",
+      "features": [
+        "F11"
+      ],
+      "durationMs": 86,
+      "error": "[F11/M3] Expected HTTP 200 from http://localhost:3001/api/v1/calculations/retirement-simulation (POST /api/v1/calculations/retirement-simulation (10,000 paths)), got HTTP 400. Body: {\"error\":\"Validation error: field: Invalid value, field: Invalid value, field: Invalid value\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f11-six-signature-charts.test.mjs",
+      "name": "[F11] Frontend exposes all 6 signature charts index without unsourced static ratios",
+      "features": [
+        "F11"
+      ],
+      "durationMs": 12,
+      "error": "[F11/M3] Expected live frontend module at http://localhost:5173/src/components/charts/index.ts (Signature charts barrel /src/components/charts/index.ts), but Vite returned HTML SPA fallback (module does not exist yet)  true !== false"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f12-kdense-provenance.test.mjs",
+      "name": "[F12] Living Lab Notebook, SHA-256 Frozen Analysis Plan hash chain, and RO-Crate 1.1 ZIP WORM export",
+      "features": [
+        "F12"
+      ],
+      "durationMs": 110,
+      "error": "[F12/M4] Expected HTTP 200 or 201 from http://localhost:3001/api/v1/provenance/notebook (POST /api/v1/provenance/notebook), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/provenance/notebook\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f13-skill-governance.test.mjs",
+      "name": "[F13] Skill registry returns only allowlisted skills scanned by cisco-ai-skill-scanner and rejects unvetted skills",
+      "features": [
+        "F13"
+      ],
+      "durationMs": 75,
+      "error": "[F13/M4] Expected HTTP 200 from http://localhost:3001/api/v1/governance/skills (GET /api/v1/governance/skills), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/governance/skills\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f13-skill-governance.test.mjs",
+      "name": "[F13] mimeo pedagogy checklists are exposed read-only and reject mutations",
+      "features": [
+        "F13"
+      ],
+      "durationMs": 16,
+      "error": "[F13/M4] Expected HTTP 200 from http://localhost:3001/api/v1/governance/mimeo/checklists (GET /api/v1/governance/mimeo/checklists), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/governance/mimeo/checklists\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f14-biomimicry-honeybee.test.mjs",
+      "name": "[F14] POST /api/v1/governance/honeybee/align computes weighted household consensus and Biomimicry cash-flow allocation",
+      "features": [
+        "F14"
+      ],
+      "durationMs": 71,
+      "error": "[F14/M4] Expected HTTP 200 from http://localhost:3001/api/v1/governance/honeybee/align (POST /api/v1/governance/honeybee/align), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/governance/honeybee/align\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f14-biomimicry-honeybee.test.mjs",
+      "name": "[F14] POST /api/v1/governance/swarm-critic executes 4 independent scouts and returns quorum convergence",
+      "features": [
+        "F14"
+      ],
+      "durationMs": 16,
+      "error": "[F14/M4] Expected HTTP 200 from http://localhost:3001/api/v1/governance/swarm-critic (POST /api/v1/governance/swarm-critic), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/governance/swarm-critic\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f15-audited-connectors.test.mjs",
+      "name": "[F15] GET /api/v1/connectors/status reports all audited connectors including Gemini 4 Api-Revision 2026-05-20",
+      "features": [
+        "F15"
+      ],
+      "durationMs": 99,
+      "error": "[F15/M4] Expected HTTP 200 from http://localhost:3001/api/v1/connectors/status (GET /api/v1/connectors/status), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/connectors/status\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f15-audited-connectors.test.mjs",
+      "name": "[F15] POST /api/v1/connectors/plaid/sync returns cursor-based incremental sync payload",
+      "features": [
+        "F15"
+      ],
+      "durationMs": 28,
+      "error": "[F15/M4] Expected HTTP 200 from http://localhost:3001/api/v1/connectors/plaid/sync (POST /api/v1/connectors/plaid/sync), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/connectors/plaid/sync\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f15-audited-connectors.test.mjs",
+      "name": "[F15] POST /api/v1/connectors/quotes/compare with valid REMOTE_IP returns timestamped multi-carrier quotes",
+      "features": [
+        "F15"
+      ],
+      "durationMs": 12,
+      "error": "[F15/M4] Expected HTTP 200 from http://localhost:3001/api/v1/connectors/quotes/compare (POST /api/v1/connectors/quotes/compare), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/connectors/quotes/compare\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f16-orchestration-spine.test.mjs",
+      "name": "[F16] Temporal + LangGraph workflow execution returns durable workflowId and bounded state transitions",
+      "features": [
+        "F16"
+      ],
+      "durationMs": 77,
+      "error": "[F16/M4] Expected HTTP 200 or 201 or 202 from http://localhost:3001/api/v1/orchestration/workflows (POST /api/v1/orchestration/workflows), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/orchestration/workflows\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f16-orchestration-spine.test.mjs",
+      "name": "[F16] Camunda DMN regulatory decision table returns deterministic decision for identical inputs",
+      "features": [
+        "F16"
+      ],
+      "durationMs": 18,
+      "error": "[F16/M4] Expected HTTP 200 from http://localhost:3001/api/v1/orchestration/dmn/evaluate (POST /api/v1/orchestration/dmn/evaluate (1)), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/orchestration/dmn/evaluate\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f16-orchestration-spine.test.mjs",
+      "name": "[F16] MCP/A2A discovery endpoint returns valid tool and agent capability schema",
+      "features": [
+        "F16"
+      ],
+      "durationMs": 12,
+      "error": "[F16/M4] Expected HTTP 200 from http://localhost:3001/api/v1/orchestration/capabilities (GET /api/v1/orchestration/capabilities), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/orchestration/capabilities\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f17-compliance-gates-worm.test.mjs",
+      "name": "[F17] POST /api/v1/compliance/evaluate passes educational copy and emits chained 64-hex WORM receipt hashes",
+      "features": [
+        "F17"
+      ],
+      "durationMs": 78,
+      "error": "[F17/M2] Expected HTTP 200 from http://localhost:3001/api/v1/compliance/evaluate (POST /api/v1/compliance/evaluate (1)), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/compliance/evaluate\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier1",
+      "file": "tests/tier1/f17-compliance-gates-worm.test.mjs",
+      "name": "[F17] trust-core (:3002) confirms durable cryptographic ledger mode (NOT LEDGER_MODE=memory)",
+      "features": [
+        "F17"
+      ],
+      "durationMs": 9,
+      "error": "[F17/M1] trust-core must report durable ledger persistence (NOT memory), got ledgerMode=\"undefined\""
+    },
+    {
+      "status": "pass",
+      "tier": "tier1",
+      "file": "tests/tier1/f18-unit-economics-roadmap.test.mjs",
+      "name": "[F18] Unit_Economics.md contains exact reconciled LTV/CAC figures for Solo, Growth, Enterprise, and B2C Premium",
+      "features": [
+        "F18"
+      ],
+      "durationMs": 0
+    },
+    {
+      "status": "pass",
+      "tier": "tier1",
+      "file": "tests/tier1/f18-unit-economics-roadmap.test.mjs",
+      "name": "[F18] FINANCIAL_MODEL_PACKAGE.md and 07_Scenario_Analysis.csv reconcile Year 5 Base ARR ($19.95M) vs Base/Legacy/Upside Revenue ($21.05M / $28.02M / $51.7M)",
+      "features": [
+        "F18"
+      ],
+      "durationMs": 0
+    },
+    {
+      "status": "pass",
+      "tier": "tier1",
+      "file": "tests/tier1/f18-unit-economics-roadmap.test.mjs",
+      "name": "[F18] UNIFIED_PLATFORM_BLUEPRINT.md exists and documents Phases 1-4 (Flagger canary), all 5 Founder Decisions, and Brand Namespace Governance Note",
+      "features": [
+        "F18"
+      ],
+      "durationMs": 1
+    },
+    {
+      "status": "fail",
+      "tier": "tier2",
+      "file": "tests/tier2/compliance-pii-and-copy-boundaries.test.mjs",
+      "name": "[F17] Gate 1 redacts all SSN, email, phone, and bank account PII variants from redactedText",
+      "features": [
+        "F17"
+      ],
+      "durationMs": 91,
+      "error": "[F17/M2] Expected HTTP 200 from http://localhost:3001/api/v1/compliance/evaluate (POST /api/v1/compliance/evaluate (PII vectors)), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/compliance/evaluate\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier2",
+      "file": "tests/tier2/compliance-pii-and-copy-boundaries.test.mjs",
+      "name": "[F17] Gate 2 blocks prompt-injection promotional claim and populates violations[]",
+      "features": [
+        "F17"
+      ],
+      "durationMs": 10,
+      "error": "[F17/M2] Expected HTTP 200 from http://localhost:3001/api/v1/compliance/evaluate (POST /api/v1/compliance/evaluate (prompt injection)), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/compliance/evaluate\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier2",
+      "file": "tests/tier2/compliance-pii-and-copy-boundaries.test.mjs",
+      "name": "[F1][F2] lint:copy catches uppercase, mixed-case, punctuation, and whitespace variants of banned phrases",
+      "features": [
+        "F1",
+        "F2"
+      ],
+      "durationMs": 3,
+      "error": "[F2/M2] Missing \"lint:copy\" script in fiduciary-os/frontend/package.json  false !== true"
+    },
+    {
+      "status": "fail",
+      "tier": "tier2",
+      "file": "tests/tier2/crm-and-property-boundaries.test.mjs",
+      "name": "[F8] CRM rejects empty JSON {}, oversized strings (>10KB), and invalid member role enum with 400/422 (never 500)",
+      "features": [
+        "F8"
+      ],
+      "durationMs": 81,
+      "error": "[F8/M1] Expected HTTP 400 or 422 from http://localhost:3001/api/v1/crm/households (POST /api/v1/crm/households with empty {}), got HTTP 401. Body: {\"error\":\"Access token required\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier2",
+      "file": "tests/tier2/crm-and-property-boundaries.test.mjs",
+      "name": "[F7] Property underwriting rejects zero/negative prices, invalid rates, >100% down payment, zero loan term, and unknown strategy with 400/422",
+      "features": [
+        "F7"
+      ],
+      "durationMs": 13,
+      "error": "[F7/M3] Expected HTTP 400 or 422 from http://localhost:3001/api/v1/property/underwrite (Invalid underwriting boundary (purchasePrice=0)), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/property/underwrite\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier2",
+      "file": "tests/tier2/crm-and-property-boundaries.test.mjs",
+      "name": "[F7] Property underwriting handles extreme $100,000,000 purchasePrice with finite numbers and balanced 30-yr amortization",
+      "features": [
+        "F7"
+      ],
+      "durationMs": 10,
+      "error": "[F7/M3] Expected HTTP 200 from http://localhost:3001/api/v1/property/underwrite (Extreme $100M property underwriting), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/property/underwrite\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier2",
+      "file": "tests/tier2/monte-carlo-boundaries.test.mjs",
+      "name": "[F11] Monte Carlo enforces path bounds: rejects 0, -1, 10001, and string paths; accepts 1 and 10000",
+      "features": [
+        "F11"
+      ],
+      "durationMs": 114,
+      "error": "[F11/M3] Expected HTTP 200 from http://localhost:3001/api/v1/calculations/retirement-simulation (Monte Carlo paths=1 degenerate boundary), got HTTP 400. Body: {\"error\":\"Validation error: field: Invalid value, field: Invalid value, field: Invalid value\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier2",
+      "file": "tests/tier2/monte-carlo-boundaries.test.mjs",
+      "name": "[F11] Rejects unsourced static marketing ratios (1.25x leverage / 11.10% FIA payout) without valid assumptionSource",
+      "features": [
+        "F11"
+      ],
+      "durationMs": 16,
+      "error": "[F11/M3] Expected HTTP 200 from http://localhost:3001/api/v1/calculations/retirement-simulation (Valid baseline Monte Carlo payload (paths=100, user_declared_hypothetical) must succeed before testing unsourced static ratio rejection), got HTTP 400. Body: {\"error\":\"Validation error: field: Invalid value, field: Invalid value, field: Invalid value\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier2",
+      "file": "tests/tier2/orchestration-and-connectors-boundaries.test.mjs",
+      "name": "[F16] Temporal orchestration spine handles >2.1 MB payload via S3 UUID ref offload without gRPC limit crash",
+      "features": [
+        "F16"
+      ],
+      "durationMs": 120,
+      "error": "[F16/M4] Expected HTTP 200 or 201 or 202 or 413 from http://localhost:3001/api/v1/orchestration/workflows (Temporal >2 MB payload guard (offload to S3 UUID ref or explicit 413 offload contract)), got HTTP 500. Body: {\"error\":\"Internal server error\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier2",
+      "file": "tests/tier2/orchestration-and-connectors-boundaries.test.mjs",
+      "name": "[F15] Plaid FDX Free-tier allows 1 institution connection and blocks 2nd distinct institution with 402/403",
+      "features": [
+        "F15"
+      ],
+      "durationMs": 17,
+      "error": "[F15/M4] Expected HTTP 200 from http://localhost:3001/api/v1/connectors/plaid/sync (Plaid Free-tier 1st institution sync), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/connectors/plaid/sync\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier2",
+      "file": "tests/tier2/orchestration-and-connectors-boundaries.test.mjs",
+      "name": "[F15] Compulife quote compare rejects missing or invalid REMOTE_IP with 400/422",
+      "features": [
+        "F15"
+      ],
+      "durationMs": 9,
+      "error": "[F15/M4] Expected HTTP 400 or 422 from http://localhost:3001/api/v1/connectors/quotes/compare (Compulife quote compare without REMOTE_IP must be rejected), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/connectors/quotes/compare\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier2",
+      "file": "tests/tier2/orchestration-and-connectors-boundaries.test.mjs",
+      "name": "[F4] Consent endpoint rejects invalid channel and status enums with 400/422",
+      "features": [
+        "F4"
+      ],
+      "durationMs": 12,
+      "error": "[F4/M1] Expected HTTP 400 or 422 from http://localhost:3001/api/v1/consent (POST /api/v1/consent with invalid channel/status enums), got HTTP 401. Body: {\"error\":\"Access token required\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier3",
+      "file": "tests/tier3/01-consent-blocks-outbound.test.mjs",
+      "name": "[F4][F15] Opted-out user is strictly blocked from SMS/email outbound dispatch; flipping to double-opt-in permits dry-run dispatch",
+      "features": [
+        "F4",
+        "F15"
+      ],
+      "durationMs": 93,
+      "error": "[F4/M1] Expected HTTP 200 or 201 from http://localhost:3001/api/v1/consent (opt-out sms), got HTTP 401. Body: {\"error\":\"Access token required\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier3",
+      "file": "tests/tier3/02-charts-risk-drawer-a11y-palette.test.mjs",
+      "name": "[F3][F7][F10][F11] AccessibleChartFrame pairs RiskDrawer, ARIA region, Accessible Data Table, and Albers/Itten palette across all 6 signature charts",
+      "features": [
+        "F3",
+        "F7",
+        "F10",
+        "F11"
+      ],
+      "durationMs": 76,
+      "error": "[F3+F10+F11/M3] Expected live frontend module at http://localhost:5173/src/components/charts/AccessibleChartFrame.tsx (AccessibleChartFrame.tsx must be served by live frontend), but Vite returned HTML SPA fallback (module does not exist yet)  true !== false"
+    },
+    {
+      "status": "fail",
+      "tier": "tier3",
+      "file": "tests/tier3/03-honeybee-nonconvergence-hitl.test.mjs",
+      "name": "[F14][F17] Conflicted high-risk proposal fails 4-scout quorum and automatically triggers Gate 3 HITL Escalation Pause",
+      "features": [
+        "F14",
+        "F17"
+      ],
+      "durationMs": 75,
+      "error": "[F14+F17/M4] Expected HTTP 200 from http://localhost:3001/api/v1/governance/swarm-critic (POST /api/v1/governance/swarm-critic (conflicted high-risk)), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/governance/swarm-critic\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier3",
+      "file": "tests/tier3/04-crm-graph-to-constellation.test.mjs",
+      "name": "[F8][F11] 3-generation household seeded in CRM is retrievable as a hierarchical beneficiary constellation graph",
+      "features": [
+        "F8",
+        "F11"
+      ],
+      "durationMs": 75,
+      "error": "[F8+F11/M1] Expected HTTP 200 or 201 from http://localhost:3001/api/v1/crm/households (POST /api/v1/crm/households), got HTTP 401. Body: {\"error\":\"Access token required\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier3",
+      "file": "tests/tier3/05-masternex-zero-reference.test.mjs",
+      "name": "[F8] Zero active masternex/MASTERNEX references remain in docker-compose, .env.dev, backend/src, or frontend/src",
+      "features": [
+        "F8"
+      ],
+      "durationMs": 24,
+      "error": "[F8/M1] Found 7 active Masternex reference(s) across stack: fiduciary-os/.env.dev:47, fiduciary-os/.env.dev:48, fiduciary-os/.env.dev:49, fiduciary-os/frontend/src/AdvisorCommandCenter.tsx:34, fiduciary-os/frontend/src/AdvisorCommandCenter.tsx:654, fiduciary-os/frontend/src/AdvisorCommandCenter.tsx:655, fiduciary-os/frontend/src/AdvisorCommandCenter.tsx:668  7 !== 0"
+    },
+    {
+      "status": "fail",
+      "tier": "tier3",
+      "file": "tests/tier3/06-kdense-freeze-rocrate-worm.test.mjs",
+      "name": "[F12][F17] Frozen Analysis Plan hash and Gate 4 WORM receipt hash are both preserved inside exported RO-Crate 1.1 ZIP",
+      "features": [
+        "F12",
+        "F17"
+      ],
+      "durationMs": 83,
+      "error": "[F12+F17/M4] Expected HTTP 200 or 201 from http://localhost:3001/api/v1/provenance/notebook (POST /api/v1/provenance/notebook), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/provenance/notebook\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier3",
+      "file": "tests/tier3/07-lexicon-and-copy-linter-isolation.test.mjs",
+      "name": "[F1][F2] Consumer onboarding/checkup surfaces contain zero AUCTUM Command advisor-only terms and lint:copy flags B2C advisor-jargon leaks",
+      "features": [
+        "F1",
+        "F2"
+      ],
+      "durationMs": 72,
+      "error": "[F1+F2/M2] Expected live frontend module at http://localhost:5173/src/components/HouseholdCheckup.tsx (Consumer HouseholdCheckup.tsx must be served by live frontend), but Vite returned HTML SPA fallback (module does not exist yet)  true !== false"
+    },
+    {
+      "status": "fail",
+      "tier": "tier4",
+      "file": "tests/tier4/scenario-01-planner-parent-stewardship.test.mjs",
+      "name": "[F1][F3][F5][F6][F7][F9][F10][F11][F12][F14][F16] Full 5-stage consumer journey from AUCTUM.ATLAS checkup to 10k-path model, Property Studio, Swarm Critic HITL, and RO-Crate WORM export",
+      "features": [
+        "F1",
+        "F3",
+        "F5",
+        "F6",
+        "F7",
+        "F9",
+        "F10",
+        "F11",
+        "F12",
+        "F14",
+        "F16"
+      ],
+      "durationMs": 100,
+      "error": "[S1/F1] Expected live frontend module at http://localhost:5173/src/lib/lexicon.ts (AUCTUM.ATLAS lexicon), but Vite returned HTML SPA fallback (module does not exist yet)  true !== false"
+    },
+    {
+      "status": "fail",
+      "tier": "tier4",
+      "file": "tests/tier4/scenario-02-advisor-quote-suitability.test.mjs",
+      "name": "[F3][F8][F9][F11][F15][F17] Seeds CRM household & appointment, pulls timestamped carrier quotes with REMOTE_IP, and passes Gate 2 + Gate 4 WORM suitability review",
+      "features": [
+        "F3",
+        "F8",
+        "F9",
+        "F11",
+        "F15",
+        "F17"
+      ],
+      "durationMs": 100,
+      "error": "[S2/F8] Expected HTTP 200 or 201 from http://localhost:3001/api/v1/crm/households (Create CRM household), got HTTP 401. Body: {\"error\":\"Access token required\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier4",
+      "file": "tests/tier4/scenario-03-multigen-family-alignment.test.mjs",
+      "name": "[F1][F4][F6][F8][F10][F11][F14] Seeds 3-generation household, computes Honeybee alignment, and enforces per-member consent gating on notifications",
+      "features": [
+        "F1",
+        "F4",
+        "F6",
+        "F8",
+        "F10",
+        "F11",
+        "F14"
+      ],
+      "durationMs": 79,
+      "error": "[S3/F8] Expected HTTP 200 or 201 from http://localhost:3001/api/v1/crm/households (Create 3-gen household), got HTTP 401. Body: {\"error\":\"Access token required\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier4",
+      "file": "tests/tier4/scenario-04-real-property-committee.test.mjs",
+      "name": "[F6][F7][F10][F11] Underwrites hold/brrrr/str strategies, verifies 30-yr amortization + 2^3 DOE + Committee Memo consistency",
+      "features": [
+        "F6",
+        "F7",
+        "F10",
+        "F11"
+      ],
+      "durationMs": 102,
+      "error": "[S4/F7] Expected HTTP 200 from http://localhost:3001/api/v1/property/underwrite (Underwrite hold), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/property/underwrite\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier4",
+      "file": "tests/tier4/scenario-05-privacy-regulatory-audit.test.mjs",
+      "name": "[F4][F8][F12][F17] Encrypts SSN, records consent toggle + chained WORM receipts, exports user data, and soft-deletes user while preserving WORM immutability",
+      "features": [
+        "F4",
+        "F8",
+        "F12",
+        "F17"
+      ],
+      "durationMs": 76,
+      "error": "[S5/F8] Expected HTTP 200 or 201 from http://localhost:3001/api/v1/crm/households (Create household), got HTTP 401. Body: {\"error\":\"Access token required\"}"
+    },
+    {
+      "status": "fail",
+      "tier": "tier4",
+      "file": "tests/tier4/scenario-06-high-volatility-guardrail.test.mjs",
+      "name": "[F1][F2][F3][F11][F17] Blocks unsourced 1.25x/11.10% promotional claims in Gate 2, rejects via lint:copy, and triggers Gate 3 HITL + Risk Drawer on high-volatility allocation",
+      "features": [
+        "F1",
+        "F2",
+        "F3",
+        "F11",
+        "F17"
+      ],
+      "durationMs": 78,
+      "error": "[S6/F17] Expected HTTP 200 from http://localhost:3001/api/v1/compliance/evaluate (POST /api/v1/compliance/evaluate), got HTTP 404. Body: {\"error\":\"Not Found\",\"path\":\"/api/v1/compliance/evaluate\"}"
+    }
+  ]
+}

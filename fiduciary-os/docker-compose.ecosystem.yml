@@ -1,7 +1,6 @@
 # Full Ecosystem Localhost Stack:
-#   PostgreSQL 16 + pgvector (:5432)
+#   PostgreSQL 16 + pgvector + pgcrypto (:5432)
 #   Redis 7 (:6379)
-#   MASTERNEX.os Core (:8080)
 #   Fiduciary OS trust-core (:3002)
 #   Fiduciary OS Express API (:3001)
 #   Fiduciary OS Web + Advisor Command Center (:4173)
@@ -43,25 +42,6 @@ services:
     networks:
       - ecosystem-net
 
-  masternex:
-    build:
-      context: ../../MASTERNEX.os
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    environment:
-      MASTERNEX_ENV: development
-      MASTERNEX_JWT_SECRET: ${MASTERNEX_JWT_SECRET:-fiduciary-ecosystem-local-jwt-secret-32chars}
-    volumes:
-      - ecosystem_masternex_data:/data
-    healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8080/health')"]
-      interval: 10s
-      timeout: 3s
-      retries: 10
-    networks:
-      - ecosystem-net
-
   trust-core:
     build:
       context: ../trust-core
@@ -71,7 +51,10 @@ services:
     environment:
       NODE_ENV: development
       PORT: 3002
-      LEDGER_MODE: memory
+      LEDGER_MODE: file
+      LEDGER_DIR: /app/.data/ledger
+    volumes:
+      - ecosystem_trust_core_ledger:/app/.data/ledger
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3002/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 10s
@@ -95,16 +78,12 @@ services:
       JWT_SECRET: local-dev-jwt-secret-minimum-32-chars-ok
       CORS_ORIGIN: http://localhost:4173,http://localhost:5173
       TRUST_CORE_URL: http://trust-core:3002
-      MASTERNEX_API_URL: http://masternex:8080
-      MASTERNEX_JWT: ${MASTERNEX_JWT:-}
       KDENSE_API_URL: ${KDENSE_API_URL:-http://host.docker.internal:8000}
       HF_TOKEN: ${HF_TOKEN:-}
     depends_on:
       postgres:
         condition: service_healthy
       redis:
-        condition: service_healthy
-      masternex:
         condition: service_healthy
       trust-core:
         condition: service_healthy
@@ -130,7 +109,7 @@ services:
 volumes:
   ecosystem_pg_data:
   ecosystem_redis_data:
-  ecosystem_masternex_data:
+  ecosystem_trust_core_ledger:
 
 networks:
   ecosystem-net:

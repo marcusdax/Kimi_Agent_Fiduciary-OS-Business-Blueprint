@@ -1,6 +1,6 @@
 # Fiduciary OS Unit Economics
 
-**Version:** 2.0 · **Updated:** October 2026 · **Source:** [`model/build_model.py`](model/build_model.py)
+**Version:** 2.1 · **Updated:** November 2026 · **Source:** [`model/build_model.py`](model/build_model.py)
 
 *All figures are planning assumptions for a pre-launch product. There are no customers, cohorts, or measured churn yet.*
 
@@ -16,7 +16,7 @@
 | **LTV** | **$4,950** | **$14,950** | **$120,000** | **$255** |
 | **CAC** | $500 | $1,500 | $8,000 | $30 |
 | **LTV/CAC** | **9.9×** | **10.0×** | **15.0×** | **8.5×** |
-| **Payback** | 6.7 months | 6.7 months | 6.7 months | 2.4 months |
+| **Payback** | 6.73 months | 6.69 months | 6.67 months | 2.35 months |
 
 On these assumptions every segment clears the common 3× LTV/CAC benchmark with payback under a year. The figures are only as good as the churn and CAC inputs, which are unproven.
 
@@ -92,8 +92,10 @@ Worked example, Solo tier:
 ```
 Monthly contribution = $99 × 0.75      = $74.25
 LTV                  = $74.25 ÷ 0.015  = $4,950
-Payback              = $500 ÷ $74.25   = 6.7 months
+Payback              = $500 ÷ $74.25   = 6.73 months
 ```
+
+*(Note: `06_SaaS_Metrics.csv` rounds payback display to 1 decimal place: `6.7`, `6.7`, `6.7`, and `2.4` months.)*
 
 ### Sensitivity of LTV to churn (gross margin held at segment value)
 
@@ -128,6 +130,17 @@ Only subscription revenue is modelled. Insurance performance-partnership revenue
 | B2B SaaS | 55% | 46% | 42% |
 | B2C Premium | 45% | 54% | 58% |
 
+### Year 5 revenue reconciliation
+
+To eliminate ambiguity across legacy v1 documents, the active v2.0 pure-SaaS operating model, and gated strategic upside discussions, all Year 5 top-line figures reconcile as follows (see [`07_Scenario_Analysis.csv`](07_Scenario_Analysis.csv) and [`FINANCIAL_MODEL_PACKAGE.md`](FINANCIAL_MODEL_PACKAGE.md#year-5-revenue-reconciliation)):
+
+| Case / Basis | Year 5 ARR | Year 5 Total Revenue | Delta vs. v2.0 Base Rev | Regulatory & Model Status |
+|---|---:|---:|---:|---|
+| **v2.0 Pure-SaaS Base Case (Current Model)** | **$19.95M** ($19,948,393) | **$21.05M** ($21,049,999) | $0 (Baseline) | Active operating model (`04_Income_Statement.csv`, `06_SaaS_Metrics.csv`, `07_Scenario_Analysis.csv`). B2B SaaS $8.90M + B2C Premium $12.15M. Excludes ~$6.97M unlicensed insurance performance-partnership revenue. |
+| **v1 Legacy Reference Base Case (Superseded)** | **$19.95M** ($19,948,393) | **$28.02M** ($28,020,000) | +$6.97M (+$6,970,001) | Superseded Dec 2024 v1 figure prior to removing unlicensed insurance performance-partnership rev-share (25–45% commission split). Retained strictly as an audit bridge. |
+| **v2.0 Pure-SaaS Optimistic Case (140% Base)** | **$27.93M** ($27,927,750) | **$29.47M** ($29,469,999) | +$8.42M (+$8,420,000) | Active upside scenario in `07_Scenario_Analysis.csv` (140% pure-SaaS revenue & customers, fixed dollar OpEx; Year 5 EBITDA $8.73M). |
+| **Gated Licensed-Channel Upside Case (Contingent)** | *Unmodelled* | **$51.7M** ($51,700,000) | +$30.65M (+$30,650,001) | **Gated / Excluded from v2.0 P&L & valuation.** Strictly contingent on securing a licensed BD/RIA/insurance agency distribution channel, written securities/insurance counsel opinion, and regulatory approval. |
+
 ---
 
 ## 4. Operating leverage (base case)
@@ -158,4 +171,4 @@ Replace the plan values in `model/build_model.py` with measured values as they a
 
 ---
 
-**Document version:** 2.0 · **Date:** October 2026
+**Document version:** 2.1 · **Date:** November 2026

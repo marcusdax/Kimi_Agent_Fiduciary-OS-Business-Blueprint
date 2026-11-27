@@ -64,11 +64,13 @@ describe('Ecosystem Integration — Phases 1 to 5', () => {
       expect(res.body.metrics.merkleRoot).toHaveLength(64);
     });
 
-    it('GET /api/v1/trust/status reports MCP servers and post-quantum scheme', async () => {
+    it('GET /api/v1/trust/status reports trust-core MCP server, post-quantum scheme, and no masternex service', async () => {
       const res = await request(app).get('/api/v1/trust/status');
       expect(res.status).toBe(200);
       expect(res.body.postQuantumSignature).toBe('Ed25519+ML-DSA-87');
-      expect(res.body.mcpServers).toHaveLength(2);
+      expect(res.body.services.masternex).toBeUndefined();
+      expect(res.body.mcpServers).toHaveLength(1);
+      expect(res.body.mcpServers[0].name).toBe('trust-core');
     });
   });
 

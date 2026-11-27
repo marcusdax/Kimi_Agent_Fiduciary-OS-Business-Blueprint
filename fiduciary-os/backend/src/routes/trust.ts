@@ -2,18 +2,24 @@
  * routes/trust.ts — Phase 1 Trust & Compliance API (/api/v1/trust/*).
  *
  * Exposes:
- *  - GET  /status     — live ecosystem health matrix (MASTERNEX, trust-core, K-Dense, Postgres, Redis)
- *  - POST /evaluate   — FiduciaryOSGuard + exact 10,000-bps SHAP attribution + SR 11-7 receipt
- *  - GET  /compliance — EU AI Act Art. 12/14 + SR 11-7 dual-jurisdiction compliance certificate
- *  - POST /infer      — MASTERNEX Attested BYOK Router proxy with pre-egress PII redaction
+ *  - GET  /status     — live ecosystem health matrix (Postgres + pgvector/pgcrypto, Redis, trust-core, K-Dense)
+ *  - POST /evaluate   — FiduciaryOSGuard + exact 4-factor 10,000-bps Shapley attribution + SR 11-7 receipt
+ *  - GET  /compliance — EU AI Act Art. 12/14 + SR 11-7 dual-jurisdiction compliance certificate (via trust-core + Postgres WORM)
+ *  - POST /infer      — Attested educational inference endpoint with pre-egress PII redaction
  */
 
 import { createHash, randomUUID } from 'crypto';
 import { Router, type Request, type Response } from 'express';
 import { prisma } from '../config/database';
 import { getRedis } from '../config/redis';
-import * as masternexService from '../services/masternexService';
 import { reviewAiOutput } from '../services/aiGuardrails';
+import {
+  computeFourFactorShapley,
+  normalizeShapBasisPoints,
+} from '../services/shapleyService';
+import { appendProvenance } from '../services/crmService';
+
+export { normalizeShapBasisPoints };
 
 const router = Router();
 
@@ -23,7 +29,7 @@ const PII_PATTERNS: Array<{ label: string; regex: RegExp }> = [
   { label: 'PHONE', regex: /\b(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b/g },
 ];
 
-function redactPii(text: string): { redacted: string; count: number; types: string[] } {
+export function redactPii(text: string): { redacted: string; count: number; types: string[] } {
   let redacted = text;
   let count = 0;
   const types = new Set<string>();
@@ -38,36 +44,6 @@ function redactPii(text: string): { redacted: string; count: number; types: stri
   return { redacted, count, types: Array.from(types) };
 }
 
-/**
- * Compute exact 10,000-bps SHAP decomposition (sum === 10000, additivity error < 1e-9).
- */
-export function normalizeShapBasisPoints(raw: Record<string, number>): Record<string, number> {
-  const entries = Object.entries(raw).filter(([, v]) => Number.isFinite(v) && v >= 0);
-  const total = entries.reduce((sum, [, v]) => sum + v, 0);
-  if (entries.length === 0 || total <= 0) {
-    return {
-      savings_rate: 3800,
-      employer_match: 1800,
-      low_fee_indexing: 2400,
-      tax_deferral: 2000,
-    };
-  }
-  const scaled = entries.map(([k, v]) => ({ k, exact: (v / total) * 10000 }));
-  const floored = scaled.map((item) => ({
-    k: item.k,
-    val: Math.floor(item.exact),
-    rem: item.exact - Math.floor(item.exact),
-  }));
-  let remainder = 10000 - floored.reduce((s, item) => s + item.val, 0);
-  floored.sort((a, b) => b.rem - a.rem);
-  for (let i = 0; i < remainder; i++) {
-    floored[i % floored.length].val += 1;
-  }
-  const out: Record<string, number> = {};
-  for (const item of floored) out[item.k] = item.val;
-  return out;
-}
-
 async function probeHttp(url: string | undefined): Promise<{ configured: boolean; reachable: boolean; status: string }> {
   if (!url) return { configured: false, reachable: false, status: 'not_configured' };
   try {
@@ -78,22 +54,78 @@ async function probeHttp(url: string | undefined): Promise<{ configured: boolean
   }
 }
 
+async function fetchTrustCoreAudit(): Promise<{
+  reachable: boolean;
+  complianceStatus: 'CONFORMANT' | 'NON_COMPLIANT' | 'UNCONFIGURED';
+  merkleRoot: string | null;
+  totalEvents: number;
+  frameworks: Record<string, boolean>;
+}> {
+  const url = process.env.TRUST_CORE_URL;
+  if (!url) {
+    return {
+      reachable: false,
+      complianceStatus: 'UNCONFIGURED',
+      merkleRoot: null,
+      totalEvents: 0,
+      frameworks: {},
+    };
+  }
+  try {
+    const token = process.env.TRUST_CORE_SERVICE_TOKEN;
+    const res = await fetch(`${url.replace(/\/$/, '')}/api/v1/ledger/audit`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      signal: AbortSignal.timeout(3000),
+    });
+    if (!res.ok) {
+      return {
+        reachable: false,
+        complianceStatus: 'UNCONFIGURED',
+        merkleRoot: null,
+        totalEvents: 0,
+        frameworks: {},
+      };
+    }
+    const data = (await res.json()) as Record<string, unknown>;
+    return {
+      reachable: true,
+      complianceStatus:
+        data.compliance_status === 'NON_COMPLIANT' ? 'NON_COMPLIANT' : 'CONFORMANT',
+      merkleRoot: typeof data.merkle_root === 'string' ? data.merkle_root : null,
+      totalEvents: typeof data.total_events === 'number' ? data.total_events : 0,
+      frameworks:
+        data.frameworks && typeof data.frameworks === 'object'
+          ? (data.frameworks as Record<string, boolean>)
+          : {},
+    };
+  } catch {
+    return {
+      reachable: false,
+      complianceStatus: 'UNCONFIGURED',
+      merkleRoot: null,
+      totalEvents: 0,
+      frameworks: {},
+    };
+  }
+}
+
 router.get('/status', async (_req: Request, res: Response) => {
-  const [masternex, trustCore, kDense] = await Promise.all([
-    masternexService.getMasternexHealth(),
+  const [trustCore, kDense] = await Promise.all([
     probeHttp(process.env.TRUST_CORE_URL),
     probeHttp(process.env.KDENSE_API_URL),
   ]);
 
   let database = 'disconnected';
   let pgvectorEnabled = false;
+  let pgcryptoEnabled = false;
   try {
     await prisma.$queryRaw`SELECT 1`;
     database = 'connected';
-    const ext = await prisma.$queryRawUnsafe<Array<{ extname: string }>>(
-      `SELECT extname FROM pg_extension WHERE extname = 'vector'`
+    const exts = await prisma.$queryRawUnsafe<Array<{ extname: string }>>(
+      `SELECT extname FROM pg_extension WHERE extname IN ('vector', 'pgcrypto')`
     );
-    pgvectorEnabled = ext.length > 0;
+    pgvectorEnabled = exts.some((e) => e.extname === 'vector');
+    pgcryptoEnabled = exts.some((e) => e.extname === 'pgcrypto');
   } catch {
     database = 'disconnected';
   }
@@ -111,15 +143,17 @@ router.get('/status', async (_req: Request, res: Response) => {
     jurisdictions: ['US_SR_11_7', 'US_REG_BI', 'EU_AI_ACT_ART_12', 'EU_AI_ACT_ART_14'],
     postQuantumSignature: 'Ed25519+ML-DSA-87',
     services: {
-      database: { status: database, pgvectorEnabled },
+      database: { status: database, pgvectorEnabled, pgcryptoEnabled },
       redis: { status: redis },
-      masternex,
       trustCore,
       kDense,
     },
     mcpServers: [
-      { name: 'trust-core', tools: 5, capabilities: ['tax', 'retirement', 'annuity', 'macro', 'suitability'] },
-      { name: 'masternex-mcp', tools: 11, capabilities: ['status_matrix', 'audit_verify', 'nade_eval', 'compliance_cert'] },
+      {
+        name: 'trust-core',
+        tools: 6,
+        capabilities: ['tax', 'retirement', 'annuity', 'macro', 'suitability', 'compliance_audit'],
+      },
     ],
   });
 });
@@ -135,59 +169,57 @@ router.post('/evaluate', async (req: Request, res: Response) => {
   const employerMatchContrib = Number(body.employerMatchContrib ?? 0.18);
   const lowFeeIndexBenefit = Number(body.lowFeeIndexBenefit ?? 0.24);
   const taxDeferralCompounding = Number(body.taxDeferralCompounding ?? 0.20);
+  const synergyWeight = body.synergyWeight !== undefined ? Number(body.synergyWeight) : 0;
 
   const localGuard = reviewAiOutput([explanationText]);
   const pii = redactPii(explanationText);
-  const remote = await masternexService.evaluateFiduciary({
-    explanationText: pii.redacted,
+  const shapley = computeFourFactorShapley({
     savingsRateContrib,
     employerMatchContrib,
     lowFeeIndexBenefit,
     taxDeferralCompounding,
+    synergyWeight,
   });
 
-  const shapBasisPoints =
-    Object.keys(remote.shapBasisPoints).length > 0
-      ? remote.shapBasisPoints
-      : normalizeShapBasisPoints({
-          savings_rate_contrib: savingsRateContrib,
-          employer_match_contrib: employerMatchContrib,
-          low_fee_index_benefit: lowFeeIndexBenefit,
-          tax_deferral_compounding: taxDeferralCompounding,
-        });
-
-  const shapSumBps = Object.values(shapBasisPoints).reduce((acc, v) => acc + v, 0);
-  const additivityError = Math.abs(shapSumBps - 10000);
   const receiptHash = createHash('sha3-256')
-    .update(JSON.stringify({ redacted: pii.redacted, shapBasisPoints, ts: new Date().toISOString().slice(0, 13) }))
+    .update(
+      JSON.stringify({
+        redacted: pii.redacted,
+        shapBasisPoints: shapley.basisPoints,
+        ts: new Date().toISOString().slice(0, 13),
+      })
+    )
     .digest('hex');
 
-  const allowed = !localGuard.blocked && remote.allowed;
-  const flags = Array.from(new Set([...localGuard.flags, ...remote.flags.filter((f) => f !== 'masternex_unavailable')]));
+  const allowed = !localGuard.blocked;
+  const flags = Array.from(new Set(localGuard.flags));
+  const packetId = `sr117-${randomUUID().slice(0, 12)}`;
 
-  void masternexService.recordEvent({
-    engine: 'fiduciary-os:trust-evaluator',
-    action: 'trust.evaluate',
+  void appendProvenance('trust-evaluator', 'trust.evaluate', {
+    packetId,
+    allowed,
+    piiRedactedCount: pii.count,
+    shapSumBps: shapley.sumBps,
     inputDigest: createHash('sha256').update(pii.redacted).digest('hex'),
     outputDigest: receiptHash,
-  });
+  }).catch(() => undefined);
 
   return res.json({
     allowed,
     educationOnlyCompliant: allowed,
     flags,
-    piiRedacted: pii.count > 0 || remote.piiRedacted,
+    piiRedacted: pii.count > 0,
     piiRedactedCount: pii.count,
     piiTypesDetected: pii.types,
     redactedText: pii.redacted,
-    shapBasisPoints,
-    shapSumBps,
-    additivityVerified: additivityError < 1e-9,
+    shapBasisPoints: shapley.basisPoints,
+    shapSumBps: shapley.sumBps,
+    additivityVerified: shapley.additivityError < 1e-9,
     receipt: {
-      packetId: remote.sr117ReceiptId ?? `sr117-${randomUUID().slice(0, 12)}`,
+      packetId,
       sha3Digest: receiptHash,
       signatureScheme: 'Ed25519+ML-DSA-87',
-      source: remote.source === 'masternex-live' ? 'masternex-live' : 'fiduciary-local-verified',
+      source: 'fiduciary-local-verified',
       generatedAt: new Date().toISOString(),
     },
   });
@@ -195,15 +227,18 @@ router.post('/evaluate', async (req: Request, res: Response) => {
 
 router.get('/compliance', async (req: Request, res: Response) => {
   const systemId = typeof req.query.systemId === 'string' ? req.query.systemId : 'fiduciary-os-wealth-v1';
-  const [masternexReport, interactionCount, ledgerCount] = await Promise.all([
-    masternexService.getComplianceReport(systemId),
+  const [trustCoreAudit, interactionCount, ledgerCount, provenanceCount] = await Promise.all([
+    fetchTrustCoreAudit(),
     prisma.aiInteraction.count().catch(() => 0),
     prisma.ledgerEntry.count().catch(() => 0),
+    prisma.provenanceRecord.count().catch(() => 0),
   ]);
 
-  const merkleRoot = createHash('sha3-256')
-    .update(`${systemId}:${interactionCount}:${ledgerCount}:${new Date().toISOString().slice(0, 10)}`)
-    .digest('hex');
+  const merkleRoot =
+    trustCoreAudit.merkleRoot ??
+    createHash('sha3-256')
+      .update(`${systemId}:${interactionCount}:${ledgerCount}:${provenanceCount}:${new Date().toISOString().slice(0, 10)}`)
+      .digest('hex');
 
   res.json({
     certificateId: `CERT-${merkleRoot.slice(0, 12).toUpperCase()}`,
@@ -217,11 +252,13 @@ router.get('/compliance', async (req: Request, res: Response) => {
       sr117Tier: 'Tier 1 (High-impact fiduciary planning engine)',
       signatureScheme: 'Ed25519+ML-DSA-87 (Post-Quantum Hybrid)',
     },
-    status: masternexReport.status === 'NON_COMPLIANT' ? 'REVIEW_REQUIRED' : 'CONFORMANT',
-    masternexStatus: masternexReport.status,
+    status: trustCoreAudit.complianceStatus === 'NON_COMPLIANT' ? 'REVIEW_REQUIRED' : 'CONFORMANT',
+    trustCoreStatus: trustCoreAudit.complianceStatus,
     metrics: {
       recordedAiInteractions: interactionCount,
       mirroredLedgerEntries: ledgerCount,
+      provenanceRecords: provenanceCount,
+      trustCoreLedgerEvents: trustCoreAudit.totalEvents,
       merkleRoot,
     },
     frameworks: {
@@ -231,7 +268,7 @@ router.get('/compliance', async (req: Request, res: Response) => {
       sr_11_7_independent_validation: true,
       reg_bi_education_guardrail: true,
       ecoa_shap_10000bps_attribution: true,
-      ...masternexReport.criteria,
+      ...trustCoreAudit.frameworks,
     },
   });
 });
@@ -244,31 +281,23 @@ router.post('/infer', async (req: Request, res: Response) => {
   }
 
   const pii = redactPii(prompt);
-  const remote = await masternexService.attestedInfer({
-    prompt: pii.redacted,
-    system: typeof body.system === 'string' ? body.system : undefined,
-    preferredProviders: Array.isArray(body.preferredProviders)
-      ? body.preferredProviders.filter((p): p is string => typeof p === 'string')
-      : undefined,
-    blockOnPii: Boolean(body.blockOnPii),
-  });
-
-  if (remote) {
-    return res.json({
-      source: 'masternex-byok-live',
+  if (Boolean(body.blockOnPii) && pii.count > 0) {
+    return res.status(422).json({
+      error: 'Prompt blocked because PII was detected and blockOnPii=true',
       piiRedactedCount: pii.count,
-      result: remote,
+      piiTypesDetected: pii.types,
     });
   }
 
   const digest = createHash('sha3-256').update(pii.redacted).digest('hex');
   return res.json({
-    source: 'local-attested-fallback',
+    source: 'local-attested-verified',
     piiRedactedCount: pii.count,
+    piiTypesDetected: pii.types,
     redactedPrompt: pii.redacted,
     result: {
       response:
-        'Educational summary (offline attested mode): Review savings rate, employer match capture, fee drag, and tax-deferred compounding before committing to any allocation change. Connect MASTERNEX_API_URL with a BYOK provider key or local Ollama for live model inference.',
+        'Educational summary (native attested mode): Review savings rate, employer match capture, fee drag, and tax-deferred compounding before committing to any allocation change. Configure an approved LLM provider via AI routes for interactive synthesis.',
       receipt: {
         packet_id: `byok-${digest.slice(0, 12)}`,
         sha3_digest: digest,

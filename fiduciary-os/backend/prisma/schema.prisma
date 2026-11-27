@@ -17,16 +17,21 @@ model User {
   advisorCode   String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime? @map("deleted_at")
 
-  profile       Profile?
-  portfolio     Portfolio?
-  documents     Document[]
-  sessions      Session[]
-  aiInteractions AiInteraction[]
-  planningActions PlanningAction[]
-  financialPlan FinancialPlan?
-  toolScenarios ToolScenario[]
-  authSessions AuthSession[]
+  profile           Profile?
+  portfolio         Portfolio?
+  documents         Document[]
+  sessions          Session[]
+  aiInteractions    AiInteraction[]
+  planningActions   PlanningAction[]
+  financialPlan     FinancialPlan?
+  toolScenarios     ToolScenario[]
+  authSessions      AuthSession[]
+  ownedHouseholds   Household[]     @relation("HouseholdOwner")
+  advisedHouseholds Household[]     @relation("HouseholdAdvisor")
+  personProfile     Person?
+  consentRecords    ConsentRecord[]
 
   @@map("users")
 }
@@ -263,3 +268,157 @@ model WorkspaceState {
   @@index([category, updatedAt])
   @@map("workspace_states")
 }
+
+// ============================================================================
+// Household Graph CRM, Consent Ledger & WORM Provenance (PostgreSQL + pgcrypto)
+// ============================================================================
+
+model Household {
+  id               String    @id @default(uuid())
+  name             String
+  lifecycleStage   String    @default("PROSPECT") @map("lifecycle_stage")
+  ownerUserId      String?   @map("owner_user_id")
+  primaryAdvisorId String?   @map("primary_advisor_id")
+  metadata         Json?
+  deletedAt        DateTime? @map("deleted_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  owner          User?           @relation("HouseholdOwner", fields: [ownerUserId], references: [id], onDelete: SetNull)
+  primaryAdvisor User?           @relation("HouseholdAdvisor", fields: [primaryAdvisorId], references: [id], onDelete: SetNull)
+  people         Person[]
+  crmAccounts    CrmAccount[]
+  appointments   Appointment[]
+  lifeEvents     LifeEvent[]
+  consentRecords ConsentRecord[]
+
+  @@index([ownerUserId])
+  @@index([primaryAdvisorId])
+  @@index([lifecycleStage])
+  @@map("households")
+}
+
+model Person {
+  id                    String    @id @default(uuid())
+  householdId           String    @map("household_id")
+  userId                String?   @unique @map("user_id")
+  firstName             String    @map("first_name")
+  lastName              String    @map("last_name")
+  email                 String?
+  phone                 String?
+  dateOfBirth           DateTime? @map("date_of_birth")
+  ssnEncrypted          Bytes?    @map("ssn_encrypted")
+  ssnLast4              String?   @map("ssn_last4")
+  role                  String    @default("PLANNER_PARENT")
+  relationshipToPrimary String?   @map("relationship_to_primary")
+  deletedAt             DateTime? @map("deleted_at")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+
+  household   Household    @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  user        User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  crmAccounts CrmAccount[]
+  lifeEvents  LifeEvent[]
+
+  @@index([householdId])
+  @@map("people")
+}
+
+model CrmAccount {
+  id                        String    @id @default(uuid())
+  householdId               String    @map("household_id")
+  personId                  String?   @map("person_id")
+  institutionName           String    @map("institution_name")
+  accountName               String?   @map("account_name")
+  accountType               String    @map("account_type")
+  balance                   Decimal   @default(0) @db.Decimal(18, 2)
+  source                    String    @default("MANUAL")
+  lastSyncedAt              DateTime? @map("last_synced_at")
+  isActive                  Boolean   @default(true) @map("is_active")
+  plaidItemId               String?   @map("plaid_item_id")
+  plaidAccessTokenEncrypted Bytes?    @map("plaid_access_token_encrypted")
+  plaidCursor               String?   @map("plaid_cursor")
+  deletedAt                 DateTime? @map("deleted_at")
+  createdAt                 DateTime  @default(now()) @map("created_at")
+  updatedAt                 DateTime  @updatedAt @map("updated_at")
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  person    Person?   @relation(fields: [personId], references: [id], onDelete: SetNull)
+
+  @@index([householdId])
+  @@index([personId])
+  @@map("crm_accounts")
+}
+
+model Appointment {
+  id              String   @id @default(uuid())
+  householdId     String   @map("household_id")
+  advisorId       String?  @map("advisor_id")
+  title           String
+  scheduledAt     DateTime @map("scheduled_at")
+  durationMinutes Int      @default(30) @map("duration_minutes")
+  status          String   @default("SCHEDULED")
+  notes           String?
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  @@index([householdId, scheduledAt])
+  @@map("appointments")
+}
+
+model LifeEvent {
+  id            String   @id @default(uuid())
+  householdId   String   @map("household_id")
+  personId      String?  @map("person_id")
+  eventType     String   @map("event_type")
+  eventDate     DateTime @map("event_date")
+  impactSummary String?  @map("impact_summary")
+  status        String   @default("PLANNED")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  person    Person?   @relation(fields: [personId], references: [id], onDelete: SetNull)
+
+  @@index([householdId, eventDate])
+  @@map("life_events")
+}
+
+model ConsentRecord {
+  id                  String   @id @default(uuid())
+  userId              String   @map("user_id")
+  householdId         String?  @map("household_id")
+  channel             String
+  status              String
+  doubleOptInVerified Boolean  @default(false) @map("double_opt_in_verified")
+  source              String
+  ipAddress           String?  @map("ip_address")
+  proofHash           String   @map("proof_hash")
+  recordedAt          DateTime @default(now()) @map("recorded_at")
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  household Household? @relation(fields: [householdId], references: [id], onDelete: SetNull)
+
+  @@index([userId, channel, recordedAt])
+  @@map("consent_records")
+}
+
+// Append-only, hash-chained WORM provenance log (enforced by PostgreSQL triggers).
+// Deliberately has NO FK to users so user lifecycle/test cleanup never triggers DELETE on this table.
+model ProvenanceRecord {
+  id         String   @id @default(uuid())
+  sequence   Int      @unique @default(autoincrement())
+  occurredAt DateTime @default(now()) @map("occurred_at")
+  actorId    String   @map("actor_id")
+  recordType String   @map("record_type")
+  prevHash   String   @map("prev_hash")
+  rowHash    String   @unique @map("row_hash")
+  payload    Json     @default("{}")
+
+  @@index([actorId, occurredAt])
+  @@index([recordType, occurredAt])
+  @@map("provenance_records")
+}
+

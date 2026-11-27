@@ -1,10 +1,6 @@
-import { createHash } from 'crypto';
+import { createHash, randomUUID } from 'crypto';
 import { prisma } from '../config/database';
 import { logger } from '../utils/logger';
-import * as masternexService from './masternexService';
-
-const TRUST_CORE_URL = process.env.TRUST_CORE_URL ?? null;
-const TRUST_CORE_SERVICE_TOKEN = process.env.TRUST_CORE_SERVICE_TOKEN ?? null;
 import { assertPlaceholdersAllowed, type DataSource } from '../utils/dataSource';
 import {
   AI_DISCLOSURE,
@@ -12,6 +8,24 @@ import {
   BLOCKED_RESPONSE,
   reviewAiOutput,
 } from './aiGuardrails';
+import { computeFourFactorShapley } from './shapleyService';
+import { appendProvenance } from './crmService';
+
+const TRUST_CORE_URL = process.env.TRUST_CORE_URL ?? null;
+const TRUST_CORE_SERVICE_TOKEN = process.env.TRUST_CORE_SERVICE_TOKEN ?? null;
+
+const PII_REGEXES = [
+  /\b\d{3}-\d{2}-\d{4}\b/g,
+  /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi,
+  /\b(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b/g,
+];
+
+function containsPii(text: string): boolean {
+  return PII_REGEXES.some((rx) => {
+    rx.lastIndex = 0;
+    return rx.test(text);
+  });
+}
 
 /**
  * Single choke point for AI output. Every AI route calls `deliverAiOutput`, which:
@@ -29,11 +43,11 @@ export interface AiEnvelope {
   guardrail: { blocked: boolean; flags: string[] };
   interactionId: string | null;
   trustReceipt?: {
-    sr117ReceiptId: string | null;
+    sr117ReceiptId: string;
     shapBasisPoints: Record<string, number>;
     piiRedacted: boolean;
-    masternexAllowed: boolean;
-    source: 'masternex-live' | 'unconfigured' | 'fallback';
+    guardrailAllowed: boolean;
+    source: 'fiduciary-local-verified';
   };
 }
 
@@ -58,13 +72,14 @@ export async function deliverAiOutput<T>(call: AiCall<T>): Promise<{ output: T; 
   }
 
   const rawTexts = call.texts(call.output);
+  const joinedTexts = rawTexts.filter((t): t is string => typeof t === 'string' && t.length > 0).join('\n');
   const review = reviewAiOutput(rawTexts);
-  const masternexEval = await masternexService.evaluateFiduciary({
-    explanationText: rawTexts.filter((t): t is string => typeof t === 'string' && t.length > 0).join('\n'),
-  });
+  const piiDetected = containsPii(joinedTexts);
+  const shapley = computeFourFactorShapley();
+  const sr117ReceiptId = `sr117-${randomUUID().slice(0, 12)}`;
 
-  const combinedBlocked = review.blocked || !masternexEval.allowed;
-  const combinedFlags = Array.from(new Set([...review.flags, ...masternexEval.flags]));
+  const combinedBlocked = review.blocked;
+  const combinedFlags = Array.from(new Set(review.flags));
   const output = combinedBlocked ? call.withheld() : call.output;
 
   if (combinedBlocked) {
@@ -84,6 +99,9 @@ export async function deliverAiOutput<T>(call: AiCall<T>): Promise<{ output: T; 
     flags: combinedFlags,
   });
 
+  const promptDigest = createHash('sha256').update(call.prompt).digest('hex');
+  const outputDigest = createHash('sha256').update(JSON.stringify(output)).digest('hex');
+
   // Non-blocking: append to trust-core EvidenceLedger for tamper-evident AI audit trail.
   if (TRUST_CORE_URL) {
     void fetch(`${TRUST_CORE_URL}/api/v1/ledger/entries`, {
@@ -102,19 +120,23 @@ export async function deliverAiOutput<T>(call: AiCall<T>): Promise<{ output: T; 
           model: call.model ?? 'unknown',
           blocked: combinedBlocked,
           policyVersion: AI_POLICY_VERSION,
-          sr117ReceiptId: masternexEval.sr117ReceiptId ?? 'none',
-          promptDigest: createHash('sha256').update(call.prompt).digest('hex').slice(0, 16),
+          sr117ReceiptId,
+          promptDigest: promptDigest.slice(0, 16),
         },
       }),
     }).catch((err: Error) => logger.warn('trust-core ledger append failed', { error: err.message }));
   }
-  // Non-blocking: record to MASTERNEX AI Flight Recorder for SR 11-7 compliance.
-  void masternexService.recordEvent({
-    engine: `${call.provider}:${call.model ?? 'unknown'}`,
-    action: call.endpoint,
-    inputDigest: createHash('sha256').update(call.prompt).digest('hex'),
-    outputDigest: createHash('sha256').update(JSON.stringify(output)).digest('hex'),
-  });
+
+  // Non-blocking: append to PostgreSQL WORM provenance_records for SR 11-7 compliance.
+  void appendProvenance(call.userId ?? 'anonymous', 'ai.output.delivered', {
+    sr117ReceiptId,
+    endpoint: call.endpoint,
+    provider: call.provider,
+    model: call.model ?? 'unknown',
+    blocked: combinedBlocked,
+    inputDigest: promptDigest,
+    outputDigest,
+  }).catch(() => undefined);
 
   return {
     output,
@@ -126,11 +148,11 @@ export async function deliverAiOutput<T>(call: AiCall<T>): Promise<{ output: T; 
       guardrail: { blocked: combinedBlocked, flags: combinedFlags },
       interactionId,
       trustReceipt: {
-        sr117ReceiptId: masternexEval.sr117ReceiptId,
-        shapBasisPoints: masternexEval.shapBasisPoints,
-        piiRedacted: masternexEval.piiRedacted,
-        masternexAllowed: masternexEval.allowed,
-        source: masternexEval.source,
+        sr117ReceiptId,
+        shapBasisPoints: shapley.basisPoints,
+        piiRedacted: piiDetected,
+        guardrailAllowed: !combinedBlocked,
+        source: 'fiduciary-local-verified',
       },
     },
   };

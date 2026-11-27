@@ -26,6 +26,9 @@ import { trustRouter } from './routes/trust';
 import { intelligenceRouter } from './routes/intelligence';
 import { advisorRouter } from './routes/advisor';
 import { workspaceStateRouter } from './routes/workspace-state';
+import { crmRouter } from './routes/crm';
+import { consentRouter } from './routes/consent';
+import { privacyRouter } from './routes/privacy';
 import { registerMcpServers } from './services/kdenseService';
 import { logger } from './utils/logger';
 import { connectDatabase } from './config/database';
@@ -104,10 +107,13 @@ app.use(`${API_PREFIX}/ai`, aiRouter);
 app.use(`${API_PREFIX}/ai-v2`, aiEnhancedRouter); // Enhanced AI with Kimi
 app.use(`${API_PREFIX}/market`, marketRouter);   // Real-time market data & insurance
 app.use(`${API_PREFIX}/crypto`, cryptoRouter);   // Cryptocurrency prices
-app.use(`${API_PREFIX}/trust`, trustRouter);     // Phase 1: MASTERNEX Trust, SHAP & Compliance
+app.use(`${API_PREFIX}/trust`, trustRouter);     // Phase 1: Native Trust, Exact Shapley & Compliance
 app.use(`${API_PREFIX}/intelligence`, intelligenceRouter); // Phase 2/4/5: pgvector, Doc Intel, Nature, PRINCE, ZK
 app.use(`${API_PREFIX}/advisor`, advisorRouter); // Phase 3: Advisor Command Center productivity
 app.use(`${API_PREFIX}/workspace-state`, workspaceStateRouter); // Sprint 3: Durable Will & Trust, Proposed Symphony, and Tenant Brand persistence
+app.use(`${API_PREFIX}/crm`, crmRouter); // Household Graph CRM (PostgreSQL + pgcrypto)
+app.use(`${API_PREFIX}/consent`, consentRouter); // CAN-SPAM / TCPA / GDPR / CCPA double-opt-in consent ledger
+app.use(`${API_PREFIX}/privacy`, privacyRouter); // GDPR / CCPA export, soft-delete & WORM provenance verification
 
 // Error handling
 app.use(errorHandler);
@@ -141,7 +147,7 @@ async function startServer() {
       logger.info(`📚 API Documentation: http://localhost:${PORT}/api/v1`);
       logger.info(`💚 Health Check: http://localhost:${PORT}/health`);
 
-      // Phase 3: Register trust-core + MASTERNEX MCP servers into K-Dense Kady (non-blocking)
+      // Phase 3: Register trust-core MCP server into K-Dense Kady (non-blocking)
       registerMcpServers().then((r) => {
         if (r.status === 'registered') {
           logger.info(`K-Dense MCP: registered [${r.servers.join(', ')}] at ${r.kdenseUrl}`);

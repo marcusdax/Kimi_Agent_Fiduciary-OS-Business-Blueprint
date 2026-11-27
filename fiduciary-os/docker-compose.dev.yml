@@ -1,6 +1,6 @@
 version: "3.9"
 
-# Local development stack — Fiduciary OS + trust-core (+ optional MASTERNEX + frontend)
+# Local development stack — Fiduciary OS + trust-core (+ optional frontend)
 #
 # Default stack (backend + trust-core):
 #   docker compose -f docker-compose.dev.yml up
@@ -8,14 +8,11 @@ version: "3.9"
 # Full stack including React dev server:
 #   docker compose -f docker-compose.dev.yml --profile fullstack up
 #
-# Full stack + MASTERNEX.os (requires marcusdax/masternex.os cloned alongside this repo):
-#   docker compose -f docker-compose.dev.yml --profile fullstack --profile masternex up
-#
-# Dev defaults (SQLite, no API keys needed) are in .env.dev (committed).
+# Dev defaults are in .env.dev (committed).
 # Put real secrets/API keys in .env (gitignored) — it overrides .env.dev.
 
 services:
-  # ── PostgreSQL 16 + pgvector ───────────────────────────────────────────────
+  # ── PostgreSQL 16 + pgvector + pgcrypto ────────────────────────────────────
   postgres:
     image: pgvector/pgvector:pg16
     ports:
@@ -63,7 +60,6 @@ services:
       REDIS_ENABLED: "true"
       REDIS_URL: redis://redis:6379
       TRUST_CORE_URL: http://trust-core:3002
-      MASTERNEX_API_URL: http://masternex:8080
     depends_on:
       postgres:
         condition: service_healthy
@@ -83,7 +79,7 @@ services:
       - ./backend/logs:/app/logs
       - backend-db:/app
 
-  # ── trust-core MCP + HTTP sidecar ─────────────────────────────────────────
+  # ── trust-core MCP + HTTP sidecar (durable file ledger) ────────────────────
   trust-core:
     build:
       context: ../trust-core
@@ -93,36 +89,16 @@ services:
     environment:
       PORT: "3002"
       NODE_ENV: development
-      LEDGER_MODE: memory
+      LEDGER_MODE: file
+      LEDGER_DIR: /app/.data/ledger
+    volumes:
+      - dev_trust_core_ledger:/app/.data/ledger
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3002/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 20s
-
-  # ── MASTERNEX.os FastAPI service (optional — requires sibling repo) ────────
-  masternex:
-    build:
-      context: ../../MASTERNEX.os
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    env_file:
-      - path: .env
-        required: false
-    environment:
-      PORT: "8080"
-      MASTERNEX_ENV: development
-      MASTERNEX_JWT_SECRET: ${MASTERNEX_JWT_SECRET:-fiduciary-ecosystem-local-jwt-secret-32chars}
-    profiles:
-      - masternex
-    healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8080/health')"]
-      interval: 15s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
 
   # ── React frontend dev server ──────────────────────────────────────────────
   frontend:
@@ -146,3 +122,4 @@ services:
 volumes:
   backend-db:
   dev_pg_data:
+  dev_trust_core_ledger:

@@ -1,15 +1,15 @@
 /**
- * trust/masternex-bridge.ts — Official MASTERNEX.os Trust & Compliance Bridge for Fiduciary OS.
+ * trust/compliance-audit.ts — Native EU AI Act (Annex III, point 5) and Federal Reserve SR 11-7
+ * compliance audit engine backed by Fiduciary OS's EvidenceLedger.
  *
- * Implements turnkey EU AI Act (Annex III, point 5) and Federal Reserve SR 11-7
- * compliance recording, cryptographic legal holds, and Merkle proof generation
- * directly from Fiduciary OS's EvidenceLedger.
+ * Uses `ledger.verify()` for full cryptographic hash and chain-link verification so
+ * payload tampering, reordering, or truncation is detected deterministically.
  */
 
 import { createHash } from 'node:crypto';
-import type { EvidenceLedger, LedgerEntry, LedgerBundle } from './ledger.js';
+import type { EvidenceLedger, LedgerEntry } from './ledger.ts';
 
-export interface MasternexSystemRegistration {
+export interface SystemRegistration {
   system_id: string;
   name: string;
   provider: string;
@@ -20,12 +20,14 @@ export interface MasternexSystemRegistration {
   zero_pii_certified: boolean;
 }
 
-export interface MasternexComplianceReport {
+export interface ComplianceAuditReport {
   generated_at: string;
-  system: MasternexSystemRegistration;
+  system: SystemRegistration;
   total_events: number;
   merkle_root: string;
   chain_integrity_valid: boolean;
+  verification_reason: string | null;
+  broken_at: number | null;
   compliance_status: 'CONFORMANT' | 'NON_CONFORMANT';
   frameworks: {
     eu_ai_act_article_12: boolean;
@@ -35,20 +37,21 @@ export interface MasternexComplianceReport {
   };
 }
 
-export class MasternexFiduciaryBridge {
-  public readonly system: MasternexSystemRegistration = {
+export class ComplianceAuditEngine {
+  public readonly system: SystemRegistration = {
     system_id: 'fiduciary-os-wealth-v1',
     name: 'Fiduciary OS Wealth & Advisory Engine',
     provider: 'Odasi Technologies, Inc. / Marcus Dax',
     risk_category: 'high_risk',
     eu_ai_act_annex: 'Annex III, point 5 (Credit/Financial Risk Assessment)',
     sr11_7_tier: 'Tier 1 (High-impact fiduciary calculation engine)',
-    intended_purpose: 'Deterministic fiduciary financial planning, annuity modeling, tax bracket calculation, and Monte Carlo wealth projection.',
+    intended_purpose:
+      'Deterministic fiduciary financial planning, annuity modeling, tax bracket calculation, exact Shapley attribution, and Monte Carlo wealth projection.',
     zero_pii_certified: true,
   };
 
   /**
-   * Compute pairwise Merkle root over all entry hashes in the ledger.
+   * Compute pairwise SHA-256 Merkle root over all entry hashes in the ledger.
    */
   public computeMerkleRoot(entries: readonly LedgerEntry[]): string {
     if (entries.length === 0) {
@@ -68,24 +71,27 @@ export class MasternexFiduciaryBridge {
   }
 
   /**
-   * Verify the mathematical integrity of the Fiduciary OS ledger.
+   * Verify full mathematical and cryptographic integrity of the EvidenceLedger
+   * via `ledger.verify()` (recomputes entry hashes + prevHash linkage).
    */
-  public verifyLedger(ledger: EvidenceLedger): { valid: boolean; reason?: string } {
-    const entries = typeof ledger.entries === 'function' ? ledger.entries() : (ledger as any).entries;
-    for (let i = 0; i < entries.length; i++) {
-      const e = entries[i];
-      if (i > 0 && e.prevHash !== entries[i - 1].hash) {
-        return { valid: false, reason: `Chain broken at sequence ${e.seq}` };
-      }
-    }
-    return { valid: true };
+  public verifyLedger(ledger: EvidenceLedger): {
+    valid: boolean;
+    brokenAt: number | null;
+    reason: string | null;
+  } {
+    const result = ledger.verify();
+    return {
+      valid: result.valid,
+      brokenAt: result.brokenAt,
+      reason: result.reason,
+    };
   }
 
   /**
-   * Generate an EU AI Act & SR 11-7 certified compliance audit report.
+   * Generate an EU AI Act Art. 12/14 & SR 11-7 compliance audit report.
    */
-  public generateComplianceAudit(ledger: EvidenceLedger): MasternexComplianceReport {
-    const entries = typeof ledger.entries === 'function' ? ledger.entries() : (ledger as any).entries;
+  public generateComplianceAudit(ledger: EvidenceLedger): ComplianceAuditReport {
+    const entries = ledger.entries();
     const verification = this.verifyLedger(ledger);
     const merkleRoot = this.computeMerkleRoot(entries);
 
@@ -95,12 +101,14 @@ export class MasternexFiduciaryBridge {
       total_events: entries.length,
       merkle_root: merkleRoot,
       chain_integrity_valid: verification.valid,
+      verification_reason: verification.reason,
+      broken_at: verification.brokenAt,
       compliance_status: verification.valid ? 'CONFORMANT' : 'NON_CONFORMANT',
       frameworks: {
-        eu_ai_act_article_12: true, // Automatic event logging & tamper-evident record keeping
-        eu_ai_act_article_14: true, // Human oversight & deterministic suitability gate
-        sr_11_7_model_inventory: true, // Rigorous model documentation & source attribution
-        sr_11_7_audit_trail: true, // Independent validation & append-only immutable history
+        eu_ai_act_article_12: verification.valid,
+        eu_ai_act_article_14: true,
+        sr_11_7_model_inventory: true,
+        sr_11_7_audit_trail: verification.valid,
       },
     };
   }

@@ -23,7 +23,7 @@ import { simulate, type MonteCarloInput } from './engines/montecarlo.ts';
 import { priceAnnuity, type AnnuityInput } from './engines/annuity.ts';
 import { lifeExpectancy } from './engines/mortality.ts';
 import { EvidenceLedger, verifyBundle, extractSubChain } from './trust/ledger.ts';
-import { MasternexFiduciaryBridge } from './trust/masternex-bridge.ts';
+import { ComplianceAuditEngine } from './trust/compliance-audit.ts';
 import { assessAction, type PlanningAction, type ClientContext } from './trust/anomaly.ts';
 import { assessSuitability, type PlanFacts, DEFAULT_RULES } from './trust/suitability.ts';
 import { AuthzGraph } from './trust/authz.ts';
@@ -98,7 +98,7 @@ const signing = (() => {
   return { privateKeyPem: pair.privateKey, publicKeyPem: pair.publicKey };
 })();
 ledger.withSigningKeys(signing.privateKeyPem, signing.publicKeyPem);
-const masternexBridge = new MasternexFiduciaryBridge();
+const complianceAudit = new ComplianceAuditEngine();
 
 const attestationKeys = generateAttestationKeyPair();
 
@@ -679,8 +679,8 @@ const routes: RouteSpec[] = [
     path: '/api/v1/ledger/audit',
     group: 'ledger',
     scope: 'ledger:read',
-    summary: 'MASTERNEX EU AI Act Art. 12 + SR 11-7 Merkle-verified compliance audit report.',
-    handler: async () => ({ status: 200, body: masternexBridge.generateComplianceAudit(ledger) }),
+    summary: 'EU AI Act Art. 12 + SR 11-7 Merkle-verified compliance audit report.',
+    handler: async () => ({ status: 200, body: complianceAudit.generateComplianceAudit(ledger) }),
   },
   {
     method: 'GET',
@@ -1107,4 +1107,4 @@ if (invokedDirectly) {
   });
 }
 
-export { routes, ledger, authz, vault, watch, calibration, masternexBridge };
+export { routes, ledger, authz, vault, watch, calibration, complianceAudit };

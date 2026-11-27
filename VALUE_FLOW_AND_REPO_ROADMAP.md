@@ -1,8 +1,8 @@
 # Value Flow & Open-Source Upgrade Roadmap
 
-**Purpose:** identify open-source GitHub projects that raise Fiduciary OS's value — product quality, credibility, speed to market, and visual polish — and sequence them against the business value flow.
+**Purpose:** identify open-source GitHub projects and audited connectors that raise the unified **AUCTUM.ATLAS** (Consumer Household Portal) + **AUCTUM Command (powered by Fiduciary OS™)** (Licensed Advisor Core) ecosystem — product quality, credibility, speed to market, and WCAG 2.2 visual polish — sequenced against the canonical architecture in [`UNIFIED_PLATFORM_BLUEPRINT.md`](UNIFIED_PLATFORM_BLUEPRINT.md).
 
-**Snapshot:** October 2026. Star counts and licenses were read from each project's GitHub page at that time; re-check before adopting.
+**Snapshot:** November 2026. Star counts and licenses were read from each project's GitHub page at that time; re-check before adopting.
 
 ---
 
@@ -61,20 +61,21 @@ flowchart TB
 
 **Stage:** Activate
 
-The repo has no frontend. These let a small team ship one that looks institutional on day one, while keeping full ownership of the code (copy-in components, not a locked UI kit).
+The unified frontend (`React 19 + Vite 8 + TypeScript 7`) serves both **AUCTUM.ATLAS** (plain-language household stewardship) and **AUCTUM Command** (institutional advisor workstation) from a single owned-component architecture with mandatory WCAG 2.2 AA accessibility.
 
 | Project | ★ | License | What it adds | Replaces | Effort |
 |---|---|---|---|---|---|
-| [shadcn-ui/ui](https://github.com/shadcn-ui/ui) | 125k | MIT | Accessible Radix-based components you own and theme. De-facto standard for React SaaS. | Missing `frontend/` | S |
-| [satnaing/shadcn-admin](https://github.com/satnaing/shadcn-admin) | 15.8k | MIT | Complete dashboard shell: Vite, TanStack Router, sidebar, auth pages, tables, dark mode. Start the Advisor Command Center here. | Missing `frontend/` scaffold | S |
-| [tremorlabs/tremor](https://github.com/tremorlabs/tremor) | 3.6k | Apache-2.0 | Copy-paste KPI cards, area/bar/donut charts, trackers styled for financial dashboards. | "GlassCard / KPICard" described in docs | S |
-| [recharts/recharts](https://github.com/recharts/recharts) | 27.6k | MIT | Charting layer under Tremor; use directly for retirement-income ribbons and Monte Carlo fan charts. | Chart.js plan | S |
-| [TanStack/table](https://github.com/TanStack/table) | 28.4k | MIT | Headless tables for holdings, client books, carrier comparisons. | — | S |
-| [lucide-icons/lucide](https://github.com/lucide-icons/lucide) | 24.4k | ISC | Consistent stroke icon set (already bundled with shadcn). | — | S |
-| [motiondivision/motion](https://github.com/motiondivision/motion) | 34.2k | MIT | Restrained micro-interactions: number tick-ups on scores, panel transitions. | — | S |
-| [magicuidesign/magicui](https://github.com/magicuidesign/magicui) | 22.1k | MIT | Animated marketing-site sections (hero, bento grids, number tickers) for the B2C landing page. Use sparingly in the product itself. | — | S |
+| [shadcn-ui/ui](https://github.com/shadcn-ui/ui) | 125k | MIT | Accessible Radix-based components you own and theme. De-facto standard for React SaaS. | Ad-hoc UI primitives | S |
+| [satnaing/shadcn-admin](https://github.com/satnaing/shadcn-admin) | 15.8k | MIT | Dashboard shell scaffold (Vite, sidebar, auth pages, tables) adapted for AUCTUM Command. | Legacy admin wireframe | S |
+| [airbnb/visx](https://github.com/airbnb/visx) (**Visx 4.0**) | 19.5k | MIT | Primary SVG/React charting layer (`@visx/a11y`, modular ~15 KB) for Canopy, Fee-Drag Recovery, and Beneficiary Constellation charts. | Legacy Chart.js / Recharts plan | S |
+| [apache/echarts](https://github.com/apache/echarts) (**ECharts 6.1**) | 62k | Apache-2.0 | High-density Canvas renderer (`sampling: 'lttb'`) for 10,000-path Longevity Fans and Multi-Carrier Parallel Coordinates. | Unscalable SVG simulations | S |
+| [d3/d3](https://github.com/d3/d3) (**D3.js 7.9** layout math) | 109k | ISC | Pure layout math (`d3-sankey`, `d3-hierarchy`, `d3-scale`) paired with Visx React rendering. | Hand-rolled graph math | S |
+| [statelyai/xstate](https://github.com/statelyai/xstate) (**XState**) | 28k | MIT | Deterministic 6-step Onboarding Wizard (`≤10` steps) and 5-stage household lifecycle state machine. | Ad-hoc multi-step form state | S |
+| [TanStack/table](https://github.com/TanStack/table) | 28.4k | MIT | Headless tables for holdings, client books, carrier comparisons, and paired **Accessible Data Tables**. | — | S |
+| [lucide-icons/lucide](https://github.com/lucide-icons/lucide) | 24.4k | ISC | Consistent stroke icon set (paired with shape/label cues so color is never the sole channel). | — | S |
+| [motiondivision/motion](https://github.com/motiondivision/motion) | 34.2k | MIT | Restrained `220ms cubic-bezier(0.16, 1, 0.3, 1)` transitions honoring `prefers-reduced-motion`. | — | S |
 
-**Design direction.** Keep the existing dark theme intent, but make trust the dominant signal: one restrained accent (the docs' cyan), generous whitespace, tabular figures for every number (`font-variant-numeric: tabular-nums`), and charts that always show the assumption behind them. Advisors sell to people who are nervous about money; calm beats flashy.
+**Design direction.** Enforce the WCAG 2.2 AA **Albers/Itten palette** (`#1B365D` navy foundation, `#2E6F5E` sage resilience, `#C27D2C` amber caution, `#B83A3A` crimson deficits only), pair every chart with an **Accessible Data Table** and inline **SEC 206(4)-1 Risk Drawer**, use `font-variant-numeric: tabular-nums` for every figure, and gate every release with automated `lint:copy` (`check-copy-lexicon.mjs`) enforcing the 10-row bifurcated lexicon.
 
 ---
 
@@ -101,20 +102,22 @@ The free calculators are the top of the funnel. Today they are rule-of-thumb for
 
 ---
 
-## 3. Platform foundation
+## 3. Platform foundation & audited connectors
 
 **Stage:** Convert
 
-The B2B product needs firms, advisors, households, and the permissions between them. The current auth is a single `role` string on a user.
+Both AUCTUM.ATLAS and AUCTUM Command share a native **PostgreSQL 16 + `pgcrypto` + `pgvector` Household Graph CRM** (`Household`, `Person`, `HouseholdMember`, `CrmAccount`, `Appointment`, `LifeEvent`, `ConsentRecord`, AES-256-GCM SSN encryption, `export_user_data` / `soft_delete_user`) — formally replacing `MASTERNEX.os` — plus audited commercial connectors governed by strict unit-economics and failover controls.
 
-| Project | ★ | License | What it adds | Replaces | Effort |
-|---|---|---|---|---|---|
-| [better-auth/better-auth](https://github.com/better-auth/better-auth) | 29.5k | MIT | Sessions, 2FA, multi-tenant organizations, social/SSO. Removes hand-rolled JWT handling. | `routes/auth.ts`, `middleware/auth.ts` | M |
-| [openfga/openfga](https://github.com/openfga/openfga) | 5.7k | Apache-2.0 | Relationship-based access (Zanzibar model): *advisor X may view household Y because firm Z assigned them*. Auditable. | `requireRole()` | M |
-| [plaid/quickstart](https://github.com/plaid/quickstart) | 749 | MIT | Reference Link flow for account aggregation (Node + React). Real balances replace manual holdings entry. | Manual `PUT /portfolio` | M |
-| [diegomura/react-pdf](https://github.com/diegomura/react-pdf) | 16.8k | MIT | Firm-branded plan and proposal PDFs from React components — the white-label artifact advisors hand to clients. | "Proposal Generation" (docs only) | M |
-| [documenso/documenso](https://github.com/documenso/documenso) | 15.2k | **AGPL-3.0** | Self-hosted e-signature for engagement letters and acknowledgements. Run as its own service. | — | M |
-| [resend/react-email](https://github.com/resend/react-email) | 19.6k | MIT | Branded lifecycle email (welcome, plan ready, advisor intro) built in React. | — | S |
+| Component / Project | License / Model | What it adds | Replaces | Effort |
+|---|---|---|---|---|
+| **PostgreSQL 16 + `pgcrypto` + `pgvector`** | PostgreSQL | Native Household Graph CRM, multi-gen roles, AES-256-GCM SSN encryption, Merkle audit table, PL/pgSQL GDPR/CCPA routines. | `MASTERNEX.os` (decommissioned) | M |
+| **Auth0 / OIDC + PKCE + Argon2id + AWS KMS** | Commercial / OSS | Enterprise SSO/MFA (15m access / 7d refresh), Argon2id (`64 MB, t=3, p=4`), envelope KMS keys, TLS 1.3 ECDSA P-256. | Hand-rolled JWT auth | M |
+| [openfga/openfga](https://github.com/openfga/openfga) | Apache-2.0 | Relationship-based access (Zanzibar model): *advisor X may view household Y because firm Z assigned them*. | `requireRole()` | M |
+| **Plaid FDX (`/transactions/sync` cursors)** | Commercial API | Event-driven account aggregation; Free tier capped at manual/CSV/1 user-refreshed checking account; multi-institution gated to B2C Premium (`$15/mo`) & Advisor seats; failover to MX/Finicity/TimescaleDB. | Manual `PUT /portfolio` & costly polling | M |
+| **iPipeline Novera / OneView™ + Annuity Rate Watch / Wink + CANNEX + Compulife** | Commercial APIs | Live annuity order/AFFIRM suitability & policy status (OneView™), timestamped annuity schedules (ARW/Wink), Phase 4 US/CA income annuities (CANNEX), and term quoting (Compulife `REMOTE_IP` + separate US/CA Auth IDs). | Unsourced static carrier tables | M |
+| **Google Maps `AdvancedMarkerElement` + Gemini 4 Interactions** | Commercial APIs | Studio #11 spatial parcel clustering (`importLibrary`, `PlaceAutocompleteElement`) and grounded market comps (`POST /v1beta/interactions`, `Api-Revision: 2026-05-20`, `google_search` + `google_maps`). | Static property comps | M |
+| **Twilio + SendGrid / AWS SES** + [resend/react-email](https://github.com/resend/react-email) | Commercial / MIT | Lifecycle email & SMS strictly gated behind PostgreSQL `ConsentRecord` double-opt-in and FINRA 2210 / CAN-SPAM / TCPA copy lint. | Ungated notifications | S |
+| [diegomura/react-pdf](https://github.com/diegomura/react-pdf) & [documenso/documenso](https://github.com/documenso/documenso) | MIT / **AGPL-3.0** | Firm-branded plan PDFs and self-hosted e-signature (run Documenso as a separate container). | "Proposal Generation" (docs only) | M |
 
 ---
 
@@ -122,14 +125,17 @@ The B2B product needs firms, advisors, households, and the permissions between t
 
 **Stage:** Trust
 
-This is the layer that turns the platform from a demo into something a compliance officer will sign off on.
+This layer embeds regulatory supervision directly into runtime execution so every AI turn, calculation, and advisor sign-off is deterministically auditable.
 
-| Project | ★ | License | What it adds | Replaces | Effort |
-|---|---|---|---|---|---|
-| [langfuse/langfuse](https://github.com/langfuse/langfuse) | 32.4k | MIT (core) | Trace every AI prompt and response with user, model, cost, and latency. Gives supervisors a reviewable record of what the AI told each client. | Nothing logs AI output today | S |
-| [promptfoo/promptfoo](https://github.com/promptfoo/promptfoo) | 24.2k | MIT | Test suites for AI output: flag guarantees, product pushing, missing disclosures, unsuitable advice for a risk profile. Run in CI. Now part of OpenAI. | — | S |
-| [trycompai/comp](https://github.com/trycompai/comp) | 1.9k | **AGPL-3.0** (open core) | Policies, controls, evidence collection toward SOC 2 / ISO 27001 — the path to *earning* the claim the old README made. Internal tool, run separately. | Unattested claims | L |
-| [open-telemetry/opentelemetry-js](https://github.com/open-telemetry/opentelemetry-js) | 3.5k | Apache-2.0 | Traces and metrics across API, jobs, and AI calls; vendor-neutral. | `morgan` + `winston` only | S |
+| Component / Project | License / Model | What it adds | Replaces | Effort |
+|---|---|---|---|---|
+| **Temporal + LangGraph + Camunda DMN + MCP/A2A** | MIT / Apache-2.0 | Layered orchestration spine: Temporal outer durability (payloads `>2 MB` stored in encrypted S3 with compact UUID refs), LangGraph inner reasoning, Camunda DMN deterministic suitability/RMD tables, MCP/A2A interoperability. | Ad-hoc synchronous AI calls | L |
+| **K-Dense Dual-Loop Verification & Dual-Record Provenance + RO-Crate 1.1** | Apache-2.0 / Native | Outer Planning + Inner Sandboxed Execution/Math Review (zero LLM mental math); Living Lab Notebook + unforgeable host-observed Provenance Log + SHA-256 Frozen Analysis Plan + RO-Crate 1.1 ZIP WORM export. | Unverified prose math | M |
+| **Vetted `claude-skills-mcp` (`cisco-ai-skill-scanner --use-behavioral`)** | MIT / Apache-2.0 | Behavioral security scan gate prior to skill admission; allowlisted `docx`/`pdf`/`pptx`/`xlsx` from `anthropics/skills`; read-only `mimeo` pedagogy checklists. | Unscanned agent tools | S |
+| **Biomimicry 3.8 + Honeybee Democracy 4-Scout Swarm Critic** | Native | Multi-Constraint Cash-Flow Solver, independent spouse/heir alignment scoring, and 4-scout convergence gate with automatic HITL escalation on disagreement. | Single-pass unconstrained solver | M |
+| **4 Runtime Compliance Gates + 7-Year S3 Object Lock WORM + Postgres Merkle Chain** | Native / AWS | (1) PII Redaction & Scope Gate, (2) FINRA 2210 / SEC 206(4)-1 Content Guard, (3) Temporal HITL Escalation Pause, (4) 7-year S3 Object Lock WORM + `pg_advisory_xact_lock` append-only Merkle ledger + `export_user_data`/`soft_delete_user`. | Unlogged AI output | M |
+| [langfuse/langfuse](https://github.com/langfuse/langfuse) & [promptfoo/promptfoo](https://github.com/promptfoo/promptfoo) | MIT | Prompt/response tracing and CI adversarial evals flagging guarantees, product pushing, and missing disclosures. | Manual QA spot-checks | S |
+| [trycompai/comp](https://github.com/trycompai/comp) & [open-telemetry/opentelemetry-js](https://github.com/open-telemetry/opentelemetry-js) | **AGPL-3.0** / Apache-2.0 | SOC 2 / ISO 27001 evidence collection (separate service) and vendor-neutral OpenTelemetry traces/metrics. | Unattested compliance claims | M |
 
 ---
 
@@ -148,22 +154,24 @@ This is the layer that turns the platform from a demo into something a complianc
 
 ## Phased plan
 
-Sequenced so each phase produces something sellable or demonstrable, and nothing customer-facing ships before the trust gates.
+Aligned with [`UNIFIED_PLATFORM_BLUEPRINT.md`](UNIFIED_PLATFORM_BLUEPRINT.md#7-phased-rollout-roadmap-phases-14--flagger-canary-governance). Every production release across Phases 1–4 is gated by **Flagger progressive canary delivery** (**10%** traffic weight, **30s** health check interval, automatic rollback if **error rate > 1%** or **p95 latency > 500 ms**).
 
-| Phase | Outcome | Adopt | Exit criteria |
+| Phase | Timeline | Outcome & Core Stack | Exit Criteria |
 |---|---|---|---|
-| **0 · Credibility gates** | Nothing in the repo overstates reality | — (see [README](README.md#trust-and-safety-controls) and [open items](README.md#open-items-before-launch)) | Claims removed, quotes anonymised, model corrected, counsel engaged on revenue share |
-| **1 · Consumer MVP** | Public calculators with a real UI | shadcn-admin, shadcn/ui, Tremor, Recharts, formulajs, PostHog | Four calculators live; funnel instrumented from first visit to registration |
-| **2 · Trustworthy AI** | AI insights a supervisor can review | Langfuse, promptfoo, MCP SDK | Every AI response traced; eval suite blocks unsafe output in CI; calculators published as MCP tools |
-| **3 · Advisor product** | First paying firm | Better Auth, OpenFGA, react-pdf, react-email, Plaid | Firm → advisor → household permissions; branded PDF plan; aggregated accounts |
-| **4 · Scale & attest** | Enterprise-ready | PolicyEngine, OpenBB, BullMQ, OpenTelemetry, zod-to-openapi + Scalar, Documenso, Comp AI | PostgreSQL in production, published API reference, SOC 2 Type I audit scheduled |
+| **Phase 1 · Foundation & Trust Core** | **Months 1–6** | Durable `trust-core` ledger; WCAG 2.2 AA UI (Visx 4.0 + ECharts 6.1 + Accessible Data Tables); 6-step XState onboarding + 3-Slider Checkup; PostgreSQL 16 + `pgcrypto` Household Graph CRM (`MASTERNEX.os` removed); Family Document Binder (Argon2id + PKCE + S3 Object Lock); 2 core literacy studios. | Compulife pilot (`$490/yr`); Plaid Trial (`≤10` Prod Items); `lint:copy` green; 25+ discovery interviews; Flagger canary thresholds passing. |
+| **Phase 2 · Multi-Studio Coupling & Live Connectors** | **Months 7–15** | Unified Cash-Flow Router linking Tax, Retirement, Life Insurance + **Studio #11 Real Property & Tangible Asset Studio** (Google Maps `AdvancedMarkerElement`); live Advisor Command Center CRM & quote matrix. | Annuity Rate Watch (Wink failover) + iPipeline Novera/OneView™; event-driven Plaid FDX (B2C Premium & Advisor seats only); FINRA 2210 / CAN-SPAM / TCPA pre-flight linter on Twilio & SendGrid/SES. |
+| **Phase 3 · Durable AI Orchestration & Swarm Verification** | **Months 16–24** | Temporal + LangGraph + Camunda DMN spine (S3 UUID refs for `>2 MB` payloads); K-Dense Dual-Loop AI Coach + Frozen Analysis Plan + Provenance Log + RO-Crate 1.1 WORM export; Honeybee Democracy Household Alignment & 4-Scout Swarm Critic. | Vetted `claude-skills-mcp` (`cisco-ai-skill-scanner --use-behavioral`); Gemini 4 Interactions grounding; 100% HITL escalation coverage on regulated outputs. |
+| **Phase 4 · Cross-Border Scale & Multi-Generational Ecosystem** | **Years 3–5** | CANNEX Canadian expansion (RRIFs & Canadian payout annuities, separate Compulife CA Auth ID); 3-generation Household Constellations + NextGen Heir literacy tracks; audited MCP/A2A/REST APIs for CPA & estate-attorney collaboration. | 7-year S3 Object Lock WORM & regional data residency attested; SOC 2 Type II audit completed; multi-region DR verified. |
 
 ---
 
 ## Not recommended
 
-| Project | Why not |
+| Project / Practice | Why not |
 |---|---|
 | Copying AGPL code (Ghostfolio, OpenBB, PolicyEngine, Documenso, Comp AI) into this codebase | Would obligate releasing Fiduciary OS source to network users. Run them as separate services instead. |
 | Any "free carrier quote" scraper | Carrier pricing without an appointment or licensed quoting partner is the same risk as the current hard-coded table. |
 | Heavy component kits with their own design language (Material, Ant) | Fights white-labelling; shadcn's owned-code model is a better fit for firm branding. |
+| **`MASTERNEX.os`** (decommissioned) | Contains zero native CRM entities and introduces FINRA Regulatory Notice 24-09 vendor-supervision risk; formally replaced by PostgreSQL 16 + `pgcrypto` Household Graph CRM and native `trust-core` / Camunda DMN / K-Dense Provenance services. |
+| **Unsourced static marketing ratios** (`1.25x Leverage Factor`, unsourced `11.10%` FIA payout) | Hard-banned in production UI; all charts must render strictly from timestamped carrier API schedules or explicit user-declared hypothetical assumptions with a mounted SEC 206(4)-1 Risk Drawer. |
+| **Unbounded Free-tier Plaid background polling** | Causes negative gross margin inversion on `$0` users; enforce event-driven `/transactions/sync` cursors gated to B2C Premium (`$15/mo`) and Advisor seats, with Free tier capped at manual/CSV/1 user-refreshed checking account. |

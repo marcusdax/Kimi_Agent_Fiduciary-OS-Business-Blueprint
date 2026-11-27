@@ -16,7 +16,6 @@ import { createHash } from 'crypto';
 import { Router, type Request, type Response } from 'express';
 import { upsertEmbedding, semanticSearch } from '../services/embeddingService';
 import { analyzeDocument } from '../services/documentVaultService';
-import * as masternexService from '../services/masternexService';
 
 const router = Router();
 
@@ -127,22 +126,6 @@ router.post('/research/search', async (req: Request, res: Response) => {
     ? body.sources.filter((s): s is string => typeof s === 'string')
     : ['nature', 'openalex', 'arxiv', 'pubmed'];
 
-  const remote = await masternexService.searchAcademicLiterature({
-    query,
-    sources,
-    rowsPerSource: Number(body.rowsPerSource ?? 3),
-  });
-
-  if (remote && Array.isArray(remote.results) && remote.results.length > 0) {
-    return res.json({
-      source: 'masternex-academic-live',
-      query,
-      sources,
-      merkleProvenance: remote.merkle_root ?? createHash('sha3-256').update(JSON.stringify(remote.results)).digest('hex'),
-      results: remote.results,
-    });
-  }
-
   const q = query.toLowerCase();
   const matched = CURATED_LITERATURE.filter(
     (c) =>
@@ -174,22 +157,6 @@ router.post('/real-estate/underwrite', async (req: Request, res: Response) => {
   const operatingExpenseRatio = Number(parcel.operatingExpenseRatio ?? 0.35);
   const loanToValue = Number(parcel.loanToValue ?? 0.7);
   const interestRate = Number(parcel.interestRate ?? 0.065);
-
-  const remote = await masternexService.underwriteProperty({
-    parcel: {
-      address: String(parcel.address ?? '1200 Fiduciary Way, Austin, TX'),
-      purchase_price: purchasePrice,
-      annual_gross_rent: annualGrossRent,
-      operating_expense_ratio: operatingExpenseRatio,
-      loan_to_value: loanToValue,
-      interest_rate: interestRate,
-    },
-    reportType: typeof body.reportType === 'string' ? body.reportType : 'IC Audit',
-  });
-
-  if (remote) {
-    return res.json({ source: 'masternex-auctum-insights-live', underwriting: remote });
-  }
 
   const noi = annualGrossRent * (1 - operatingExpenseRatio);
   const capRate = purchasePrice > 0 ? noi / purchasePrice : 0;
@@ -334,7 +301,7 @@ router.get('/zk/status', (_req: Request, res: Response) => {
   res.json({
     phase: 'Phase 5 — Competitive Moat (Foundation)',
     zkAttestationReady: true,
-    module: 'masternex/intel/zk_attest.py',
+    module: 'trust-core/src/trust/attestations.ts',
     proofSystem: 'Hash-based ZK Computation Commitment (SNARK-ready interface)',
     postQuantumSignature: 'Ed25519+ML-DSA-87',
     dailyCommitmentRoot: proofCommitment,

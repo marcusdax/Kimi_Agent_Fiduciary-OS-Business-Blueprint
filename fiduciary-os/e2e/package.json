@@ -1,0 +1,18 @@
+{
+  "name": "fiduciary-os-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Zero-dependency Node.js 22 opaque-box 4-tier E2E test suite for Unified AUCTUM.ATLAS & AUCTUM Command (Fiduciary OS)",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "test": "node run-e2e.mjs --tier=all",
+    "test:tier1": "node run-e2e.mjs --tier=1",
+    "test:tier2": "node run-e2e.mjs --tier=2",
+    "test:tier3": "node run-e2e.mjs --tier=3",
+    "test:tier4": "node run-e2e.mjs --tier=4",
+    "check": "node run-e2e.mjs --check"
+  }
+}

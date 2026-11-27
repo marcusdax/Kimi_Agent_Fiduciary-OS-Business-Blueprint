@@ -26,7 +26,7 @@
  * adapter (a table with a trigger that raises on UPDATE/DELETE) and is listed as
  * the Phase-2 migration.
  */
-import { appendFileSync, closeSync, existsSync, fstatSync, mkdirSync, openSync, readFileSync, writeSync, fsyncSync, readdirSync } from 'node:fs';
+import { closeSync, existsSync, mkdirSync, openSync, readFileSync, writeSync, fsyncSync, readdirSync, statSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import type { LedgerEntry } from '../trust/ledger.ts';
@@ -77,7 +77,7 @@ export class FileLedgerStore implements LedgerStore {
     mkdirSync(dir, { recursive: true });
     const path = join(dir, filename);
     if (existsSync(path)) {
-      this.#bytes = fstatSync(openSync(path, 'r')).size;
+      this.#bytes = statSync(path).size;
     }
   }
 

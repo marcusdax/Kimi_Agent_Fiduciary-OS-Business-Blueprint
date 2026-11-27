@@ -41,7 +41,10 @@ services:
     environment:
       NODE_ENV: development
       PORT: 3002
-      LEDGER_MODE: memory
+      LEDGER_MODE: file
+      LEDGER_DIR: /app/.data/ledger
+    volumes:
+      - trust_core_ledger:/app/.data/ledger
     networks:
       - fiduciary-network
 
@@ -60,8 +63,6 @@ services:
       JWT_SECRET: local-dev-jwt-secret-minimum-32-chars-ok
       CORS_ORIGIN: http://localhost:4173,http://localhost:5173
       TRUST_CORE_URL: http://trust-core:3002
-      MASTERNEX_API_URL: ${MASTERNEX_API_URL:-}
-      MASTERNEX_JWT: ${MASTERNEX_JWT:-}
       HF_TOKEN: ${HF_TOKEN:-}
     depends_on:
       postgres:
@@ -92,6 +93,7 @@ services:
 volumes:
   postgres_data:
   redis_data:
+  trust_core_ledger:
 
 networks:
   fiduciary-network:

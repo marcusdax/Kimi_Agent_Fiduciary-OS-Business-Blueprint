@@ -2,8 +2,14 @@ import { prisma } from '../src/config/database';
 
 // Clean up database before each test
 beforeEach(async () => {
-  // Delete test data
+  // Delete test data (never touch immutable provenance_records)
   await prisma.$transaction([
+    prisma.consentRecord.deleteMany(),
+    prisma.lifeEvent.deleteMany(),
+    prisma.appointment.deleteMany(),
+    prisma.crmAccount.deleteMany(),
+    prisma.person.deleteMany(),
+    prisma.household.deleteMany(),
     prisma.sessionRefresh.deleteMany(),
     prisma.authSession.deleteMany(),
     prisma.toolScenario.deleteMany(),

@@ -17,7 +17,7 @@ import { SecSource } from '../sources/sec.ts';
 import { DisclosureWatch } from '../features/disclosure-watch.ts';
 import { EvidenceLedger } from '../trust/ledger.ts';
 import { FileLedgerStore, MemoryLedgerStore, defaultLedgerDir } from '../store/ledger-store.ts';
-import { MasternexFiduciaryBridge } from '../trust/masternex-bridge.ts';
+import { ComplianceAuditEngine } from '../trust/compliance-audit.ts';
 import { runStdio } from './server.ts';
 
 const http = new HttpClient({
@@ -35,6 +35,6 @@ const ledgerStore =
     ? new MemoryLedgerStore()
     : new FileLedgerStore(defaultLedgerDir());
 const ledger = EvidenceLedger.open(ledgerStore, process.env.LEDGER_ID ?? 'fiduciary-os-primary');
-const masternexBridge = new MasternexFiduciaryBridge();
+const complianceAudit = new ComplianceAuditEngine();
 
-await runStdio({ calibration, watch, ledger, masternexBridge });
+await runStdio({ calibration, watch, ledger, complianceAudit });

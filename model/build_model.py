@@ -83,6 +83,9 @@ SEGMENTS = {
 # --------------------------------------------------------------------------- scenarios / valuation
 
 SCENARIOS = {"Conservative": 0.70, "Base": 1.00, "Optimistic": 1.40}
+# Audited Year 5 revenue reconciliation reference benchmarks (excluded from v2.0 operating P&L)
+V1_LEGACY_YEAR5_REVENUE = 28_020_000              # v1 Base Case prior to removing ~$6.97M unlicensed rev-share
+GATED_LICENSED_UPSIDE_YEAR5_REVENUE = 51_700_000  # Contingent on licensed BD/RIA/insurance channel & counsel
 WACC = {"Conservative": 0.15, "Base": 0.12, "Optimistic": 0.10}
 TERMINAL_GROWTH = 0.03
 TERMINAL_EBITDA_MULTIPLE = 8.0
@@ -370,6 +373,14 @@ def main() -> None:
         ["Conservative and Optimistic scale revenue and customers to 70% and 140% of base.", *[""] * n],
         ["Operating-expense plan, D&A, SBC and capex stay fixed in dollars in every scenario.", *[""] * n],
         ["Performance-partnership revenue is excluded from every scenario.", *[""] * n],
+        blank,
+        ["=== YEAR 5 REVENUE RECONCILIATION (AUDITED REFERENCE) ===", *[""] * n],
+        ["v2.0 Pure-SaaS Base Case - Year 5 ARR ($)", "", "", "", "", round(m["arr"][-1])],
+        ["v2.0 Pure-SaaS Base Case - Year 5 Total Revenue ($)", "", "", "", "", round(m["revenue"][-1])],
+        ["Excluded Unlicensed Insurance Rev-Share Delta vs v1 ($)", "", "", "", "", V1_LEGACY_YEAR5_REVENUE - round(m["revenue"][-1])],
+        ["v1 Legacy Reference Base Case - Year 5 Total Revenue ($)", "", "", "", "", V1_LEGACY_YEAR5_REVENUE],
+        ["v2.0 Pure-SaaS Optimistic Case - Year 5 Total Revenue ($)", "", "", "", "", round(scen_models["Optimistic"]["revenue"][-1])],
+        ["Gated Licensed-Channel Upside Case - Year 5 Revenue (Contingent; Unmodelled) ($)", "", "", "", "", GATED_LICENSED_UPSIDE_YEAR5_REVENUE],
     ]
     write_csv("07_Scenario_Analysis.csv", rows)
 
@@ -383,7 +394,7 @@ def main() -> None:
     print("FCF        ", [f"{v / 1e6:.2f}M" for v in m["fcf"]])
     print("Ending cash", [f"{v / 1e6:.2f}M" for v in m["cash_end"]])
     for k, v in u.items():
-        print(f"{k:12s} LTV ${v['ltv']:,.0f}  CAC ${v['cac']:,.0f}  LTV/CAC {v['ltv_cac']:.1f}x  payback {v['payback_months']:.1f} mo")
+        print(f"{k:12s} LTV ${v['ltv']:,.0f}  CAC ${v['cac']:,.0f}  LTV/CAC {v['ltv_cac']:.1f}x  payback {v['payback_months']:.2f} mo")
     for scen in SCENARIOS:
         print(scen, "EBITDA", [f"{v / 1e6:.2f}M" for v in scen_models[scen]["ebitda"]], "min cash", f"{scen_models[scen]['min_cash'] / 1e6:.2f}M")
     for scen, v in m["valuation"].items():
